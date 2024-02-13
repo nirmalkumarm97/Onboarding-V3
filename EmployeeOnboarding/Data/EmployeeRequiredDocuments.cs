@@ -1,0 +1,21 @@
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace EmployeeOnboarding.Data
+{
+    public class EmployeeRequiredDocuments
+    {
+        public int Id { get; set; }
+        [ForeignKey("EmpGen_Id")]
+        public int? EmpGen_Id { get; set; }
+        public string Aadhar { get; set; }
+        public string Pan { get; set; }
+        public string? Driving_license { get; set; }
+        public string? Passport { get; set; }
+        public DateTime Date_Created { get; set; }
+        public DateTime? Date_Modified { get; set; }
+        public string Created_by { get; set; }
+        public string? Modified_by { get; set; }
+        public string Status { get; set; }
+
+    }
+}
