@@ -36,7 +36,7 @@ namespace EmployeeOnboarding.Services
 
             using (var fileStream = new FileStream(filePath, FileMode.Create))
             {
-                fileStream.WriteAsync(certificateBytes, 0, certificateBytes.Length);
+                fileStream.WriteAsync(certificateBytes, 0, certificateBytes.Length); //File 
             }
 
             return filePath; // Return the file path
