@@ -30,7 +30,8 @@ namespace EmployeeOnboarding.Repository
                    {
                        Id = succeeded.Id,
                        Name = succeeded.Name,
-
+                       Email = succeeded.EmailId,
+                       Passwaord = succeeded.Password
                    }).FirstOrDefault();
 
                 if (_succeeded == null)
@@ -127,7 +128,7 @@ namespace EmployeeOnboarding.Repository
                 else return 0;
             }
             catch (Exception ex)
-            {
+                {
                 throw new Exception(ex.InnerException.Message);
             }
         }
