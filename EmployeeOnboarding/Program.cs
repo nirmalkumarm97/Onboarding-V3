@@ -51,6 +51,7 @@ builder.Services.AddTransient<HealthService>();
 builder.Services.AddTransient<ExistingBankService>();
 builder.Services.AddScoped<ILogin, AuthenticateLogin>();
 builder.Services.AddScoped<IAdminRepository, AdminRepository>();
+builder.Services.AddTransient<IUserDetailsRepository, UserDetailsRepository>();
 
 
 //Configuring Fluent Migrator
