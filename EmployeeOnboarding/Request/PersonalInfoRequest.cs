@@ -9,10 +9,10 @@ namespace EmployeeOnboarding.Request
         public int loginId { get; set; }
         public GeneralVM generalVM { get; set; }
         public List<ContactVM> contact { get; set; }
-        public List<FamilyVM>? families { get; set; }
+        public List<FamilyVM> families { get; set; }
         public HobbyVM hobby { get; set; }
-        public List<ColleagueVM>? colleagues { get; set; }
-        public List<EmergencyContactVM>? emergencies { get; set; }
+        public List<ColleagueVM> colleagues { get; set; }
+        public List<EmergencyContactVM> emergencies { get; set; }
         public  RequiredVM required { get; set; }
 
     }

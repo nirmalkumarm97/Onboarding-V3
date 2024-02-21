@@ -12,7 +12,7 @@ namespace EmployeeOnboarding.Migrations
 
         public override void Up()
         {
-            Insert.IntoTable("LeadAssignee")
+            Insert.IntoTable("Login")
                .Row(new { Name = ("Apoorva"), Email = ("imthyaz@ideassion.com"), EmailId = "apoorva@ideassion.com" , Password = "Apoorva@123" , Role = ("A"), Status = ("A") });
         }
     }
