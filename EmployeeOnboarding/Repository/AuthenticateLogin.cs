@@ -26,12 +26,14 @@ namespace EmployeeOnboarding.Repository
             try
             {
                 var _succeeded = _context.Login.Where(authUser => authUser.EmailId == email && authUser.Password == password).
-                   Select(succeeded => new employloginVM()
+                    Join(_context.EmployeeGeneralDetails , login => login.Id , gendet => gendet.Login_ID ,(login, gendet)  => new { login, gendet })
+                   .Select(succeeded => new employloginVM()
                    {
-                       Id = succeeded.Id,
-                       Name = succeeded.Name,
-                       Email = succeeded.EmailId,
-                       Passwaord = succeeded.Password
+                       Id = succeeded.login.Id,
+                       Name = succeeded.login.Name,
+                       Email = succeeded.login.EmailId,
+                       EmpId = succeeded.gendet.Empid,
+                       Role = succeeded.login.Role  == "U" ?  "User" : null
                    }).FirstOrDefault();
 
                 if (_succeeded == null)
@@ -67,6 +69,7 @@ namespace EmployeeOnboarding.Repository
                         Created_by = "Admin",
                         Modified_by = "Admin",
                         Status = "A",
+                        Role = "U"
                     };
 
                     _context.Login.Add(_logindet);
