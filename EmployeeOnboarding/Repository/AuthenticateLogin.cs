@@ -33,7 +33,7 @@ namespace EmployeeOnboarding.Repository
                        Name = succeeded.login.Name,
                        Email = succeeded.login.EmailId,
                        EmpId = succeeded.gendet.Empid,
-                       Role = succeeded.login.Role  == "U" ?  "User" : null
+                       Role = succeeded.login.Role  == "U" ?  "User" : "Admin"
                    }).FirstOrDefault();
 
                 if (_succeeded == null)
