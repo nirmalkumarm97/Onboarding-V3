@@ -13,5 +13,6 @@ namespace EmployeeOnboarding.ViewModels
         [ForeignKey("City_Id")]
         public int City_Id { get; set; }
         public string Pincode { get; set; }
+        public string AddressType { get; set; }
     }
 }
