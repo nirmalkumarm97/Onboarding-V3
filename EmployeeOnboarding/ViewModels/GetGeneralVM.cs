@@ -4,7 +4,7 @@ namespace EmployeeOnboarding.ViewModels
 {
     public class GetGeneralVM
     {
-
+        public int GenId { get; set; }
         public string Empname { get; set; }
         public string Personal_Emailid { get; set; }
         public long Contact_no { get; set; }

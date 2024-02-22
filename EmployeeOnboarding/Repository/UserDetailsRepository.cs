@@ -1,8 +1,12 @@
 ﻿using DocumentFormat.OpenXml.Office2010.Excel;
 using EmployeeOnboarding.Contracts;
 using EmployeeOnboarding.Data;
+using EmployeeOnboarding.Data.Enum;
 using EmployeeOnboarding.Request;
+using EmployeeOnboarding.Response;
 using EmployeeOnboarding.ViewModels;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.EntityFrameworkCore;
 using OnboardingWebsite.Models;
 //using Org.BouncyCastle.Ocsp;
 using System.Runtime.CompilerServices;
@@ -56,7 +60,7 @@ namespace EmployeeOnboarding.Repository
             return filePath; // Return the file path
         }
 
-        public async Task<bool> AddPersonalInfo(PersonalInfoRequest personalInfoRequest)
+        public async Task<bool> AddPersonalInfo(PersonalInfoRequest personalInfoRequest )
         {
 
             //General details:
@@ -171,7 +175,7 @@ namespace EmployeeOnboarding.Repository
 
 
             //Family Details
-            if (personalInfoRequest.families.Count > 0 && personalInfoRequest.families != null )
+            if (personalInfoRequest.families.Count > 0 && personalInfoRequest.families != null)
             {
 
                 List<EmployeeFamilyDetails> familyVMs = new List<EmployeeFamilyDetails>();
@@ -293,7 +297,7 @@ namespace EmployeeOnboarding.Repository
             }
 
             //EmergencyContactdetails
-            if (personalInfoRequest.emergencies.Count > 0 && personalInfoRequest.families != null )
+            if (personalInfoRequest.emergencies.Count > 0 && personalInfoRequest.families != null)
             {
                 int index1 = 0;
                 List<EmployeeEmergencyContactDetails> emergencyVMs = new List<EmployeeEmergencyContactDetails>();
@@ -372,6 +376,88 @@ namespace EmployeeOnboarding.Repository
             _context.SaveChanges();
             return true;
         }
-    
+
+        public async Task<PersonalInfoResponse> GetPersonalInfo(int loginId)
+        {
+            try
+            {
+                PersonalInfoResponse personalInfoResponse = new PersonalInfoResponse();
+                GetGeneralVM? _general = _context.EmployeeGeneralDetails.Where(n => n.Login_ID == loginId).Select(general => new GetGeneralVM()
+                {
+                    GenId = general.Id,
+                    Empname = general.Empname,
+                    Personal_Emailid = general.Personal_Emailid,
+                    Contact_no = general.Contact_no,
+                    DOB = general.DOB,
+                    Nationality = general.Nationality,
+                    Gender = ((Gender)general.Gender).ToString(),
+                    MaritalStatus = ((MartialStatus)general.Gender).ToString(),
+                    DateOfMarriage = general.DateOfMarriage,
+                    BloodGrp = EnumExtensionMethods.GetEnumDescription((BloodGroup)general.BloodGrp)
+                }).FirstOrDefault();
+                personalInfoResponse.generalVM = _general;
+
+                var _contact = _context.EmployeeContactDetails.Where(n => n.EmpGen_Id == _general.GenId).Select(contact => new ContactVM()
+                {
+                    Address1 = contact.Address1,
+                    Address2 = contact.Address2,
+                    Country_Id = contact.Country_Id,
+                    State_Id = contact.State_Id,
+                    City_Id = contact.City_Id,
+                    Pincode = contact.Pincode,
+                }).ToList();
+                personalInfoResponse.contact = _contact;
+
+                var family =  _context.EmployeeFamilyDetails.Where(e => e.EmpGen_Id == _general.GenId && e.Family_no != null).Select(e => new GetFamilyVM()
+                {
+                    Relationship = e.Relationship,
+                    Name = e.Name,
+                    DOB = e.DOB,
+                    Occupation = e.Occupation,
+                    contact = e.contact
+                }).ToList();
+
+                personalInfoResponse.families = family;
+
+
+                var _hobby = _context.EmployeeHobbyMembership.Where(n => n.EmpGen_Id == _general.GenId).Select(hobby => new HobbyVM()
+                {
+                    ProfessionalBody = hobby.ProfessionalBody,
+                    ProfessionalBody_name = hobby.ProfessionalBody_name,
+                    Hobbies = hobby.Hobbies,
+
+                }).FirstOrDefault();
+
+                personalInfoResponse.hobby = _hobby;
+
+                var colleague = _context.EmployeeColleagueDetails.Where(e => e.EmpGen_Id == _general.GenId && e.colleague_no != null).Select(e => new ColleagueVM
+                {
+                    Empid = e.Employee_id,
+                    Colleague_Name = e.Colleague_Name,
+                    Location = e.Location
+                })
+                  .ToList();
+
+                personalInfoResponse.colleagues = colleague;
+
+                var emergencyContact = _context.EmployeeEmergencyContactDetails.Where(e => e.EmpGen_Id == _general.GenId && e.emergency_no != null).Select(e => new EmergencyContactVM
+                {
+                    Relationship = e.Relationship,
+                    Relation_name = e.Relation_name,
+                    Contact_number = e.Contact_number,
+                    Contact_address = e.Contact_address,
+                })
+                   .ToList();
+                personalInfoResponse.emergencies = emergencyContact;
+
+
+                return personalInfoResponse;
+            }
+            catch (Exception e)
+            {
+                throw;
+            }
+        }
     }
 }
+
