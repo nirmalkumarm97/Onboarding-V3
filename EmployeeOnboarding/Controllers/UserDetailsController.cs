@@ -125,7 +125,9 @@ namespace EmployeeOnboarding.Controllers
             {
                 var name = Enum.GetName(typeof(Status), value);
                 var id = (int)value;
-                enumList.Add(enumValues);
+                var enumobj = new { Id = id, Name = name };
+
+                enumList.Add(enumobj);
             }
 
             return Ok(enumList);
@@ -180,6 +182,21 @@ namespace EmployeeOnboarding.Controllers
 
             return Ok(enumDictionary);
         }
+        [HttpGet("GetStatusByLoginId")]
+
+        public async Task<IActionResult> GetStatusByLoginId(int loginId)
+        {
+            var response = await _userDetailsRepository.GetStatusByLoginId(loginId);
+            if (response != null)
+            {
+                return Ok(response);
+            }
+            else
+            {
+                return NoContent();
+            }
+        }
+
     }
 }
 

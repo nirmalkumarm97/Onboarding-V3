@@ -495,9 +495,14 @@ namespace EmployeeOnboarding.Repository
                 throw;
             }
         }
+        public async Task<string> GetStatusByLoginId(int loginId)
+        {
 
+            string data = await _context.Login.Where(x => x.Id == loginId).Select(x => x.Invited_Status).FirstOrDefaultAsync();
+            return data;
 
-            
+        }
+
     }
 }
 

@@ -10,7 +10,6 @@ namespace EmployeeOnboarding.Contracts
     {
      Task<bool> AddPersonalInfo(PersonalInfoRequest personalInfoRequest);
      Task<PersonalInfoResponse> GetPersonalInfo(int loginId);
-
-
+     Task<string>GetStatusByLoginId(int loginId);
     }
 }
