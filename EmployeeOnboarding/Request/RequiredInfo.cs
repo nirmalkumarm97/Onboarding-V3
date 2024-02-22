@@ -2,10 +2,10 @@
 {
     public class RequiredInfo
     {
-        public IFormFile Aadhar { get; set; }
-        public IFormFile Pan { get; set; }
-        public IFormFile? Driving_license { get; set; }
-        public IFormFile? Passport { get; set; }
+        public byte[] Aadhar { get; set; }
+        public byte[] Pan { get; set; }
+        public byte[]? Driving_license { get; set; }
+        public byte[]? Passport { get; set; }
 
     }
 }

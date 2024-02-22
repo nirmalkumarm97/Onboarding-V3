@@ -24,7 +24,7 @@ namespace EmployeeOnboarding.Controllers
 
 
         [HttpPost("AddPersonalInfo")]
-        public async Task<IActionResult> AddPersonalInfo([FromForm] PersonalInfoRequest personalInfoRequest)
+        public async Task<IActionResult> AddPersonalInfo([FromBody]PersonalInfoRequest personalInfoRequest)
         {
             var response = _userDetailsRepository.AddPersonalInfo(personalInfoRequest);
             if (response != null)
