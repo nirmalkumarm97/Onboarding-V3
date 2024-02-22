@@ -108,8 +108,75 @@ namespace EmployeeOnboarding.Controllers
 
             return Ok(enumDictionary);
         }
+
+        [HttpGet("Status")]
+        public IActionResult Status()
+        {
+            var enumValues = Enum.GetValues(typeof(Status));
+            var enumDictionary = new Dictionary<string, int>();
+
+            foreach (var value in enumValues)
+            {
+                var name = Enum.GetName(typeof(Status), value);
+                var id = (int)value;
+                enumDictionary.Add(name, id);
+            }
+
+            return Ok(enumDictionary);
+        }
+
+        [HttpGet("CovidVaccine")]
+        public IActionResult CovidVaccine()
+        {
+            var enumValues = Enum.GetValues(typeof(CovidVaccine));
+            var enumDictionary = new Dictionary<string, int>();
+
+            foreach (var value in enumValues)
+            {
+                var enumType = value.GetType();
+                var enumName = Enum.GetName(enumType, value);
+                var memberInfo = enumType.GetMember(enumName)[0];
+                var customAttribute = memberInfo.GetCustomAttribute<DescriptionAttribute>();
+
+                if (customAttribute != null)
+                {
+                    var customDescription = customAttribute.Description;
+                    var id = (int)value;
+                    enumDictionary.Add(customDescription, id);
+                }
+            }
+
+            return Ok(enumDictionary);
+
+        }
+
+
+        [HttpGet("VaccinationStatus")]
+        public IActionResult VaccinationStatus()
+        {
+            var enumValues = Enum.GetValues(typeof(VaccinationStatus));
+            var enumDictionary = new Dictionary<string, int>();
+
+            foreach (var value in enumValues)
+            {
+                var enumType = value.GetType();
+                var enumName = Enum.GetName(enumType, value);
+                var memberInfo = enumType.GetMember(enumName)[0];
+                var customAttribute = memberInfo.GetCustomAttribute<DescriptionAttribute>();
+
+                if (customAttribute != null)
+                {
+                    var customDescription = customAttribute.Description;
+                    var id = (int)value;
+                    enumDictionary.Add(customDescription, id);
+                }
+            }
+
+            return Ok(enumDictionary);
+        }
     }
 }
+
 
         
 
