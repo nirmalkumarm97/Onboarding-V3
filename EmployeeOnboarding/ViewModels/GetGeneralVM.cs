@@ -14,5 +14,6 @@ namespace EmployeeOnboarding.ViewModels
         public string? MaritalStatus { get; set; }
         public DateOnly? DateOfMarriage { get; set; }
         public string BloodGrp { get; set; }
+        public string Profile_Pic { get; set; }
     }
 }

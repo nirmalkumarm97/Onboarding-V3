@@ -8,6 +8,7 @@ using EmployeeOnboarding.ViewModels;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
 using OnboardingWebsite.Models;
+using System;
 //using Org.BouncyCastle.Ocsp;
 using System.Runtime.CompilerServices;
 
@@ -22,12 +23,13 @@ namespace EmployeeOnboarding.Repository
             _context = context;
         }
 
-        private string SaveImageFile(IFormFile image, string Id, string fileName)
+        private string SaveImageFile(byte[] image, string Id, string fileName)
         {
             if (image == null)
             {
                 return null;
             }
+
             var empFolderPath = Path.Combine(Directory.GetCurrentDirectory(), "Documents", Id);
             if (!Directory.Exists(empFolderPath))
             {
@@ -36,17 +38,18 @@ namespace EmployeeOnboarding.Repository
             var filePath = Path.Combine(empFolderPath, fileName);
             using (var fileStream = new FileStream(filePath, FileMode.Create))
             {
-                image.CopyTo(fileStream);
+                fileStream.WriteAsync(image , 0 , image.Length);
             }
             return filePath;
         }
 
-        private string SaveCertificateFile(IFormFile certificateFile, string Id, string fileName)
+        private string SaveCertificateFile(byte[] certificateFile, string Id, string fileName)
         {
             if (certificateFile == null)
             {
                 return null;
             }
+
             var empFolderPath = Path.Combine(Directory.GetCurrentDirectory(), "Documents", Id);
             if (!Directory.Exists(empFolderPath))
             {
@@ -55,7 +58,7 @@ namespace EmployeeOnboarding.Repository
             var filePath = Path.Combine(empFolderPath, fileName);
             using (var fileStream = new FileStream(filePath, FileMode.Create))
             {
-                certificateFile.CopyTo(fileStream);
+                fileStream.WriteAsync(certificateFile, 0, certificateFile.Length);
             }
             return filePath; // Return the file path
         }
@@ -65,7 +68,7 @@ namespace EmployeeOnboarding.Repository
 
             //General details:
 
-            var existingGeneral = _context.EmployeeGeneralDetails.FirstOrDefault(e => e.Login_ID == personalInfoRequest.loginId);
+            var existingGeneral =  _context.EmployeeGeneralDetails.FirstOrDefault(e => e.Login_ID == personalInfoRequest.loginId);
             int newGenId = 0;
             if (existingGeneral != null)
             {
@@ -85,7 +88,7 @@ namespace EmployeeOnboarding.Repository
 
                 existingGeneral.BloodGrp = personalInfoRequest.generalVM.BloodGrp;
 
-                existingGeneral.Profile_pic = SaveImageFile(personalInfoRequest.generalVM.Profile_pic, personalInfoRequest.loginId.ToString(), "Profile.jpeg");
+                existingGeneral.Profile_pic = SaveImageFile(personalInfoRequest.generalVM.Profile_pic, personalInfoRequest.loginId.ToString(), "Profile.jpg");
 
                 existingGeneral.Date_Modified = DateTime.UtcNow;
                 existingGeneral.Modified_by = personalInfoRequest.loginId.ToString();
@@ -119,7 +122,7 @@ namespace EmployeeOnboarding.Repository
 
             }
 
-            var submit = _context.Login.FirstOrDefault(e => e.Id == personalInfoRequest.loginId);
+            var submit =  _context.Login.FirstOrDefault(e => e.Id == personalInfoRequest.loginId);
 
             submit.Invited_Status = "Submitted";
 
@@ -135,7 +138,7 @@ namespace EmployeeOnboarding.Repository
             //Present And Permanent Address:
             foreach (var type in personalInfoRequest.contact)
             {
-                var existingContact = _context.EmployeeContactDetails.FirstOrDefault(e => e.EmpGen_Id == GenId && e.Address_Type == type.AddressType);
+                var existingContact =  _context.EmployeeContactDetails.FirstOrDefault(e => e.EmpGen_Id == GenId && e.Address_Type == type.AddressType);
 
                 if (existingContact != null)
                 {
@@ -175,15 +178,14 @@ namespace EmployeeOnboarding.Repository
 
 
             //Family Details
-            if (personalInfoRequest.families.Count > 0 && personalInfoRequest.families != null)
-            {
+           
 
                 List<EmployeeFamilyDetails> familyVMs = new List<EmployeeFamilyDetails>();
                 int index1 = 1; // Initialize the Company_no sequence
 
                 foreach (var family in personalInfoRequest.families)
                 {
-                    var existingFamily = _context.EmployeeFamilyDetails.FirstOrDefault(e => e.EmpGen_Id == GenId && e.Family_no == index1);
+                    var existingFamily =  _context.EmployeeFamilyDetails.FirstOrDefault(e => e.EmpGen_Id == GenId && e.Family_no == index1);
 
                     if (existingFamily != null)
                     {
@@ -221,7 +223,7 @@ namespace EmployeeOnboarding.Repository
                     index1++;
                 }
                 _context.EmployeeFamilyDetails.AddRange(familyVMs);
-            }
+            
 
 
             // hobbies and membership
@@ -256,14 +258,13 @@ namespace EmployeeOnboarding.Repository
             }
 
             //colleaguesInfo
-
-            if (personalInfoRequest.colleagues.Count > 0 && personalInfoRequest.families != null)
+            if (personalInfoRequest.colleagues.Count > 0)
             {
-                int index1 = 0;
+                int index2 = 0;
                 List<EmployeeColleagueDetails> colleagueVMs = new List<EmployeeColleagueDetails>();
                 foreach (var colleague in personalInfoRequest.colleagues)
                 {
-                    var existingColleague = _context.EmployeeColleagueDetails.FirstOrDefault(e => e.EmpGen_Id == GenId && e.colleague_no == index1);
+                    var existingColleague = _context.EmployeeColleagueDetails.FirstOrDefault(e => e.EmpGen_Id == GenId && e.colleague_no == index2);
 
                     if (existingColleague != null)
                     {
@@ -291,19 +292,19 @@ namespace EmployeeOnboarding.Repository
                         };
                         colleagueVMs.Add(_colleague);
                     }
-                    index1++;
+                    index2++;
                 }
                 _context.EmployeeColleagueDetails.AddRange(colleagueVMs);
             }
 
             //EmergencyContactdetails
-            if (personalInfoRequest.emergencies.Count > 0 && personalInfoRequest.families != null)
+            if (personalInfoRequest.emergencies.Count > 0)
             {
-                int index1 = 0;
+                int index3 = 0;
                 List<EmployeeEmergencyContactDetails> emergencyVMs = new List<EmployeeEmergencyContactDetails>();
                 foreach (var emergency in personalInfoRequest.emergencies)
                 {
-                    var existingemergency = _context.EmployeeEmergencyContactDetails.FirstOrDefault(e => e.EmpGen_Id == GenId && e.emergency_no == index1);
+                    var existingemergency = _context.EmployeeEmergencyContactDetails.FirstOrDefault(e => e.EmpGen_Id == GenId && e.emergency_no == index3);
 
                     if (existingemergency != null)
                     {
@@ -334,7 +335,7 @@ namespace EmployeeOnboarding.Repository
                         emergencyVMs.Add(_emergency);
 
                     }
-                    index1++;
+                    index3++;
 
                 }
 
@@ -377,12 +378,28 @@ namespace EmployeeOnboarding.Repository
             return true;
         }
 
+        public static byte[] GetFile(string filepath)
+        {
+            if (System.IO.File.Exists(filepath))
+            {
+                System.IO.FileStream fs = System.IO.File.OpenRead(filepath);
+                byte[] file = new byte[fs.Length];
+                int br = fs.Read(file, 0, file.Length);
+                if (br != fs.Length)
+                {
+                    throw new IOException("Invalid path");
+                }
+                return file;
+            }
+            return null;
+        }
+
         public async Task<PersonalInfoResponse> GetPersonalInfo(int loginId)
         {
             try
             {
                 PersonalInfoResponse personalInfoResponse = new PersonalInfoResponse();
-                GetGeneralVM? _general = _context.EmployeeGeneralDetails.Where(n => n.Login_ID == loginId).Select(general => new GetGeneralVM()
+                GeneralInfoResponse? _general =  _context.EmployeeGeneralDetails.Where(n => n.Login_ID == loginId).Select(general => new GeneralInfoResponse()
                 {
                     GenId = general.Id,
                     Empname = general.Empname,
@@ -393,11 +410,13 @@ namespace EmployeeOnboarding.Repository
                     Gender = ((Gender)general.Gender).ToString(),
                     MaritalStatus = ((MartialStatus)general.Gender).ToString(),
                     DateOfMarriage = general.DateOfMarriage,
-                    BloodGrp = EnumExtensionMethods.GetEnumDescription((BloodGroup)general.BloodGrp)
+                    BloodGrp = EnumExtensionMethods.GetEnumDescription((BloodGroup)general.BloodGrp),
+                    Profile_Pic = GetFile(general.Profile_pic)
+
                 }).FirstOrDefault();
                 personalInfoResponse.generalVM = _general;
 
-                var _contact = _context.EmployeeContactDetails.Where(n => n.EmpGen_Id == _general.GenId).Select(contact => new ContactVM()
+                var _contact = _context.EmployeeContactDetails.Where(n => n.EmpGen_Id == _general.GenId).Select(contact => new ContactResponse()
                 {
                     Address1 = contact.Address1,
                     Address2 = contact.Address2,
@@ -408,7 +427,7 @@ namespace EmployeeOnboarding.Repository
                 }).ToList();
                 personalInfoResponse.contact = _contact;
 
-                var family =  _context.EmployeeFamilyDetails.Where(e => e.EmpGen_Id == _general.GenId && e.Family_no != null).Select(e => new GetFamilyVM()
+                var family =  _context.EmployeeFamilyDetails.Where(e => e.EmpGen_Id == _general.GenId && e.Family_no != null).Select(e => new FamilyResponse()
                 {
                     Relationship = e.Relationship,
                     Name = e.Name,
@@ -420,7 +439,7 @@ namespace EmployeeOnboarding.Repository
                 personalInfoResponse.families = family;
 
 
-                var _hobby = _context.EmployeeHobbyMembership.Where(n => n.EmpGen_Id == _general.GenId).Select(hobby => new HobbyVM()
+                var _hobby = _context.EmployeeHobbyMembership.Where(n => n.EmpGen_Id == _general.GenId).Select(hobby => new HobbyResponse()
                 {
                     ProfessionalBody = hobby.ProfessionalBody,
                     ProfessionalBody_name = hobby.ProfessionalBody_name,
@@ -430,7 +449,7 @@ namespace EmployeeOnboarding.Repository
 
                 personalInfoResponse.hobby = _hobby;
 
-                var colleague = _context.EmployeeColleagueDetails.Where(e => e.EmpGen_Id == _general.GenId && e.colleague_no != null).Select(e => new ColleagueVM
+                var colleague = _context.EmployeeColleagueDetails.Where(e => e.EmpGen_Id == _general.GenId && e.colleague_no != null).Select(e => new ColleagueResponse
                 {
                     Empid = e.Employee_id,
                     Colleague_Name = e.Colleague_Name,
@@ -438,9 +457,13 @@ namespace EmployeeOnboarding.Repository
                 })
                   .ToList();
 
-                personalInfoResponse.colleagues = colleague;
+                if(colleague.Count > 0)
+                {
+                    personalInfoResponse.colleagues = colleague;
+                }
 
-                var emergencyContact = _context.EmployeeEmergencyContactDetails.Where(e => e.EmpGen_Id == _general.GenId && e.emergency_no != null).Select(e => new EmergencyContactVM
+
+                var emergencyContact = _context.EmployeeEmergencyContactDetails.Where(e => e.EmpGen_Id == _general.GenId && e.emergency_no != null).Select(e => new EmergencyContactResponse
                 {
                     Relationship = e.Relationship,
                     Relation_name = e.Relation_name,
@@ -448,7 +471,21 @@ namespace EmployeeOnboarding.Repository
                     Contact_address = e.Contact_address,
                 })
                    .ToList();
-                personalInfoResponse.emergencies = emergencyContact;
+
+                if (emergencyContact.Count > 0)
+                {
+                    personalInfoResponse.emergencies = emergencyContact;
+                }
+
+                var requiredDocuments =  _context.EmployeeRequiredDocuments.Where(x => x.EmpGen_Id == _general.GenId).Select(e => new RequiredDocumentsRespose
+                {
+                    Aadhar = e.Aadhar,
+                    Driving_license = e.Driving_license,
+                    Pan = e.Pan,
+                    Passport = e.Passport
+                }).FirstOrDefault();
+
+                personalInfoResponse.RequiredDocuments = requiredDocuments;
 
 
                 return personalInfoResponse;
@@ -458,6 +495,9 @@ namespace EmployeeOnboarding.Repository
                 throw;
             }
         }
+
+
+            
     }
 }
 

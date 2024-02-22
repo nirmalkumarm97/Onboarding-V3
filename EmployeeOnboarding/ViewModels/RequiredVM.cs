@@ -2,11 +2,9 @@
 {
     public class RequiredVM
     {
-        public IFormFile Aadhar { get; set; }
-        public IFormFile Pan { get; set; }
-        public IFormFile? Driving_license { get; set; }
-        public IFormFile? Passport { get; set; }
-
-
+        public string Aadhar { get; set; }
+        public string Pan { get; set; }
+        public string? Driving_license { get; set; }
+        public string? Passport { get; set; }
     }
 }

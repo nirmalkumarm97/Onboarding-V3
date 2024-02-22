@@ -39,39 +39,39 @@ namespace EmployeeOnboarding.Services
             return filePath; // Return the file path
         }
 
-        public void AddRequired(int Id, RequiredVM required)
-        {
-            var existingRequired = _context.EmployeeRequiredDocuments.FirstOrDefault(e => e.EmpGen_Id == Id);
+    //    public void AddRequired(int Id, RequiredVM required)
+    //    {
+    //        var existingRequired = _context.EmployeeRequiredDocuments.FirstOrDefault(e => e.EmpGen_Id == Id);
 
-            if (existingRequired != null)
-            {
-                existingRequired.Aadhar= SaveCertificateFile(required.Aadhar, Id.ToString(), "Aadhar.pdf");
-                existingRequired.Pan = SaveCertificateFile(required.Pan, Id.ToString(), "Pan.pdf");
-                existingRequired.Driving_license = SaveCertificateFile(required.Driving_license, Id.ToString(), "Driving_license.pdf");
-                existingRequired.Passport = SaveCertificateFile(required.Passport, Id.ToString(), "Passport.pdf");
-                existingRequired.Date_Modified = DateTime.UtcNow;
-                existingRequired.Modified_by = Id.ToString();
-                existingRequired.Status = "A";
-            }
-            else
-            {
-                // Add new record
-                var _required = new EmployeeRequiredDocuments()
-                {
-                    Aadhar = SaveCertificateFile(required.Aadhar, Id.ToString(), "Aadhar.pdf"),
-                    Pan = SaveCertificateFile(required.Pan, Id.ToString(), "Pan.pdf"),
-                    Driving_license = SaveCertificateFile(required.Driving_license, Id.ToString(), "Driving_license.pdf"),
-                    Passport = SaveCertificateFile(required.Passport, Id.ToString(), "Passport.pdf"),
-                    Date_Created = DateTime.UtcNow,
-                    Date_Modified = DateTime.UtcNow,
-                    Created_by = Id.ToString(),
-                    Modified_by = Id.ToString(),
-                    Status = "A"
-                };
+    //        if (existingRequired != null)
+    //        {
+    //            existingRequired.Aadhar= SaveCertificateFile(required.Aadhar, Id.ToString(), "Aadhar.pdf");
+    //            existingRequired.Pan = SaveCertificateFile(required.Pan, Id.ToString(), "Pan.pdf");
+    //            existingRequired.Driving_license = SaveCertificateFile(required.Driving_license, Id.ToString(), "Driving_license.pdf");
+    //            existingRequired.Passport = SaveCertificateFile(required.Passport, Id.ToString(), "Passport.pdf");
+    //            existingRequired.Date_Modified = DateTime.UtcNow;
+    //            existingRequired.Modified_by = Id.ToString();
+    //            existingRequired.Status = "A";
+    //        }
+    //        else
+    //        {
+    //            // Add new record
+    //            var _required = new EmployeeRequiredDocuments()
+    //            {
+    //                Aadhar = SaveCertificateFile(required.Aadhar, Id.ToString(), "Aadhar.pdf"),
+    //                Pan = SaveCertificateFile(required.Pan, Id.ToString(), "Pan.pdf"),
+    //                Driving_license = SaveCertificateFile(required.Driving_license, Id.ToString(), "Driving_license.pdf"),
+    //                Passport = SaveCertificateFile(required.Passport, Id.ToString(), "Passport.pdf"),
+    //                Date_Created = DateTime.UtcNow,
+    //                Date_Modified = DateTime.UtcNow,
+    //                Created_by = Id.ToString(),
+    //                Modified_by = Id.ToString(),
+    //                Status = "A"
+    //            };
 
-                _context.EmployeeRequiredDocuments.Add(_required);
-            }
-            _context.SaveChanges();
-        }
+    //            _context.EmployeeRequiredDocuments.Add(_required);
+    //        }
+    //        _context.SaveChanges();
+    //    }
     }
 }
