@@ -25,15 +25,13 @@ namespace EmployeeOnboarding.Repository
         {
             try
             {
-                var _succeeded = _context.Login.Where(authUser => authUser.EmailId == email && authUser.Password == password).
-                    Join(_context.EmployeeGeneralDetails , login => login.Id , gendet => gendet.Login_ID ,(login, gendet)  => new { login, gendet })
+                var _succeeded = _context.Login.Where(authUser => authUser.EmailId == email && authUser.Password == password)
                    .Select(succeeded => new employloginVM()
                    {
-                       Id = succeeded.login.Id,
-                       Name = succeeded.login.Name,
-                       Email = succeeded.login.EmailId,
-                       EmpId = succeeded.gendet.Empid,
-                       Role = succeeded.login.Role  == "U" ?  "User" : "Admin"
+                       EmpId = succeeded.Id,
+                       Name = succeeded.Name,
+                       Email = succeeded.EmailId,
+                       Role = succeeded.Role  == "U" ?  "User" : "Admin"
                    }).FirstOrDefault();
 
                 if (_succeeded == null)
