@@ -1,6 +1,7 @@
 ﻿using EmployeeOnboarding.Contracts;
 using EmployeeOnboarding.Data;
 using EmployeeOnboarding.Request;
+using EmployeeOnboarding.Response;
 using EmployeeOnboarding.Services;
 using EmployeeOnboarding.ViewModels;
 using Microsoft.AspNetCore.Mvc;
@@ -24,9 +25,23 @@ namespace EmployeeOnboarding.Controllers
 
         [HttpPost("AddPersonalInfo")]
         public async Task<IActionResult> AddPersonalInfo([FromForm] PersonalInfoRequest personalInfoRequest)
-        { 
+        {
             var response = _userDetailsRepository.AddPersonalInfo(personalInfoRequest);
-            if(response != null)
+            if (response != null)
+            {
+                return Ok(response);
+            }
+            else
+            {
+                return NoContent();
+            }
+        }
+
+        [HttpGet("GetPersonalInfo")]
+        public async Task<IActionResult> GetPersonalInfo(int loginId)
+        {
+            var response = _userDetailsRepository.GetPersonalInfo(loginId);
+            if (response != null)
             {
                 return Ok(response);
             }
