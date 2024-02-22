@@ -1,4 +1,6 @@
-﻿using EmployeeOnboarding.Contracts;
+﻿using DocumentFormat.OpenXml.Office2010.Excel;
+using DocumentFormat.OpenXml.Wordprocessing;
+using EmployeeOnboarding.Contracts;
 using EmployeeOnboarding.Data;
 using EmployeeOnboarding.Data.Enum;
 using EmployeeOnboarding.Request;
@@ -56,40 +58,43 @@ namespace EmployeeOnboarding.Controllers
         [HttpGet("Gender")]
         public IActionResult Gender()
         {
-            var enumValues = Enum.GetValues(typeof(Gender));
-            var enumDictionary = new Dictionary<string, int>();
-
-            foreach (var value in enumValues)
             {
-                var name = Enum.GetName(typeof(Gender), value);
-                var id = (int)value;
-                enumDictionary.Add(name, id);
-            }
+                var enumValues = Enum.GetValues(typeof(Gender));
+                var genderList = new List<object>();
 
-            return Ok(enumDictionary);
+                foreach (var value in enumValues)
+                {
+                    var name = Enum.GetName(typeof(Gender), value);
+                    var id = (int)value;
+                    var genderObj = new { Id = id, Name = name };
+                    genderList.Add(genderObj);
+                }
+
+                return Ok(genderList);
+            }
 
         }
         [HttpGet("MartialStatus")]
         public IActionResult MartialStatus()
         {
             var enumValues = Enum.GetValues(typeof(MartialStatus));
-            var enumDictionary = new Dictionary<string, int>();
+            var enumList = new List<object>();
 
             foreach (var value in enumValues)
             {
                 var name = Enum.GetName(typeof(MartialStatus), value);
                 var id = (int)value;
-                enumDictionary.Add(name, id);
+                var enumobj = new { Id = id, Name = name };
+                enumList.Add(enumobj);
             }
 
-            return Ok(enumDictionary);
+            return Ok(enumList);
         }
         [HttpGet("BloodGroup")]
         public IActionResult BloodGroup()
         {
-
             var enumValues = Enum.GetValues(typeof(BloodGroup));
-            var enumDictionary = new Dictionary<string, int>();
+            var bloodGroupList = new List<object>();
 
             foreach (var value in enumValues)
             {
@@ -102,27 +107,28 @@ namespace EmployeeOnboarding.Controllers
                 {
                     var customDescription = customAttribute.Description;
                     var id = (int)value;
-                    enumDictionary.Add(customDescription, id);
+                    var bloodGroupObj = new { Id = id, Name = customDescription };
+                    bloodGroupList.Add(bloodGroupObj);
                 }
             }
 
-            return Ok(enumDictionary);
+            return Ok(bloodGroupList);
         }
 
         [HttpGet("Status")]
         public IActionResult Status()
         {
             var enumValues = Enum.GetValues(typeof(Status));
-            var enumDictionary = new Dictionary<string, int>();
+            var enumList = new List<object>();
 
             foreach (var value in enumValues)
             {
                 var name = Enum.GetName(typeof(Status), value);
                 var id = (int)value;
-                enumDictionary.Add(name, id);
+                enumList.Add(enumValues);
             }
 
-            return Ok(enumDictionary);
+            return Ok(enumList);
         }
 
         [HttpGet("CovidVaccine")]
