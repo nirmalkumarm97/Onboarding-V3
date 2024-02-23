@@ -123,7 +123,7 @@ namespace EmployeeOnboarding.Repository
                 if (check != null)
                 {
                     int getOTP = otpgeneration();
-                    await _emailSender.SendEmailAsync(emailId, "Password Reset", $"<p>OTP : <b>\"+{getOTP}+\"</b></p>\\r\\n\\r\\n\\r\\n\\r\\n<p>Enter this OTP to Reset Password.</P>\\r\\n\\r\\n<p>OTP will Expire in 30 secs</p>\\r\\n\\r\\n\\r\\n\\r\\n<p>Note :</p>\\r\\n\\r\\n<p>1. This is an Auto Generated Mail.</p>\\r\\n\\r\\n<p>2. Don't need to Reply This mail .</p>\\r\\n\\r\\n\\r\\n\\r\\n\\r\\n<p>Regards.</p>\\r\\n\\r\\n<p>ERP</p>\"");
+                    await _emailSender.SendEmailAsync(emailId, "Reset Password", $"Please reset your password by entering the OTP. Your OTP is {getOTP}");
                     return getOTP;
                 }
                 else return 0;
