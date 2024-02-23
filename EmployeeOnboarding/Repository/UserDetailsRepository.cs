@@ -424,6 +424,7 @@ namespace EmployeeOnboarding.Repository
                     State_Id = contact.State_Id,
                     City_Id = contact.City_Id,
                     Pincode = contact.Pincode,
+                    AddressType = contact.Address_Type,
                 }).ToList();
                 personalInfoResponse.contact = _contact;
 
