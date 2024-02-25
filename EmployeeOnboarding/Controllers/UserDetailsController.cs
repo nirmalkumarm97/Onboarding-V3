@@ -8,6 +8,7 @@ using EmployeeOnboarding.Response;
 using EmployeeOnboarding.Services;
 using EmployeeOnboarding.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using OnboardingWebsite.Models;
 using System.ComponentModel;
 using System.Reflection;
@@ -21,10 +22,12 @@ namespace EmployeeOnboarding.Controllers
     public class UserDetailsController : ControllerBase
     {
         private readonly IUserDetailsRepository _userDetailsRepository;
+        private readonly ApplicationDbContext _context;
 
-        public UserDetailsController(IUserDetailsRepository userDetailsRepository)
+        public UserDetailsController(IUserDetailsRepository userDetailsRepository, ApplicationDbContext context)
         {
             _userDetailsRepository = userDetailsRepository;
+            _context = context;
         }
 
 
@@ -183,7 +186,6 @@ namespace EmployeeOnboarding.Controllers
             return Ok(enumDictionary);
         }
         [HttpGet("GetStatusByLoginId")]
-
         public async Task<IActionResult> GetStatusByLoginId(int loginId)
         {
             var response = await _userDetailsRepository.GetStatusByLoginId(loginId);
@@ -196,6 +198,75 @@ namespace EmployeeOnboarding.Controllers
                 return NoContent();
             }
         }
+
+
+        [HttpGet("GetCountries")]
+        public async Task<IActionResult> GetCountries()
+        {
+            var response = await _context.Country.ToListAsync();
+            if (response != null)
+            {
+                return Ok(response);
+            }
+            else
+            {
+                return NoContent();
+            }
+        }
+        [HttpGet("GetStates")]
+        public async Task<IActionResult> GetSates()
+        {
+            var response = await _context.State.ToListAsync();
+            if (response != null)
+            {
+                return Ok(response);
+            }
+            else
+            {
+                return NoContent();
+            }
+        }
+
+        [HttpGet("GetCities")]
+        public async Task<IActionResult> GetCities()
+        {
+            var response = await _context.City.ToListAsync();
+            if (response != null)
+            {
+                return Ok(response);
+            }
+            else
+            {
+                return NoContent();
+            }
+        }
+
+        //[HttpGet("GetStatesByCountryId/{Id}")]
+        //public async Task<IActionResult> GetStatesByCountryId(int Id)
+        //{
+        //    var response = await _context.State.Where(x => x.Country_Id == Id).ToListAsync();
+        //    if (response != null)
+        //    {
+        //        return Ok(response);
+        //    }
+        //    else
+        //    {
+        //        return NoContent();
+        //    }
+        //}
+        //[HttpGet("GetCitiesByStateId/{Id}")]
+        //public async Task<IActionResult> GetCitiesByStateId(int Id)
+        //{
+        //    var response = await _context.City.Where(x => x.State_Id == Id).ToListAsync();
+        //    if (response != null)
+        //    {
+        //        return Ok(response);
+        //    }
+        //    else
+        //    {
+        //        return NoContent();
+        //    }
+        //}
 
     }
 }
