@@ -4,7 +4,7 @@
     {
         public int Id { get; set; }
         public string Country_Name { get; set; }
-        public string Date_Created { get; set; }
-        public string Date_Modified { get; set;}
+        public DateTime Date_Created { get; set; }
+        public DateTime Date_Modified { get; set;}
     }
 }
