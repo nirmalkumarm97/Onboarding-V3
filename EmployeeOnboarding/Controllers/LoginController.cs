@@ -20,9 +20,14 @@ namespace EmployeeOnboarding.Controllers
         }
 
         [HttpPost("LoginInvite")]
-        public int LoginInvite(logininviteVM logindet)
+        public async Task<IActionResult> LoginInvite(logininviteVM logindet)
         {
-            return _Ilogin.LoginInvite(logindet);
+            var response = await _Ilogin.LoginInvite(logindet);
+            if (response != null)
+            {
+                return Ok(response);
+            }
+            return NoContent();
         }
 
         [HttpPut("LoginCmp")]
@@ -68,5 +73,17 @@ namespace EmployeeOnboarding.Controllers
             }
             return NoContent();
         }
+        [HttpPost("VerifyOTP")]
+
+        public async Task<IActionResult> VerifyOTP(string emailId, int OTP)
+        {
+            var response = await _Ilogin.VerifyOTP(emailId, OTP);
+            if (response != null)
+            {
+                return Ok(response);
+            }
+            return NoContent();
+        }
+
     }
 }

@@ -4,6 +4,8 @@ using EmployeeOnboarding.Models;
 using EmployeeOnboarding.Services;
 using EmployeeOnboarding.ViewModels;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.EntityFrameworkCore;
+using Org.BouncyCastle.Crypto;
 using System.Text.Encodings.Web;
 
 namespace EmployeeOnboarding.Repository
@@ -50,7 +52,7 @@ namespace EmployeeOnboarding.Repository
             return _context.Login.ToList();
         }
 
-        public int LoginInvite(logininviteVM logindet)
+        public async Task <bool> LoginInvite(logininviteVM logindet)
         {
             try
             {
@@ -78,11 +80,11 @@ namespace EmployeeOnboarding.Repository
                     ///
                     int Verifyotp = otpgeneration();
                     //await
-                    _emailSender.SendEmailAsync(logindet.Emailid, "Confirm your email",
+                   await _emailSender.SendEmailAsync(logindet.Emailid, "Confirm your email",
                                $"Please confirm your account by entering the OTP by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'> clicking here</a>. Your OTP is " + Verifyotp);
-                    return Verifyotp;
+                    return true;
                 }
-                else return 0;
+                else return false;
             }
             catch(Exception e)
             {
@@ -115,7 +117,7 @@ namespace EmployeeOnboarding.Repository
                 throw new Exception(e.InnerException.Message);
             }
         }
-        public async Task<int> ForgotPassword(string emailId)
+        public async Task<bool> ForgotPassword(string emailId)
         {
             try
             {
@@ -124,9 +126,9 @@ namespace EmployeeOnboarding.Repository
                 {
                     int getOTP = otpgeneration();
                     await _emailSender.SendEmailAsync(emailId, "Reset Password", $"Please reset your password by entering the OTP. Your OTP is {getOTP}");
-                    return getOTP;
+                    return true;
                 }
-                else return 0;
+                else return false;
             }
             catch (Exception ex)
                 {
@@ -150,6 +152,15 @@ namespace EmployeeOnboarding.Repository
             {
                 throw new Exception(ex.InnerException.Message);
             }
+        }
+        public async Task<bool> VerifyOTP(string emailId, int OTP)
+        {
+            var CheckOtp = await _context.Login.Where(e => e.EmailId == emailId && e.OTP == OTP).FirstOrDefaultAsync();
+            if (CheckOtp != null)
+            {
+                return true;
+            }
+            else return false;
         }
         public int otpgeneration()
         {
