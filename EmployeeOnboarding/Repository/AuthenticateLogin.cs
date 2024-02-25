@@ -59,6 +59,8 @@ namespace EmployeeOnboarding.Repository
                var check = _context.Login.Where(x => x.EmailId == logindet.Emailid).FirstOrDefault();
                 if (check == null)
                 {
+                    int Verifyotp = otpgeneration();
+
                     var _logindet = new Login()
                     {
                         Name = logindet.Name,
@@ -69,7 +71,8 @@ namespace EmployeeOnboarding.Repository
                         Created_by = "Admin",
                         Modified_by = "Admin",
                         Status = "A",
-                        Role = "U"
+                        Role = "U",
+                        OTP = Verifyotp
                     };
 
                     _context.Login.Add(_logindet);
@@ -78,10 +81,10 @@ namespace EmployeeOnboarding.Repository
                     var callbackUrl = "http://localhost:7136/swagger/index.html";
                     //var callbackUrl = "http://localhost:7136/api/logindetails/confirm-login";
                     ///
-                    int Verifyotp = otpgeneration();
                     //await
                    await _emailSender.SendEmailAsync(logindet.Emailid, "Confirm your email",
                                $"Please confirm your account by entering the OTP by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'> clicking here</a>. Your OTP is " + Verifyotp);
+
                     return true;
                 }
                 else return false;
@@ -126,6 +129,8 @@ namespace EmployeeOnboarding.Repository
                 {
                     int getOTP = otpgeneration();
                     await _emailSender.SendEmailAsync(emailId, "Reset Password", $"Please reset your password by entering the OTP. Your OTP is {getOTP}");
+                    check.OTP = getOTP;
+                    _context.SaveChanges();
                     return true;
                 }
                 else return false;
