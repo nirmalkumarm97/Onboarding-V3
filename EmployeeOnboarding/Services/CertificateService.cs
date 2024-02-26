@@ -26,7 +26,7 @@ namespace EmployeeOnboarding.Services
 
             var certificateBytes = Convert.FromBase64String(certificateBase64);
 
-            var empFolderPath = Path.Combine(Directory.GetCurrentDirectory(), "Documents", empId);
+            var empFolderPath = Path.Combine(Directory.GetCurrentDirectory(), "C:\\A_Onboarding\\OnboardingFiles", empId);
             if (!Directory.Exists(empFolderPath))
             {
                 Directory.CreateDirectory(empFolderPath);
