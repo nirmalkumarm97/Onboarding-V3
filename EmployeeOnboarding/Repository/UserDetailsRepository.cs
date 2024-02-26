@@ -30,7 +30,7 @@ namespace EmployeeOnboarding.Repository
                 return null;
             }
 
-            var empFolderPath = Path.Combine(Directory.GetCurrentDirectory(), "Documents", Id);
+            var empFolderPath = Path.Combine(Directory.GetCurrentDirectory(), "C:\\A_Onboarding\\OnboardingFiles", Id);
             if (!Directory.Exists(empFolderPath))
             {
                 Directory.CreateDirectory(empFolderPath);
@@ -50,7 +50,7 @@ namespace EmployeeOnboarding.Repository
                 return null;
             }
 
-            var empFolderPath = Path.Combine(Directory.GetCurrentDirectory(), "Documents", Id);
+            var empFolderPath = Path.Combine(Directory.GetCurrentDirectory(), "C:\\A_Onboarding\\OnboardingFiles", Id);
             if (!Directory.Exists(empFolderPath))
             {
                 Directory.CreateDirectory(empFolderPath);
