@@ -1,4 +1,5 @@
-﻿using System.Net.Mail;
+﻿using System.Net;
+using System.Net.Mail;
 using Microsoft.AspNetCore.Identity.UI.Services;
 
 
@@ -30,6 +31,9 @@ namespace EmployeeOnboarding.Services
             message.To.Add(new MailAddress(email));
 
             using var client = new SmtpClient(smtpServer, smtpPort);
+            client.UseDefaultCredentials = false;
+            client.Credentials = new NetworkCredential("podupadu@outlook.com", "cholancheran12");
+            client.EnableSsl = true;
             client.Send(message);
             return Task.CompletedTask;
         }
