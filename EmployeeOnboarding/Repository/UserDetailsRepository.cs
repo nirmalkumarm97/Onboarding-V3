@@ -361,6 +361,7 @@ namespace EmployeeOnboarding.Repository
                 // Add new record
                 var _required = new EmployeeRequiredDocuments()
                 {
+                    EmpGen_Id = GenId,
                     Aadhar = SaveCertificateFile(personalInfoRequest.required.Aadhar, GenId.ToString(), "Aadhar.pdf"),
                     Pan = SaveCertificateFile(personalInfoRequest.required.Pan, GenId.ToString(), "Pan.pdf"),
                     Driving_license = SaveCertificateFile(personalInfoRequest.required.Driving_license, GenId.ToString(), "Driving_license.pdf"),
