@@ -140,11 +140,11 @@ namespace EmployeeOnboarding.Controllers
         public IActionResult CovidVaccine()
         {
             var enumValues = Enum.GetValues(typeof(CovidVaccine));
-            var enumDictionary = new Dictionary<string, int>();
+            var enumList = new List<object>();
 
             foreach (var value in enumValues)
             {
-                var enumType = value.GetType();
+                var enumType = typeof(CovidVaccine); // Use the enum type directly
                 var enumName = Enum.GetName(enumType, value);
                 var memberInfo = enumType.GetMember(enumName)[0];
                 var customAttribute = memberInfo.GetCustomAttribute<DescriptionAttribute>();
@@ -153,11 +153,12 @@ namespace EmployeeOnboarding.Controllers
                 {
                     var customDescription = customAttribute.Description;
                     var id = (int)value;
-                    enumDictionary.Add(customDescription, id);
+                    var enumObject = new { Id = id, Name = customDescription };
+                    enumList.Add(enumObject);
                 }
             }
 
-            return Ok(enumDictionary);
+            return Ok(enumList);
 
         }
 

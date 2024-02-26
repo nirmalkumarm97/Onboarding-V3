@@ -71,10 +71,10 @@ namespace EmployeeOnboarding.Response
     }
     public class RequiredDocumentsRespose
     {
-        public string Aadhar { get; set; }
-        public string Pan { get; set; }
-        public string? Driving_license { get; set; }
-        public string? Passport { get; set; }
+        public byte[] Aadhar { get; set; }
+        public byte[] Pan { get; set; }
+        public byte[]? Driving_license { get; set; }
+        public byte[]? Passport { get; set; }
     }
 }
 

@@ -481,10 +481,10 @@ namespace EmployeeOnboarding.Repository
 
                 var requiredDocuments =  _context.EmployeeRequiredDocuments.Where(x => x.EmpGen_Id == _general.GenId).Select(e => new RequiredDocumentsRespose
                 {
-                    Aadhar = e.Aadhar,
-                    Driving_license = e.Driving_license,
-                    Pan = e.Pan,
-                    Passport = e.Passport
+                    Aadhar = GetFile(e.Aadhar),
+                    Driving_license = GetFile(e.Driving_license),
+                    Pan = GetFile(e.Pan),
+                    Passport = GetFile(e.Passport)
                 }).FirstOrDefault();
 
                 personalInfoResponse.RequiredDocuments = requiredDocuments;
