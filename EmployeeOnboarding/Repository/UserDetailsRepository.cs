@@ -407,12 +407,12 @@ namespace EmployeeOnboarding.Repository
             return null;
         }
 
-        public async Task<PersonalInfoResponse> GetPersonalInfo(int loginId)
+        public async Task<PersonalInfoResponse> GetPersonalInfo(int Id)
         {
             try
             {
                 PersonalInfoResponse personalInfoResponse = new PersonalInfoResponse();
-                GeneralInfoResponse? _general =  _context.EmployeeGeneralDetails.Where(n => n.Login_ID == loginId).Select(general => new GeneralInfoResponse()
+                GeneralInfoResponse? _general =  _context.EmployeeGeneralDetails.Where(n => n.Id == Id).Select(general => new GeneralInfoResponse()
                 {
                     GenId = general.Id,
                     Empname = general.Empname,

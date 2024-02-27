@@ -8,8 +8,8 @@ namespace EmployeeOnboarding.Contracts
 {
     public interface IUserDetailsRepository 
     {
-     Task<bool> AddPersonalInfo(PersonalInfoRequest personalInfoRequest);
-     Task<PersonalInfoResponse> GetPersonalInfo(int loginId);
+     Task<int> AddPersonalInfo(PersonalInfoRequest personalInfoRequest);
+     Task<PersonalInfoResponse> GetPersonalInfo(int Id);
      Task<string>GetStatusByLoginId(int loginId);
     }
 }
