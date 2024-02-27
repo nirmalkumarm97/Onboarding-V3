@@ -1,6 +1,7 @@
 ﻿using EmployeeOnboarding.Data;
 using EmployeeOnboarding.Data.Enum;
 using EmployeeOnboarding.Models;
+using EmployeeOnboarding.Repository;
 using EmployeeOnboarding.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using OnboardingWebsite.Models;
@@ -102,17 +103,33 @@ namespace EmployeeOnboarding.Services
             return certificateVMs;
         }
 
+        private static byte[] GetFile(string filepath)
+        {
+            if (System.IO.File.Exists(filepath))
+            {
+                System.IO.FileStream fs = System.IO.File.OpenRead(filepath);
+                byte[] file = new byte[fs.Length];
+                int br = fs.Read(file, 0, file.Length);
+                if (br != fs.Length)
+                {
+                    throw new IOException("Invalid path");
+                }
+                return file;
+            }
+            return null;
+        }
 
         public List<getCertificateVM> GetCertificate(int empId)
         {
             var certificate = _context.EmployeeCertifications.Where(e => e.EmpGen_Id == empId && e.Certificate_no != null).Select(e => new getCertificateVM
             {
+                GenId = (int)e.EmpGen_Id,
                 Certificate_name = e.Certificate_name,
                 Issued_by = e.Issued_by,
                 Valid_till = e.Valid_till,
                 Duration = e.Duration,
                 Percentage = e.Percentage,
-                proof = e.proof,
+                proof = GetFile(e.proof),
             })
             .ToList();
 

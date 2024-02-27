@@ -97,6 +97,7 @@ namespace EmployeeOnboarding.Services
 
                 var bankVM = new ExistingBankVM()
                 {
+                    GenId = (int)_bank.EmpGen_Id,
                     Account_name = _bank.Account_name,
                     Bank_name = _bank.Bank_name,
                     Bank_Branch = _bank.Bank_Branch,

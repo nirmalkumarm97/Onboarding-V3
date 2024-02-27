@@ -129,6 +129,7 @@ namespace EmployeeOnboarding.Services
         {
             var companyExperiences = _context.EmployeeExperienceDetails.Where(e => e.EmpGen_Id == empId && e.Company_no != null).Select(e => new getExperienceVM
                 {
+                    GenId = (int)e.EmpGen_Id,
                     Company_name = e.Company_name,
                     Designation = e.Designation,
                     Reason = e.Reason,

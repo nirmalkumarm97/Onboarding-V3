@@ -2,6 +2,7 @@
 {
     public class getExperienceVM
     {
+        public int GenId { get; set; }
         public string? Company_name { get; set; }
         public string? Designation { get; set; }
         public string? Reason { get; set; }

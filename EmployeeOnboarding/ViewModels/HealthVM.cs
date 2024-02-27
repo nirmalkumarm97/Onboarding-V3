@@ -2,7 +2,7 @@
 {
     public class HealthVM
     {
-
+        public int GenId { get; set; }
         public string? Specific_health_condition { get; set; }
         public string? Allergies { get; set; }
         public bool surgery { get; set; }
