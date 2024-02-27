@@ -3,6 +3,7 @@ namespace OnboardingWebsite.Models
 {
     public class EducationVM
     {
+        public int GenId { get; set; }
         public string Qualification { get; set; }
         public string University { get; set; }
         public string Institution_name { get; set; }

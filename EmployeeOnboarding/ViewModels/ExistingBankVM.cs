@@ -2,6 +2,7 @@
 {
     public class ExistingBankVM
     {
+        public int GenId { get; set; }
         public string? Account_name { get; set; }
         public string? Bank_name { get; set; }
         public string? Bank_Branch { get; set; }

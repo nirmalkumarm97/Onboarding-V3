@@ -116,6 +116,7 @@ namespace EmployeeOnboarding.Services
         {
             var education = _context.EmployeeEducationDetails.Where(e => e.EmpGen_Id == empId && e.Education_no != null).Select(e => new EducationVM
             {
+                GenId = e.EmpGen_Id,
                 Qualification = e.Qualification,
                 University = e.University,
                 Institution_name = e.Institution_name,

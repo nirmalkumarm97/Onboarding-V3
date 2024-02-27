@@ -64,6 +64,7 @@ namespace EmployeeOnboarding.Services
         {
             var _reference = _context.EmployeeReferenceDetails.Where(n => n.EmpGen_Id == Id).Select(reference => new ReferenceVM()
             {
+                GenId = (int)reference.EmpGen_Id,
                 Referral_name = reference.Referral_name,
                 Designation = reference.Designation,
                 Company_name = reference.Company_name,

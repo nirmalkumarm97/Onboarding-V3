@@ -91,6 +91,7 @@ namespace EmployeeOnboarding.Services
         {
             var _health = _context.EmployeeHealthInformation.Where(n => n.EmpGen_Id == Id).Select(health => new HealthVM()
             {
+               GenId = health.EmpGen_Id,
                Specific_health_condition = health.Specific_health_condition,
                Allergies = health.Allergies,
                surgery = health.surgery,
