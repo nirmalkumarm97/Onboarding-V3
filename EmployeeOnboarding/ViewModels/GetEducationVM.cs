@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Http;
-namespace OnboardingWebsite.Models
+﻿namespace EmployeeOnboarding.ViewModels
 {
-    public class EducationVM
+    public class GetEducationVM
     {
+        public int GenId { get; set; }
         public string Qualification { get; set; }
         public string University { get; set; }
         public string Institution_name { get; set; }
@@ -10,6 +10,6 @@ namespace OnboardingWebsite.Models
         public string specialization { get; set; }
         public int Passoutyear { get; set; }
         public string Percentage { get; set; }
-        public string Edu_certificate { get; set; }
+        public byte[] Edu_certificate { get; set; }
     }
 }

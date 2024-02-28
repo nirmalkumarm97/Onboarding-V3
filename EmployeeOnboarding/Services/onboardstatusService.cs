@@ -15,9 +15,9 @@ namespace EmployeeOnboarding.Services
         {
             _context = context;
         }
-        public void ChangeApprovalStatus(int Empid,onboardstatusVM onboardstatus)
+        public void ChangeApprovalStatus(int genId, onboardstatusVM onboardstatus)
         {
-            var approved = _context.ApprovalStatus.FirstOrDefault(e => e.EmpGen_Id == Empid && e.Current_Status == 2);
+            var approved = _context.ApprovalStatus.FirstOrDefault(e => e.EmpGen_Id == genId && e.Current_Status == 2);
 
             if (approved != null)
             {
@@ -30,7 +30,7 @@ namespace EmployeeOnboarding.Services
             }
             else
             {
-              var approve = _context.ApprovalStatus.FirstOrDefault(e => e.EmpGen_Id == Empid && e.Current_Status == 3);
+              var approve = _context.ApprovalStatus.FirstOrDefault(e => e.EmpGen_Id == genId && e.Current_Status == 3);
                
                 if (approve != null)
                 {
@@ -44,7 +44,7 @@ namespace EmployeeOnboarding.Services
 
                 var _onboard = new ApprovalStatus()
                 {
-                    EmpGen_Id = Empid,
+                    EmpGen_Id = genId,
                     Current_Status = (int)Status.Approved,
                     Comments = "",
                     Date_Created = DateTime.UtcNow,
@@ -57,7 +57,7 @@ namespace EmployeeOnboarding.Services
                 _context.SaveChanges();
             }
 
-            var official = _context.EmployeeGeneralDetails.FirstOrDefault(e => e.Login_ID == Empid);
+            var official = _context.EmployeeGeneralDetails.FirstOrDefault(e => e.Login_ID == genId);
 
             official.Empid = onboardstatus.Emp_id;
             official.Official_EmailId = onboardstatus.Official_EmailId;
@@ -128,9 +128,9 @@ namespace EmployeeOnboarding.Services
             _context.SaveChanges();
         }
 
-        public async Task<rejectcommentVM> RejectedComment(int Empid)
+        public async Task<rejectcommentVM> RejectedComment(int genId)
         {
-            var _onboard = _context.ApprovalStatus.Where(n => n.EmpGen_Id == Empid).
+            var _onboard = _context.ApprovalStatus.Where(n => n.EmpGen_Id == genId).
                Select(onboard => new rejectcommentVM()
                {
                    Comment = onboard.Comments,

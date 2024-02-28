@@ -1,7 +1,8 @@
 ﻿namespace EmployeeOnboarding.ViewModels
 {
-    public class ReferenceVM
+    public class GetReferenceVM
     {
+        public int? GenId { get; set; }
         public string? Referral_name { get; set; }
         public string? Designation { get; set; }
         public string? Company_name { get; set; }

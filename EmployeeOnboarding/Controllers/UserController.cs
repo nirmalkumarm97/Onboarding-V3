@@ -65,14 +65,14 @@ namespace EmployeeOnboarding.Controllers
         }
 
         [HttpPost("add-health/{genId}")]
-        public IActionResult AddHealth(int genId, [FromForm] HealthVM health)
+        public IActionResult AddHealth(int genId, [FromBody] HealthVM health)
         {
             _healthService.AddHealth(genId, health);
             return Ok();
         }
 
         [HttpPost("add-existing-bank/{genId}")]
-        public IActionResult AddBank(int genId, [FromForm] ExistingBankVM health)
+        public IActionResult AddBank(int genId, [FromBody] ExistingBankVM health)
         {
             _existingBankservice.AddBank(genId, health);
             return Ok();

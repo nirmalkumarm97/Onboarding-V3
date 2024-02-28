@@ -1,7 +1,8 @@
 ﻿namespace EmployeeOnboarding.ViewModels
 {
-    public class HealthVM
+    public class GetHealthVM
     {
+        public int? GenId { get; set; }
         public string? Specific_health_condition { get; set; }
         public string? Allergies { get; set; }
         public bool surgery { get; set; }
@@ -10,10 +11,7 @@
         public bool Disability { get; set; }
         public string? Disability_explanation { get; set; }
         public int CovidVaccine { get; set; }
-        public string Vaccine_certificate { get; set; }
-        public string? Health_documents { get; set; }
-
-
-
+        public byte[] Vaccine_certificate { get; set; }
+        public byte[]? Health_documents { get; set; }
     }
 }

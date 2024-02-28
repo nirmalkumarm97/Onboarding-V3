@@ -1,4 +1,5 @@
-﻿using EmployeeOnboarding.Data;
+﻿using EmployeeOnboarding.Contracts;
+using EmployeeOnboarding.Data;
 using EmployeeOnboarding.Data.Enum;
 using EmployeeOnboarding.Models;
 using EmployeeOnboarding.ViewModels;
@@ -12,12 +13,15 @@ namespace EmployeeOnboarding.Services
     {
 
         private readonly ApplicationDbContext _context;
-        public EducationService(ApplicationDbContext context)
+        private readonly IUserDetailsRepository _userDetailsRepository;
+
+        public EducationService(ApplicationDbContext context, IUserDetailsRepository userDetailsRepository)
         {
             _context = context;
+            _userDetailsRepository = userDetailsRepository;
         }
 
-        private string SaveCertificateFileAsync(string certificateBase64, string empId, string fileName)
+        private string SaveCertificateFileAsync(string certificateBase64, string genId, string fileName)
         {
             if (string.IsNullOrEmpty(certificateBase64))
             {
@@ -26,7 +30,7 @@ namespace EmployeeOnboarding.Services
 
             var certificateBytes = Convert.FromBase64String(certificateBase64);
 
-            var empFolderPath = Path.Combine(Directory.GetCurrentDirectory(), "C:\\A_Onboarding\\OnboardingFiles", empId);
+            var empFolderPath = Path.Combine(Directory.GetCurrentDirectory(), "C:\\A_Onboarding\\OnboardingFiles", genId);
             if (!Directory.Exists(empFolderPath))
             {
                 Directory.CreateDirectory(empFolderPath);
@@ -45,14 +49,14 @@ namespace EmployeeOnboarding.Services
 
         int index1 = 1; // Initialize the Company_no sequence
 
-        public async Task<List<EmployeeEducationDetails>> AddEducation(int empId, List<EducationVM> educations)
+        public async Task<List<EmployeeEducationDetails>> AddEducation(int genId, List<EducationVM> educations)
         {
             try
             {
                 List<EmployeeEducationDetails> educationVMs = new List<EmployeeEducationDetails>();
                 foreach (var education in educations)
                 {
-                    var existingEducation = _context.EmployeeEducationDetails.FirstOrDefault(e => e.EmpGen_Id == empId && e.Education_no == index1);
+                    var existingEducation = _context.EmployeeEducationDetails.FirstOrDefault(e => e.EmpGen_Id == genId && e.Education_no == index1);
 
                     if (existingEducation != null)
                     {
@@ -65,9 +69,9 @@ namespace EmployeeOnboarding.Services
                         existingEducation.specialization = education.specialization;
                         existingEducation.Passoutyear = education.Passoutyear;
                         existingEducation.Percentage = education.Percentage;
-                        existingEducation.Edu_certificate = SaveCertificateFileAsync(education.Edu_certificate, empId.ToString(), certificateFileName);
+                        existingEducation.Edu_certificate = SaveCertificateFileAsync(education.Edu_certificate, genId.ToString(), certificateFileName);
                         existingEducation.Date_Modified = DateTime.UtcNow;
-                        existingEducation.Modified_by = empId.ToString();
+                        existingEducation.Modified_by = genId.ToString();
                         existingEducation.Status = "A";
                     }
                     else
@@ -76,7 +80,7 @@ namespace EmployeeOnboarding.Services
                         var certificateFileName = $"education{index1}.pdf"; // Generate the certificate filename
                         var _education = new EmployeeEducationDetails()
                         {
-                            EmpGen_Id = empId,
+                            EmpGen_Id = genId,
                             Education_no = index1,
                             Qualification = education.Qualification,
                             University = education.University,
@@ -85,11 +89,11 @@ namespace EmployeeOnboarding.Services
                             specialization = education.specialization,
                             Passoutyear = education.Passoutyear,
                             Percentage = education.Percentage,
-                            Edu_certificate = SaveCertificateFileAsync(education.Edu_certificate, empId.ToString(), certificateFileName),
+                            Edu_certificate = SaveCertificateFileAsync(education.Edu_certificate, genId.ToString(), certificateFileName),
                             Date_Created = DateTime.UtcNow,
                             Date_Modified = DateTime.UtcNow,
-                            Created_by = empId.ToString(),
-                            Modified_by = empId.ToString(),
+                            Created_by = genId.ToString(),
+                            Modified_by = genId.ToString(),
                             Status = "A"
                         };
                         educationVMs.Add(_education);
@@ -112,17 +116,19 @@ namespace EmployeeOnboarding.Services
         }
 
 
-        public List<EducationVM> GetEducation(int empId)
+        public List<GetEducationVM> GetEducation(int genId)
         {
-            var education = _context.EmployeeEducationDetails.Where(e => e.EmpGen_Id == empId && e.Education_no != null).Select(e => new EducationVM
+            var education = _context.EmployeeEducationDetails.Where(e => e.EmpGen_Id == genId && e.Education_no != null).Select(e => new GetEducationVM
             {
-                GenId = e.EmpGen_Id,
+                GenId   = e.EmpGen_Id,
                 Qualification = e.Qualification,
                 University = e.University,
                 Institution_name = e.Institution_name,
                 Degree_achieved = e.Degree_achieved,
                 specialization = e.specialization,
                 Passoutyear = e.Passoutyear,
+                Percentage = e.Percentage,
+                Edu_certificate = _userDetailsRepository.GetFile(e.Edu_certificate)
             })
                 .ToList();
 

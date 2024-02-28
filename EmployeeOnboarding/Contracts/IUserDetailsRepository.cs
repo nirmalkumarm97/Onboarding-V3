@@ -11,5 +11,6 @@ namespace EmployeeOnboarding.Contracts
      Task<int> AddPersonalInfo(PersonalInfoRequest personalInfoRequest);
      Task<PersonalInfoResponse> GetPersonalInfo(int Id);
      Task<string>GetStatusByLoginId(int loginId);
+     byte[] GetFile(string filepath);
     }
 }
