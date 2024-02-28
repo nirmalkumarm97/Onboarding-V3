@@ -11,7 +11,7 @@
         public int MaritalStatus { get; set; }
         public string? DateOfMarriage { get; set; }
         public int BloodGrp { get; set; }
-        public byte[] Profile_pic { get; set; }
+        public string Profile_pic { get; set; }
 
     }
 }
