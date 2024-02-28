@@ -45,10 +45,10 @@ namespace EmployeeOnboarding.Controllers
             }
         }
 
-        [HttpGet("GetPersonalInfo/{loginId}")]
-        public async Task<IActionResult> GetPersonalInfo(int Id)
+        [HttpGet("GetPersonalInfo/{genId}")]
+        public async Task<IActionResult> GetPersonalInfo(int genId)
         {
-            var response = _userDetailsRepository.GetPersonalInfo(Id);
+            var response = _userDetailsRepository.GetPersonalInfo(genId);
             if (response != null)
             {
                 return Ok(response);

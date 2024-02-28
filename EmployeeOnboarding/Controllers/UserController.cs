@@ -7,6 +7,7 @@ using EmployeeOnboarding.ViewModels;
 using OnboardingWebsite.Models;
 using EmployeeOnboarding.Services;
 using DocumentFormat.OpenXml.Drawing.Charts;
+using System;
 
 namespace EmployeeOnboarding.Controllers
 {
@@ -34,46 +35,46 @@ namespace EmployeeOnboarding.Controllers
         }
 
 
-        [HttpPost("add-education/{empId}")]
-        public async Task<IActionResult> AddEducation(int empId, [FromBody] List<EducationVM> educations)
+        [HttpPost("add-education/{genId}")]
+        public async Task<IActionResult> AddEducation(int genId, [FromBody] List<EducationVM> educations)
         {
-            var data = _educationService.AddEducation(empId, educations);
+            var data = _educationService.AddEducation(genId, educations);
             return Ok(data + "Sucess");
         }
 
 
-        [HttpPost("add-certificate/{empId}")]
-        public async Task<IActionResult> AddCertificate(int empId, [FromBody] List<CertificateVM> certificates)
+        [HttpPost("add-certificate/{genId}")]
+        public async Task<IActionResult> AddCertificate(int genId, [FromBody] List<CertificateVM> certificates)
         {
-            var data = _certificateService.AddCertificate(empId, certificates);
+            var data = _certificateService.AddCertificate(genId, certificates);
             return Ok(data + "Sucess");
         }
 
-        [HttpPost("add-experience/{empId}")]
-        public async Task<IActionResult> AddExperience(int empId, [FromBody] List<WorkExperienceVM> experiences)
+        [HttpPost("add-experience/{genId}")]
+        public async Task<IActionResult> AddExperience(int genId, [FromBody] List<WorkExperienceVM> experiences)
         {
-           var data = _experienceService.AddExperiences(empId, experiences);
+           var data = _experienceService.AddExperiences(genId, experiences);
             return Ok(data + "Sucess");
         }
 
-        [HttpPost("add-reference/{empId}")]
-        public IActionResult AddReference(int empId, [FromBody] ReferenceVM reference)
+        [HttpPost("add-reference/{genId}")]
+        public IActionResult AddReference(int genId, [FromBody] ReferenceVM reference)
         {
-            _referenceService.AddReference(empId, reference);
+            _referenceService.AddReference(genId, reference);
             return Ok();
         }
 
-        [HttpPost("add-health/{empId}")]
-        public IActionResult AddHealth(int empId, [FromForm] HealthVM health)
+        [HttpPost("add-health/{genId}")]
+        public IActionResult AddHealth(int genId, [FromForm] HealthVM health)
         {
-            _healthService.AddHealth(empId, health);
+            _healthService.AddHealth(genId, health);
             return Ok();
         }
 
-        [HttpPost("add-existing-bank/{empId}")]
-        public IActionResult AddBank(int empId, [FromForm] ExistingBankVM health)
+        [HttpPost("add-existing-bank/{genId}")]
+        public IActionResult AddBank(int genId, [FromForm] ExistingBankVM health)
         {
-            _existingBankservice.AddBank(empId, health);
+            _existingBankservice.AddBank(genId, health);
             return Ok();
         }
 
@@ -81,7 +82,7 @@ namespace EmployeeOnboarding.Controllers
 
         //*************************************************************************************************************
 
-        [HttpGet("get-education/{empId}")]
+        [HttpGet("get-education/{genId}")]
         public IActionResult GetEducation(int empId)
         {
             var education = _educationService.GetEducation(empId);
@@ -89,7 +90,7 @@ namespace EmployeeOnboarding.Controllers
         }
 
 
-        [HttpGet("get-certificate/{empId}")]
+        [HttpGet("get-certificate/{genId}")]
         public IActionResult GetCertificate(int empId)
         {
             var certificate = _certificateService.GetCertificate(empId);
@@ -97,31 +98,31 @@ namespace EmployeeOnboarding.Controllers
         }
 
 
-        [HttpGet("get-experience/{empId}")]
-        public IActionResult GetCompanyExperiences(int empId)
+        [HttpGet("get-experience/{genId}")]
+        public IActionResult GetCompanyExperiences(int genId)
         {
-            var companyExperiences = _experienceService.GetCompanyByEmpId(empId);
+            var companyExperiences = _experienceService.GetCompanyByEmpId(genId);
             return Ok(companyExperiences);
         }
 
-        [HttpGet("get-reference/{empId}")]
-        public IActionResult GetReference(int empId)
+        [HttpGet("get-reference/{genId}")]
+        public IActionResult GetReference(int genId)
         {
-            var reference = _referenceService.Getreference(empId);
+            var reference = _referenceService.Getreference(genId);
             return Ok(reference);
         }
 
-        [HttpGet("get-health/{empId}")]
-        public IActionResult GetHealth(int empId)
+        [HttpGet("get-health/{genId}")]
+        public IActionResult GetHealth(int genId)
         {
-            var healthInfo = _healthService.GetHealth(empId);
+            var healthInfo = _healthService.GetHealth(genId);
             return Ok(healthInfo);
         }
 
-        [HttpGet("get-existing-bank/{empId}")]
-        public IActionResult GetBank(int empId)
+        [HttpGet("get-existing-bank/{genId}")]
+        public IActionResult GetBank(int genId)
         {
-            var bank = _existingBankservice.GetBank(empId);
+            var bank = _existingBankservice.GetBank(genId);
             return Ok(bank);
         }
 
