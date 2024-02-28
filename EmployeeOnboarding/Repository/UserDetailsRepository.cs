@@ -1,4 +1,5 @@
-﻿using DocumentFormat.OpenXml.Office2010.Excel;
+﻿using DocumentFormat.OpenXml.InkML;
+using DocumentFormat.OpenXml.Office2010.Excel;
 using EmployeeOnboarding.Contracts;
 using EmployeeOnboarding.Data;
 using EmployeeOnboarding.Data.Enum;
@@ -407,103 +408,111 @@ namespace EmployeeOnboarding.Repository
             return null;
         }
 
-        public async Task<PersonalInfoResponse> GetPersonalInfo(int Id)
+        public async Task<PersonalInfoResponse> GetPersonalInfo(int loginId)
         {
             try
             {
                 PersonalInfoResponse personalInfoResponse = new PersonalInfoResponse();
-                GeneralInfoResponse? _general =  _context.EmployeeGeneralDetails.Where(n => n.Id == Id).Select(general => new GeneralInfoResponse()
+                personalInfoResponse.loginId = loginId;
+                int? genId = _context.EmployeeGeneralDetails.Where(n => n.Login_ID == loginId).Select(x => x.Id).FirstOrDefault();
+                if (genId != 0)
                 {
-                    GenId = general.Id,
-                    Empname = general.Empname,
-                    Personal_Emailid = general.Personal_Emailid,
-                    Contact_no = general.Contact_no,
-                    DOB = general.DOB,
-                    Nationality = general.Nationality,
-                    Gender = ((Gender)general.Gender).ToString(),
-                    MaritalStatus = ((MartialStatus)general.Gender).ToString(),
-                    DateOfMarriage = general.DateOfMarriage,
-                    BloodGrp = EnumExtensionMethods.GetEnumDescription((BloodGroup)general.BloodGrp),
-                    Profile_Pic = GetFile(general.Profile_pic)
+                    personalInfoResponse.GenId = (int)genId;
 
-                }).FirstOrDefault();
-                personalInfoResponse.generalVM = _general;
+                    GeneralInfoResponse? _general = _context.EmployeeGeneralDetails.Where(n => n.Login_ID == loginId).Select(general => new GeneralInfoResponse()
+                    {
+                        Empname = general.Empname,
+                        Personal_Emailid = general.Personal_Emailid,
+                        Contact_no = general.Contact_no,
+                        DOB = general.DOB,
+                        Nationality = general.Nationality,
+                        Gender = ((Gender)general.Gender).ToString(),
+                        MaritalStatus = ((MartialStatus)general.Gender).ToString(),
+                        DateOfMarriage = general.DateOfMarriage,
+                        BloodGrp = EnumExtensionMethods.GetEnumDescription((BloodGroup)general.BloodGrp),
+                        Profile_Pic = GetFile(general.Profile_pic)
 
-                var _contact = _context.EmployeeContactDetails.Where(n => n.EmpGen_Id == _general.GenId).Select(contact => new ContactResponse()
-                {
-                    Address1 = contact.Address1,
-                    Address2 = contact.Address2,
-                    Country_Id = contact.Country_Id,
-                    State_Id = contact.State_Id,
-                    City_Id = contact.City_Id,
-                    Pincode = contact.Pincode,
-                    AddressType = contact.Address_Type,
-                }).ToList();
-                personalInfoResponse.contact = _contact;
+                    }).FirstOrDefault();
+                    personalInfoResponse.generalVM = _general;
 
-                var family =  _context.EmployeeFamilyDetails.Where(e => e.EmpGen_Id == _general.GenId && e.Family_no != null).Select(e => new FamilyResponse()
-                {
-                    Relationship = e.Relationship,
-                    Name = e.Name,
-                    DOB = e.DOB,
-                    Occupation = e.Occupation,
-                    contact = e.contact
-                }).ToList();
+                    var _contact = _context.EmployeeContactDetails.Where(n => n.EmpGen_Id == genId).Select(contact => new ContactResponse()
+                    {
+                        Address1 = contact.Address1,
+                        Address2 = contact.Address2,
+                        Country_Id = contact.Country_Id,
+                        State_Id = contact.State_Id,
+                        City_Id = contact.City_Id,
+                        Pincode = contact.Pincode,
+                        AddressType = contact.Address_Type,
+                    }).ToList();
+                    personalInfoResponse.contact = _contact;
 
-                personalInfoResponse.families = family;
+                    var family = _context.EmployeeFamilyDetails.Where(e => e.EmpGen_Id == genId && e.Family_no != null).Select(e => new FamilyResponse()
+                    {
+                        Relationship = e.Relationship,
+                        Name = e.Name,
+                        DOB = e.DOB,
+                        Occupation = e.Occupation,
+                        contact = e.contact
+                    }).ToList();
+
+                    personalInfoResponse.families = family;
 
 
-                var _hobby = _context.EmployeeHobbyMembership.Where(n => n.EmpGen_Id == _general.GenId).Select(hobby => new HobbyResponse()
-                {
-                    ProfessionalBody = hobby.ProfessionalBody,
-                    ProfessionalBody_name = hobby.ProfessionalBody_name,
-                    Hobbies = hobby.Hobbies,
+                    var _hobby = _context.EmployeeHobbyMembership.Where(n => n.EmpGen_Id == genId).Select(hobby => new HobbyResponse()
+                    {
+                        ProfessionalBody = hobby.ProfessionalBody,
+                        ProfessionalBody_name = hobby.ProfessionalBody_name,
+                        Hobbies = hobby.Hobbies,
 
-                }).FirstOrDefault();
+                    }).FirstOrDefault();
 
-                personalInfoResponse.hobby = _hobby;
+                    personalInfoResponse.hobby = _hobby;
 
-                var colleague = _context.EmployeeColleagueDetails.Where(e => e.EmpGen_Id == _general.GenId && e.colleague_no != null).Select(e => new ColleagueResponse
-                {
-                    Empid = e.Employee_id,
-                    Colleague_Name = e.Colleague_Name,
-                    Location = e.Location
-                })
-                  .ToList();
+                    var colleague = _context.EmployeeColleagueDetails.Where(e => e.EmpGen_Id == genId && e.colleague_no != null).Select(e => new ColleagueResponse
+                    {
+                        Empid = e.Employee_id,
+                        Colleague_Name = e.Colleague_Name,
+                        Location = e.Location
+                    })
+                      .ToList();
 
-                if(colleague.Count > 0)
-                {
-                    personalInfoResponse.colleagues = colleague;
+                    if (colleague.Count > 0)
+                    {
+                        personalInfoResponse.colleagues = colleague;
+                    }
+
+
+                    var emergencyContact = _context.EmployeeEmergencyContactDetails.Where(e => e.EmpGen_Id == genId && e.emergency_no != null).Select(e => new EmergencyContactResponse
+                    {
+                        Relationship = e.Relationship,
+                        Relation_name = e.Relation_name,
+                        Contact_number = e.Contact_number,
+                        Contact_address = e.Contact_address,
+                    })
+                       .ToList();
+
+                    if (emergencyContact.Count > 0)
+                    {
+                        personalInfoResponse.emergencies = emergencyContact;
+                    }
+
+                    var requiredDocuments = _context.EmployeeRequiredDocuments.Where(x => x.EmpGen_Id == genId).Select(e => new RequiredDocumentsRespose
+                    {
+                        Aadhar = GetFile(e.Aadhar),
+                        Driving_license = GetFile(e.Driving_license),
+                        Pan = GetFile(e.Pan),
+                        Passport = GetFile(e.Passport)
+                    }).FirstOrDefault();
+
+                    personalInfoResponse.RequiredDocuments = requiredDocuments;
+
+
+                    return personalInfoResponse;
                 }
-
-
-                var emergencyContact = _context.EmployeeEmergencyContactDetails.Where(e => e.EmpGen_Id == _general.GenId && e.emergency_no != null).Select(e => new EmergencyContactResponse
-                {
-                    Relationship = e.Relationship,
-                    Relation_name = e.Relation_name,
-                    Contact_number = e.Contact_number,
-                    Contact_address = e.Contact_address,
-                })
-                   .ToList();
-
-                if (emergencyContact.Count > 0)
-                {
-                    personalInfoResponse.emergencies = emergencyContact;
-                }
-
-                var requiredDocuments =  _context.EmployeeRequiredDocuments.Where(x => x.EmpGen_Id == _general.GenId).Select(e => new RequiredDocumentsRespose
-                {
-                    Aadhar = GetFile(e.Aadhar),
-                    Driving_license = GetFile(e.Driving_license),
-                    Pan = GetFile(e.Pan),
-                    Passport = GetFile(e.Passport)
-                }).FirstOrDefault();
-
-                personalInfoResponse.RequiredDocuments = requiredDocuments;
-
-
-                return personalInfoResponse;
+                else return null;
             }
+           
             catch (Exception e)
             {
                 throw;

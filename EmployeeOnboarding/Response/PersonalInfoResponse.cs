@@ -7,6 +7,7 @@ namespace EmployeeOnboarding.Response
     public class PersonalInfoResponse
     {
         public int loginId { get; set; }
+        public int GenId { get; set; }
         public GeneralInfoResponse generalVM { get; set; }
         public List<ContactResponse> contact { get; set; }
         public List<FamilyResponse> families { get; set; }
@@ -18,7 +19,6 @@ namespace EmployeeOnboarding.Response
 
     public class GeneralInfoResponse
     {
-        public int GenId { get; set; }
         public string Empname { get; set; }
         public string Personal_Emailid { get; set; }
         public long Contact_no { get; set; }
