@@ -93,6 +93,21 @@ namespace EmployeeOnboarding.Services
             }
             _context.SaveChanges();
         }
+        private byte[] GetFile(string filepath)
+        {
+            if (System.IO.File.Exists(filepath))
+            {
+                System.IO.FileStream fs = System.IO.File.OpenRead(filepath);
+                byte[] file = new byte[fs.Length];
+                int br = fs.Read(file, 0, file.Length);
+                if (br != fs.Length)
+                {
+                    throw new IOException("Invalid path");
+                }
+                return file;
+            }
+            return null;
+        }
 
         public GetHealthVM GetHealth(int Id)
         {
@@ -107,8 +122,8 @@ namespace EmployeeOnboarding.Services
                Disability=health.Disability,
                Disability_explanation=health.Disability_explanation,
                CovidVaccine=health.CovidVaccine,
-               Health_documents = _userDetailsRepository.GetFile(health.Health_documents),
-               Vaccine_certificate = _userDetailsRepository.GetFile(health.Vaccine_certificate)
+               Health_documents = GetFile(health.Health_documents),
+               Vaccine_certificate = GetFile(health.Vaccine_certificate)
             }).FirstOrDefault();
 
             return _health;

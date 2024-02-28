@@ -392,7 +392,7 @@ namespace EmployeeOnboarding.Repository
             }
         }
 
-        public byte[] GetFile(string filepath)
+        private byte[] GetFile(string filepath)
         {
             if (System.IO.File.Exists(filepath))
             {

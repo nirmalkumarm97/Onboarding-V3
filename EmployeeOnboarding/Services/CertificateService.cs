@@ -106,7 +106,21 @@ namespace EmployeeOnboarding.Services
 
             return certificateVMs;
         }
-
+        private byte[] GetFile(string filepath)
+        {
+            if (System.IO.File.Exists(filepath))
+            {
+                System.IO.FileStream fs = System.IO.File.OpenRead(filepath);
+                byte[] file = new byte[fs.Length];
+                int br = fs.Read(file, 0, file.Length);
+                if (br != fs.Length)
+                {
+                    throw new IOException("Invalid path");
+                }
+                return file;
+            }
+            return null;
+        }
         public List<getCertificateVM> GetCertificate(int genId)
         {
             var certificate = _context.EmployeeCertifications.Where(e => e.EmpGen_Id == genId && e.Certificate_no != null).Select(e => new getCertificateVM
@@ -117,7 +131,7 @@ namespace EmployeeOnboarding.Services
                 Valid_till = e.Valid_till,
                 Duration = e.Duration,
                 Percentage = e.Percentage,
-                proof = _userDetailsRepository.GetFile(e.proof),
+                proof = GetFile(e.proof),
             })
             .ToList();
 
