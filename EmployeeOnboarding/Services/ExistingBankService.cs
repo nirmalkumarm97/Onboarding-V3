@@ -90,6 +90,21 @@ namespace EmployeeOnboarding.Services
             }
             _context.SaveChanges();
         }
+        private byte[] GetFile(string filepath)
+        {
+            if (System.IO.File.Exists(filepath))
+            {
+                System.IO.FileStream fs = System.IO.File.OpenRead(filepath);
+                byte[] file = new byte[fs.Length];
+                int br = fs.Read(file, 0, file.Length);
+                if (br != fs.Length)
+                {
+                    throw new IOException("Invalid path");
+                }
+                return file;
+            }
+            return null;
+        }
 
         public GetExistingBankVM GetBank(int genId)
         {
@@ -112,7 +127,7 @@ namespace EmployeeOnboarding.Services
                     IFSC_code = _bank.IFSC_code,
                     Joint_Account = _bank.Joint_Account,
                     ProofSubmitted = proofSubmittedList,
-                    Bank_Documents = _userDetailsRepository.GetFile(_bank.Bank_Documents)
+                    Bank_Documents = GetFile(_bank.Bank_Documents)
                 };
                 return bankVM;
             }

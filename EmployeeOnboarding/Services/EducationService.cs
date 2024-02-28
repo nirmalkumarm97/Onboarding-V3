@@ -114,7 +114,21 @@ namespace EmployeeOnboarding.Services
                 throw;
             }
         }
-
+        private byte[] GetFile(string filepath)
+        {
+            if (System.IO.File.Exists(filepath))
+            {
+                System.IO.FileStream fs = System.IO.File.OpenRead(filepath);
+                byte[] file = new byte[fs.Length];
+                int br = fs.Read(file, 0, file.Length);
+                if (br != fs.Length)
+                {
+                    throw new IOException("Invalid path");
+                }
+                return file;
+            }
+            return null;
+        }
 
         public List<GetEducationVM> GetEducation(int genId)
         {
@@ -128,7 +142,7 @@ namespace EmployeeOnboarding.Services
                 specialization = e.specialization,
                 Passoutyear = e.Passoutyear,
                 Percentage = e.Percentage,
-                Edu_certificate = _userDetailsRepository.GetFile(e.Edu_certificate)
+                Edu_certificate = GetFile(e.Edu_certificate)
             })
                 .ToList();
 
