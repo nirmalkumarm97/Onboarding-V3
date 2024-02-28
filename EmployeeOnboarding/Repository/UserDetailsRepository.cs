@@ -25,12 +25,13 @@ namespace EmployeeOnboarding.Repository
             _context = context;
         }
 
-        private string SaveImageFile(byte[] image, string Id, string fileName)
+        private string SaveImageFile(string image, string Id, string fileName)
         {
             if (image == null)
             {
                 return null;
             }
+            var certificateBytes = Convert.FromBase64String(image);
 
             var empFolderPath = Path.Combine(Directory.GetCurrentDirectory(), "C:\\A_Onboarding\\OnboardingFiles", Id);
             if (!Directory.Exists(empFolderPath))
@@ -40,17 +41,18 @@ namespace EmployeeOnboarding.Repository
             var filePath = Path.Combine(empFolderPath, fileName);
             using (var fileStream = new FileStream(filePath, FileMode.Create))
             {
-                fileStream.WriteAsync(image , 0 , image.Length);
+                fileStream.WriteAsync(certificateBytes, 0 , certificateBytes.Length);
             }
             return filePath;
         }
 
-        private string SaveCertificateFile(byte[] certificateFile, string Id, string fileName)
+        private string SaveCertificateFile(string certificateFile, string Id, string fileName)
         {
             if (certificateFile == null)
             {
                 return null;
             }
+            var certificateBytes = Convert.FromBase64String(certificateFile);
 
             var empFolderPath = Path.Combine(Directory.GetCurrentDirectory(), "C:\\A_Onboarding\\OnboardingFiles", Id);
             if (!Directory.Exists(empFolderPath))
@@ -60,7 +62,7 @@ namespace EmployeeOnboarding.Repository
             var filePath = Path.Combine(empFolderPath, fileName);
             using (var fileStream = new FileStream(filePath, FileMode.Create))
             {
-                fileStream.WriteAsync(certificateFile, 0, certificateFile.Length);
+                fileStream.WriteAsync(certificateBytes, 0, certificateBytes.Length);
             }
             return filePath; // Return the file path
         }
