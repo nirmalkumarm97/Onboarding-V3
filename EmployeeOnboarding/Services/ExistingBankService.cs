@@ -90,7 +90,7 @@ namespace EmployeeOnboarding.Services
             }
             _context.SaveChanges();
         }
-        private byte[] GetFile(string filepath)
+        private static byte[] GetFile(string filepath)
         {
             if (System.IO.File.Exists(filepath))
             {
