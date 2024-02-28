@@ -355,10 +355,10 @@ namespace EmployeeOnboarding.Repository
 
                     if (existingRequired != null)
                     {
-                        existingRequired.Aadhar = SaveCertificateFile(personalInfoRequest.required.Aadhar, GenId.ToString(), "Aadhar.pdf");
-                        existingRequired.Pan = SaveCertificateFile(personalInfoRequest.required.Pan, GenId.ToString(), "Pan.pdf");
-                        existingRequired.Driving_license = SaveCertificateFile(personalInfoRequest.required.Driving_license, GenId.ToString(), "Driving_license.pdf");
-                        existingRequired.Passport = SaveCertificateFile(personalInfoRequest.required.Passport, GenId.ToString(), "Passport.pdf");
+                        existingRequired.Aadhar = SaveCertificateFile(personalInfoRequest.RequiredDocuments.Aadhar, GenId.ToString(), "Aadhar.pdf");
+                        existingRequired.Pan = SaveCertificateFile(personalInfoRequest.RequiredDocuments.Pan, GenId.ToString(), "Pan.pdf");
+                        existingRequired.Driving_license = SaveCertificateFile(personalInfoRequest.RequiredDocuments.Driving_license, GenId.ToString(), "Driving_license.pdf");
+                        existingRequired.Passport = SaveCertificateFile(personalInfoRequest.RequiredDocuments.Passport, GenId.ToString(), "Passport.pdf");
                         existingRequired.Date_Modified = DateTime.UtcNow;
                         existingRequired.Modified_by = GenId.ToString();
                         existingRequired.Status = "A";
@@ -369,10 +369,10 @@ namespace EmployeeOnboarding.Repository
                         var _required = new EmployeeRequiredDocuments()
                         {
                             EmpGen_Id = GenId,
-                            Aadhar = SaveCertificateFile(personalInfoRequest.required.Aadhar, GenId.ToString(), "Aadhar.pdf"),
-                            Pan = SaveCertificateFile(personalInfoRequest.required.Pan, GenId.ToString(), "Pan.pdf"),
-                            Driving_license = SaveCertificateFile(personalInfoRequest.required.Driving_license, GenId.ToString(), "Driving_license.pdf"),
-                            Passport = SaveCertificateFile(personalInfoRequest.required.Passport, GenId.ToString(), "Passport.pdf"),
+                            Aadhar = SaveCertificateFile(personalInfoRequest.RequiredDocuments.Aadhar, GenId.ToString(), "Aadhar.pdf"),
+                            Pan = SaveCertificateFile(personalInfoRequest.RequiredDocuments.Pan, GenId.ToString(), "Pan.pdf"),
+                            Driving_license = SaveCertificateFile(personalInfoRequest.RequiredDocuments.Driving_license, GenId.ToString(), "Driving_license.pdf"),
+                            Passport = SaveCertificateFile(personalInfoRequest.RequiredDocuments.Passport, GenId.ToString(), "Passport.pdf"),
                             Date_Created = DateTime.UtcNow,
                             Date_Modified = DateTime.UtcNow,
                             Created_by = GenId.ToString(),
