@@ -26,31 +26,31 @@ namespace EmployeeOnboarding.Controllers
             _context = context;
         }
 
-        [HttpPost("approve/{eid}")]
-        public IActionResult ChangeApprovalStatus(int eid,[FromBody] onboardstatusVM onboardstatus)
+        [HttpPost("approve/{genId}")]
+        public IActionResult ChangeApprovalStatus(int genId, [FromBody] onboardstatusVM onboardstatus)
         {
-            _onboardstatusService.ChangeApprovalStatus(eid,onboardstatus);
+            _onboardstatusService.ChangeApprovalStatus(genId, onboardstatus);
             return Ok("Approved");
         }
 
-        [HttpPost("reject/{eid}")]
-        public IActionResult ChangeCancelStatus(int eid, [FromBody] commentVM onboardstatus)
+        [HttpPost("reject/{genId}")]
+        public IActionResult ChangeCancelStatus(int genId, [FromBody] commentVM onboardstatus)
         {
-            _onboardstatusService.ChangeCancelStatus(eid, onboardstatus);
+            _onboardstatusService.ChangeCancelStatus(genId, onboardstatus);
             return Ok("Rejected");
         }
 
-        [HttpPost("pending/{eid}")]
-        public IActionResult ChangePendingStatus(int eid)
+        [HttpPost("pending/{genId}")]
+        public IActionResult ChangePendingStatus(int genId)
         {
-            _onboardstatusService.ChangePendingStatus(eid);
+            _onboardstatusService.ChangePendingStatus(genId);
             return Ok("Pending");
         }
 
-        [HttpGet("reject-comment/{id}")]
-        public IActionResult RejectedComment(int id)
+        [HttpGet("reject-comment/{genId}")]
+        public IActionResult RejectedComment(int genId)
         {
-            var issuccess = _onboardstatusService.RejectedComment(id);
+            var issuccess = _onboardstatusService.RejectedComment(genId);
 
             return Ok(issuccess);
         }
