@@ -8,24 +8,29 @@ using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Http; // Add this namespace for IFormFile
 using System.IO; // Add this namespace for file operations
 using System.Threading.Tasks;
+using EmployeeOnboarding.Contracts;
 
 namespace EmployeeOnboarding.Services
 {
     public class HealthService
     {
         private readonly ApplicationDbContext _context;
+        private readonly IUserDetailsRepository _userDetailsRepository;
 
-        public HealthService(ApplicationDbContext context)
+        public HealthService(ApplicationDbContext context, IUserDetailsRepository userDetailsRepository)
         {
             _context = context;
+            _userDetailsRepository = userDetailsRepository;
         }
 
-        private string SaveCertificateFile(IFormFile certificateFile, string Id, string fileName)
+        private string SaveCertificateFile(string certificateBase64, string Id, string fileName)
         {
-            if (certificateFile == null)
+            if (certificateBase64 == null)
             {
                 return null;
             }
+            var certificateBytes = Convert.FromBase64String(certificateBase64);
+
             var empFolderPath = Path.Combine(Directory.GetCurrentDirectory(), "C:\\A_Onboarding\\OnboardingFiles", Id);
             if (!Directory.Exists(empFolderPath))
             {
@@ -34,14 +39,16 @@ namespace EmployeeOnboarding.Services
             var filePath = Path.Combine(empFolderPath, fileName);
             using (var fileStream = new FileStream(filePath, FileMode.Create))
             {
-                certificateFile.CopyTo(fileStream);
+                // certificateFile.CopyTo(fileStream);
+                fileStream.WriteAsync(certificateBytes, 0, certificateBytes.Length);
+
             }
             return filePath; // Return the file path
         }
 
-        public void AddHealth(int Id, HealthVM health)
+        public void AddHealth(int genId, HealthVM health)
         {
-            var existingHealth = _context.EmployeeHealthInformation.FirstOrDefault(e => e.EmpGen_Id == Id);
+            var existingHealth = _context.EmployeeHealthInformation.FirstOrDefault(e => e.EmpGen_Id == genId);
 
             if (existingHealth != null)
             { 
@@ -53,10 +60,10 @@ namespace EmployeeOnboarding.Services
                 existingHealth.Disability= health.Disability;
                 existingHealth.Disability_explanation= health.Disability_explanation;
                 existingHealth.CovidVaccine = health.CovidVaccine;
-                existingHealth.Vaccine_certificate = SaveCertificateFile(health.Vaccine_certificate, Id.ToString(), "Vacc_Certificate.pdf");
-                existingHealth.Health_documents = SaveCertificateFile(health.Health_documents, Id.ToString(), "Health_Documents.pdf");
+                existingHealth.Vaccine_certificate = SaveCertificateFile(health.Vaccine_certificate, genId.ToString(), "Vacc_Certificate.pdf");
+                existingHealth.Health_documents = SaveCertificateFile(health.Health_documents, genId.ToString(), "Health_Documents.pdf");
                 existingHealth.Date_Modified = DateTime.UtcNow;
-                existingHealth.Modified_by = Id.ToString();
+                existingHealth.Modified_by = genId.ToString();
                 existingHealth.Status = "A";
             }
             else
@@ -64,7 +71,7 @@ namespace EmployeeOnboarding.Services
                 // Add new record
                 var _health = new EmployeeHealthInformation()
                 {
-                    EmpGen_Id= Id,
+                    EmpGen_Id= genId,
                     Specific_health_condition = health.Specific_health_condition,
                     Allergies = health.Allergies,
                     surgery = health.surgery,
@@ -73,12 +80,12 @@ namespace EmployeeOnboarding.Services
                     Disability= health.Disability,
                     Disability_explanation= health.Disability_explanation,
                     CovidVaccine= health.CovidVaccine,
-                    Vaccine_certificate= SaveCertificateFile(health.Vaccine_certificate, Id.ToString(), "Vacc_Certificate.pdf"),
-                    Health_documents = SaveCertificateFile(health.Health_documents, Id.ToString(), "Health_Documents.pdf"),
+                    Vaccine_certificate= SaveCertificateFile(health.Vaccine_certificate, genId.ToString(), "Vacc_Certificate.pdf"),
+                    Health_documents = SaveCertificateFile(health.Health_documents, genId.ToString(), "Health_Documents.pdf"),
                     Date_Created = DateTime.UtcNow,
                     Date_Modified = DateTime.UtcNow,
-                    Created_by = Id.ToString(),
-                    Modified_by = Id.ToString(),
+                    Created_by = genId.ToString(),
+                    Modified_by = genId.ToString(),
                     Status = "A"
                 };
 
@@ -87,9 +94,9 @@ namespace EmployeeOnboarding.Services
             _context.SaveChanges();
         }
 
-        public HealthVM GetHealth(int Id)
+        public GetHealthVM GetHealth(int Id)
         {
-            var _health = _context.EmployeeHealthInformation.Where(n => n.EmpGen_Id == Id).Select(health => new HealthVM()
+            var _health = _context.EmployeeHealthInformation.Where(n => n.EmpGen_Id == Id).Select(health => new GetHealthVM()
             {
                GenId = health.EmpGen_Id,
                Specific_health_condition = health.Specific_health_condition,
@@ -100,7 +107,8 @@ namespace EmployeeOnboarding.Services
                Disability=health.Disability,
                Disability_explanation=health.Disability_explanation,
                CovidVaccine=health.CovidVaccine,
-              
+               Health_documents = _userDetailsRepository.GetFile(health.Health_documents),
+               Vaccine_certificate = _userDetailsRepository.GetFile(health.Vaccine_certificate)
             }).FirstOrDefault();
 
             return _health;

@@ -1,4 +1,5 @@
-﻿using EmployeeOnboarding.Data;
+﻿using EmployeeOnboarding.Contracts;
+using EmployeeOnboarding.Data;
 using EmployeeOnboarding.Data.Enum;
 using EmployeeOnboarding.Models;
 using EmployeeOnboarding.Repository;
@@ -13,9 +14,12 @@ namespace EmployeeOnboarding.Services
     {
 
         private readonly ApplicationDbContext _context;
-        public CertificateService(ApplicationDbContext context)
+        private readonly IUserDetailsRepository _userDetailsRepository;
+
+        public CertificateService(ApplicationDbContext context , IUserDetailsRepository userDetailsRepository)
         {
             _context = context;
+            _userDetailsRepository = userDetailsRepository;
         }
 
         private string SaveCertificateFileAsync(string certificateBase64, string empId, string fileName)
@@ -46,12 +50,12 @@ namespace EmployeeOnboarding.Services
 
         int index1 = 1; // Initialize the Company_no sequence
 
-        public async Task<List<EmployeeCertifications>> AddCertificate(int empId, List<CertificateVM> certificates)
+        public async Task<List<EmployeeCertifications>> AddCertificate(int genId, List<CertificateVM> certificates)
         {
             List<EmployeeCertifications> certificateVMs = new List<EmployeeCertifications>();
             foreach (var certificate in certificates)
             {
-                var existingCertificate = _context.EmployeeCertifications.FirstOrDefault(e => e.EmpGen_Id == empId && e.Certificate_no == index1);
+                var existingCertificate = _context.EmployeeCertifications.FirstOrDefault(e => e.EmpGen_Id == genId && e.Certificate_no == index1);
 
                 if (existingCertificate != null)
                 {
@@ -63,9 +67,9 @@ namespace EmployeeOnboarding.Services
                     existingCertificate.Valid_till = Valid_till;
                     existingCertificate.Duration = certificate.Duration;
                     existingCertificate.Percentage = certificate.Percentage;
-                    existingCertificate.proof = SaveCertificateFileAsync(certificate.proof, empId.ToString(), certificateFileName);
+                    existingCertificate.proof = SaveCertificateFileAsync(certificate.proof, genId.ToString(), certificateFileName);
                     existingCertificate.Date_Modified = DateTime.UtcNow;
-                    existingCertificate.Modified_by = empId.ToString();
+                    existingCertificate.Modified_by = genId.ToString();
                     existingCertificate.Status = "A";
 
                 }
@@ -75,18 +79,18 @@ namespace EmployeeOnboarding.Services
                     var certificateFileName = $"certificate{index1}.pdf"; // Generate the certificate filename
                     var _certificate = new EmployeeCertifications()
                     {
-                        EmpGen_Id = empId,
+                        EmpGen_Id = genId,
                         Certificate_no = index1,
                         Certificate_name = certificate.Certificate_name,
                         Issued_by = certificate.Issued_by,
                         Valid_till = DateOnly.Parse(certificate.Valid_till),
                         Duration = certificate.Duration,
                         Percentage = certificate.Percentage,
-                        proof = SaveCertificateFileAsync(certificate.proof, empId.ToString(), certificateFileName),
+                        proof = SaveCertificateFileAsync(certificate.proof, genId.ToString(), certificateFileName),
                         Date_Created = DateTime.UtcNow,
                         Date_Modified = DateTime.UtcNow,
-                        Created_by = empId.ToString(),
-                        Modified_by = empId.ToString(),
+                        Created_by = genId.ToString(),
+                        Modified_by = genId.ToString(),
                         Status = "A"
                     };
                     certificateVMs.Add(_certificate);
@@ -103,25 +107,9 @@ namespace EmployeeOnboarding.Services
             return certificateVMs;
         }
 
-        private static byte[] GetFile(string filepath)
+        public List<getCertificateVM> GetCertificate(int genId)
         {
-            if (System.IO.File.Exists(filepath))
-            {
-                System.IO.FileStream fs = System.IO.File.OpenRead(filepath);
-                byte[] file = new byte[fs.Length];
-                int br = fs.Read(file, 0, file.Length);
-                if (br != fs.Length)
-                {
-                    throw new IOException("Invalid path");
-                }
-                return file;
-            }
-            return null;
-        }
-
-        public List<getCertificateVM> GetCertificate(int empId)
-        {
-            var certificate = _context.EmployeeCertifications.Where(e => e.EmpGen_Id == empId && e.Certificate_no != null).Select(e => new getCertificateVM
+            var certificate = _context.EmployeeCertifications.Where(e => e.EmpGen_Id == genId && e.Certificate_no != null).Select(e => new getCertificateVM
             {
                 GenId = (int)e.EmpGen_Id,
                 Certificate_name = e.Certificate_name,
@@ -129,7 +117,7 @@ namespace EmployeeOnboarding.Services
                 Valid_till = e.Valid_till,
                 Duration = e.Duration,
                 Percentage = e.Percentage,
-                proof = GetFile(e.proof),
+                proof = _userDetailsRepository.GetFile(e.proof),
             })
             .ToList();
 

@@ -46,12 +46,12 @@ namespace EmployeeOnboarding.Services
 
         int index1 = 1; // Initialize the Company_no sequence
 
-        public async Task<List<EmployeeExperienceDetails>> AddExperiences(int empId, List<WorkExperienceVM> experiences)
+        public async Task<List<EmployeeExperienceDetails>> AddExperiences(int genId, List<WorkExperienceVM> experiences)
         {
             List<EmployeeExperienceDetails> experienceVMs = new List<EmployeeExperienceDetails>();
             foreach (var experience in experiences)
             {
-                var existingExperience = _context.EmployeeExperienceDetails.FirstOrDefault(e => e.EmpGen_Id == empId && e.Company_no == index1);
+                var existingExperience = _context.EmployeeExperienceDetails.FirstOrDefault(e => e.EmpGen_Id == genId && e.Company_no == index1);
 
                 if (existingExperience != null)
                 {
@@ -66,9 +66,9 @@ namespace EmployeeOnboarding.Services
                     existingExperience.Reporting_to = experience.Reporting_to;
                     existingExperience.Reason = experience.Reason;
                     existingExperience.Location = experience.Location;
-                    existingExperience.Exp_Certificate = SaveCertificateFileAsync(experience.Exp_Certificate, empId.ToString(), certificateFileName);
+                    existingExperience.Exp_Certificate = SaveCertificateFileAsync(experience.Exp_Certificate, genId.ToString(), certificateFileName);
                     existingExperience.Date_Modified = DateTime.UtcNow;
-                    existingExperience.Modified_by = empId.ToString();
+                    existingExperience.Modified_by = genId.ToString();
                     existingExperience.Status = "A";
                 }
                 else
@@ -77,7 +77,7 @@ namespace EmployeeOnboarding.Services
                     var certificateFileName = $"experience{index1}.pdf"; // Generate the certificate filename
                     var _experience= new EmployeeExperienceDetails()
                     {
-                        EmpGen_Id = empId,
+                        EmpGen_Id = genId,
                         Company_no = index1,
                         Company_name = experience.Company_name,
                         Designation = experience.Designation,
@@ -87,11 +87,11 @@ namespace EmployeeOnboarding.Services
                         Reporting_to = experience.Reporting_to,
                         Reason = experience.Reason,
                         Location = experience.Location,
-                        Exp_Certificate =  SaveCertificateFileAsync(experience.Exp_Certificate, empId.ToString(), certificateFileName),
+                        Exp_Certificate =  SaveCertificateFileAsync(experience.Exp_Certificate, genId.ToString(), certificateFileName),
                         Date_Created = DateTime.UtcNow,
                         Date_Modified = DateTime.UtcNow,
-                        Created_by = empId.ToString(),
-                        Modified_by = empId.ToString(),
+                        Created_by = genId.ToString(),
+                        Modified_by = genId.ToString(),
                         Status = "A"
                     };
                     experienceVMs.Add(_experience);  
@@ -106,12 +106,12 @@ namespace EmployeeOnboarding.Services
             //pending status
             var _onboard = new ApprovalStatus()
                         {
-                            EmpGen_Id = empId,
+                            EmpGen_Id = genId,
                             Current_Status = (int)Status.Pending,
                             Comments = "",
                             Date_Created = DateTime.UtcNow,
                             Date_Modified = DateTime.UtcNow,
-                            Created_by = empId.ToString(),
+                            Created_by = genId.ToString(),
                             Modified_by = "Admin",
                             Status = "A",
                         };
@@ -125,9 +125,9 @@ namespace EmployeeOnboarding.Services
         }
 
 
-    public List<getExperienceVM> GetCompanyByEmpId(int empId)
+    public List<getExperienceVM> GetCompanyByEmpId(int genId)
         {
-            var companyExperiences = _context.EmployeeExperienceDetails.Where(e => e.EmpGen_Id == empId && e.Company_no != null).Select(e => new getExperienceVM
+            var companyExperiences = _context.EmployeeExperienceDetails.Where(e => e.EmpGen_Id == genId && e.Company_no != null).Select(e => new getExperienceVM
                 {
                     GenId = (int)e.EmpGen_Id,
                     Company_name = e.Company_name,

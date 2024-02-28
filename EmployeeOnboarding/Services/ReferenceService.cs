@@ -20,9 +20,9 @@ namespace EmployeeOnboarding.Services
             _context = context;
         }
 
-        public void AddReference(int Id, ReferenceVM reference)
+        public void AddReference(int genId, ReferenceVM reference)
         {
-            var existingreference = _context.EmployeeReferenceDetails.FirstOrDefault(e => e.EmpGen_Id == Id);
+            var existingreference = _context.EmployeeReferenceDetails.FirstOrDefault(e => e.EmpGen_Id == genId);
 
             if (existingreference != null)
             {
@@ -33,7 +33,7 @@ namespace EmployeeOnboarding.Services
                 existingreference.Email_Id = existingreference.Email_Id;
                 existingreference.Authorize = existingreference.Authorize;
                 existingreference.Date_Modified = DateTime.UtcNow;
-                existingreference.Modified_by = Id.ToString();
+                existingreference.Modified_by = genId.ToString();
                 existingreference.Status = "A";
             }
             else
@@ -41,7 +41,7 @@ namespace EmployeeOnboarding.Services
                 // Add new record
                 var _reference = new EmployeeReferenceDetails()
                 {
-                    EmpGen_Id = Id,
+                    EmpGen_Id = genId,
                     Referral_name = reference.Referral_name,
                     Designation = reference.Designation,
                     Company_name = reference.Company_name,
@@ -50,8 +50,8 @@ namespace EmployeeOnboarding.Services
                     Authorize = reference.Authorize,
                     Date_Created = DateTime.UtcNow,
                     Date_Modified = DateTime.UtcNow,
-                    Created_by = Id.ToString(),
-                    Modified_by = Id.ToString(),
+                    Created_by = genId.ToString(),
+                    Modified_by = genId.ToString(),
                     Status = "A"
                 };
 
@@ -60,9 +60,9 @@ namespace EmployeeOnboarding.Services
             _context.SaveChanges();
         }
 
-        public ReferenceVM Getreference(int Id)
+        public GetReferenceVM Getreference(int genId)
         {
-            var _reference = _context.EmployeeReferenceDetails.Where(n => n.EmpGen_Id == Id).Select(reference => new ReferenceVM()
+            var _reference = _context.EmployeeReferenceDetails.Where(n => n.EmpGen_Id == genId).Select(reference => new GetReferenceVM()
             {
                 GenId = (int)reference.EmpGen_Id,
                 Referral_name = reference.Referral_name,

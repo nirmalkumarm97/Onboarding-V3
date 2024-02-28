@@ -392,7 +392,7 @@ namespace EmployeeOnboarding.Repository
             }
         }
 
-        private static byte[] GetFile(string filepath)
+        public byte[] GetFile(string filepath)
         {
             if (System.IO.File.Exists(filepath))
             {
@@ -430,7 +430,7 @@ namespace EmployeeOnboarding.Repository
                         MaritalStatus = ((MartialStatus)general.Gender).ToString(),
                         DateOfMarriage = general.DateOfMarriage,
                         BloodGrp = EnumExtensionMethods.GetEnumDescription((BloodGroup)general.BloodGrp),
-                        Profile_Pic = GetFile(general.Profile_pic)
+                        Profile_Pic =  GetFile(general.Profile_pic)
 
                     }).FirstOrDefault();
                     personalInfoResponse.generalVM = _general;
