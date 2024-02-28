@@ -83,17 +83,17 @@ namespace EmployeeOnboarding.Controllers
         //*************************************************************************************************************
 
         [HttpGet("get-education/{genId}")]
-        public IActionResult GetEducation(int empId)
+        public IActionResult GetEducation(int genId)
         {
-            var education = _educationService.GetEducation(empId);
+            var education = _educationService.GetEducation(genId);
             return Ok(education);
         }
 
 
         [HttpGet("get-certificate/{genId}")]
-        public IActionResult GetCertificate(int empId)
+        public IActionResult GetCertificate(int genId)
         {
-            var certificate = _certificateService.GetCertificate(empId);
+            var certificate = _certificateService.GetCertificate(genId);
             return Ok(certificate);
         }
 
