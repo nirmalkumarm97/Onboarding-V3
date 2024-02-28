@@ -426,10 +426,10 @@ namespace EmployeeOnboarding.Repository
                         Contact_no = general.Contact_no,
                         DOB = general.DOB,
                         Nationality = general.Nationality,
-                        Gender = ((Gender)general.Gender).ToString(),
-                        MaritalStatus = ((MartialStatus)general.Gender).ToString(),
+                        Gender =    general.Gender,//((Gender)general.Gender).ToString(),
+                        MaritalStatus =   general.MaritalStatus,//((MartialStatus)general.Gender).ToString(),
                         DateOfMarriage = general.DateOfMarriage,
-                        BloodGrp = EnumExtensionMethods.GetEnumDescription((BloodGroup)general.BloodGrp),
+                        BloodGrp =     general.BloodGrp,//EnumExtensionMethods.GetEnumDescription((BloodGroup)general.BloodGrp),
                         Profile_Pic =  GetFile(general.Profile_pic)
 
                     }).FirstOrDefault();
@@ -497,7 +497,7 @@ namespace EmployeeOnboarding.Repository
                         personalInfoResponse.emergencies = emergencyContact;
                     }
 
-                    var requiredDocuments = _context.EmployeeRequiredDocuments.Where(x => x.EmpGen_Id == genId).Select(e => new RequiredDocumentsRespose
+                    RequiredDocumentsRespose requiredDocuments = _context.EmployeeRequiredDocuments.Where(x => x.EmpGen_Id == genId).Select(e => new RequiredDocumentsRespose
                     {
                         Aadhar = GetFile(e.Aadhar),
                         Driving_license = GetFile(e.Driving_license),

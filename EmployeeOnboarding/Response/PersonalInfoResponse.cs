@@ -24,10 +24,10 @@ namespace EmployeeOnboarding.Response
         public long Contact_no { get; set; }
         public DateOnly DOB { get; set; }
         public string Nationality { get; set; }
-        public string Gender { get; set; }
-        public string? MaritalStatus { get; set; }
+        public int Gender { get; set; }
+        public int? MaritalStatus { get; set; }
         public DateOnly? DateOfMarriage { get; set; }
-        public string BloodGrp { get; set; }
+        public int BloodGrp { get; set; }
         public byte[] Profile_Pic { get; set; }
     }
     public class ContactResponse
