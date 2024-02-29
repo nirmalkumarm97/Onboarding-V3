@@ -5,8 +5,10 @@ using EmployeeOnboarding.Services;
 using EmployeeOnboarding.ViewModels;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 //using Org.BouncyCastle.Crypto;
 using System.Text.Encodings.Web;
+using System.Linq;
 
 namespace EmployeeOnboarding.Repository
 {
@@ -52,44 +54,54 @@ namespace EmployeeOnboarding.Repository
             return _context.Login.ToList();
         }
 
-        public async Task <bool> LoginInvite(logininviteVM logindet)
+        public async Task<bool> LoginInvite(List<logininviteVM> logindet)
         {
             try
             {
-               var check = _context.Login.Where(x => x.EmailId == logindet.Emailid).FirstOrDefault();
-                if (check == null)
+                foreach (var (i, check) in from i in logindet
+                                           let check = _context.Login.Where(x => x.EmailId == i.Emailid).FirstOrDefault()
+                                           select (i, check))
                 {
-                    int Verifyotp = otpgeneration();
-
-                    var _logindet = new Login()
+                    if (check == null)
                     {
-                        Name = logindet.Name,
-                        EmailId = logindet.Emailid,
-                        Invited_Status = "Invited",
-                        Date_Created = DateTime.UtcNow,
-                        Date_Modified = DateTime.UtcNow,
-                        Created_by = "Admin",
-                        Modified_by = "Admin",
-                        Status = "A",
-                        Role = "U",
-                        OTP = Verifyotp
-                    };
+                        int Verifyotp = otpgeneration();
 
-                    _context.Login.Add(_logindet);
-                    _context.SaveChanges();
+                        var _logindet = new Login()
+                        {
+                            Name = i.Name,
+                            EmailId = i.Emailid,
+                            Invited_Status = "Invited",
+                            Date_Created = DateTime.UtcNow,
+                            Date_Modified = DateTime.UtcNow,
+                            Created_by = "Admin",
+                            Modified_by = "Admin",
+                            Status = "A",
+                            Role = "U",
+                            OTP = Verifyotp
+                        };
 
-                    var callbackUrl = "http://localhost:7136/swagger/index.html";
-                    //var callbackUrl = "http://localhost:7136/api/logindetails/confirm-login";
-                    ///
-                    //await
-                   await _emailSender.SendEmailAsync(logindet.Emailid, "Confirm your email",
-                               $"Please confirm your account by entering the OTP by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'> clicking here</a>. Your OTP is " + Verifyotp);
+                        _context.Login.Add(_logindet);
+                        _context.SaveChanges();
 
-                    return true;
+                        var callbackUrl = "http://localhost:7136/swagger/index.html";
+                        //var callbackUrl = "http://localhost:7136/api/logindetails/confirm-login";
+                        ///
+                        //await
+                        await _emailSender.SendEmailAsync(i.Emailid, "Confirm your email",
+                                    $"Please confirm your account by entering the OTP by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'> clicking here</a>. Your OTP is " + Verifyotp);
+
+                    }
+                    else
+                    {
+                        throw new Exception($"{i.Emailid} already exists");
+                    }
                 }
-                else return false;
+
+                return true;
+
             }
-            catch(Exception e)
+
+            catch (Exception e)
             {
                 throw new Exception(e.InnerException.Message);
             }
