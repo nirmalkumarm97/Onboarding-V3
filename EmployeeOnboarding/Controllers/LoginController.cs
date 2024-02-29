@@ -20,7 +20,7 @@ namespace EmployeeOnboarding.Controllers
         }
 
         [HttpPost("LoginInvite")]
-        public async Task<IActionResult> LoginInvite(logininviteVM logindet)
+        public async Task<IActionResult> LoginInvite(List<logininviteVM>logindet)
         {
             var response = await _Ilogin.LoginInvite(logindet);
             if (response != null)

@@ -19,11 +19,11 @@ namespace EmployeeOnboarding.Services
         private ApplicationDbContext _context;
         private IEmailSender emailSender;
 
-        public logindetailsService(ApplicationDbContext context, IEmailSender emailSender)
-        {
-            _context = context;
-            this.emailSender = emailSender;
-        }
+        //public logindetailsService(ApplicationDbContext context, IEmailSender emailSender)
+        //{
+        //    _context = context;
+        //    this.emailSender = emailSender;
+        //}
 
         //    public int LoginInvite(logininviteVM logindet)
         //    {

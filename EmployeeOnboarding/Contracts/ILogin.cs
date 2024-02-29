@@ -7,7 +7,7 @@ namespace EmployeeOnboarding.Contracts
     {
         Task<IEnumerable<Login>> getemp();
         Task<employloginVM> AuthenticateEmp(string emailid, string password);
-        Task<bool> LoginInvite(logininviteVM logindet);
+        Task<bool> LoginInvite(List<logininviteVM> logindet);
         Task<Login> LoginCmp(string Emailid, loginconfirmVM logindet);
         Task<bool> ForgotPassword(string emailId);
         Task<string> UpdatePassword(string emailId, loginconfirmVM loginconfirmVM);
