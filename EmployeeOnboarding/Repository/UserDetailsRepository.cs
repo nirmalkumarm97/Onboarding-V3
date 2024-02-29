@@ -460,11 +460,13 @@ namespace EmployeeOnboarding.Repository
             return null;
         }
 
-        public async Task<PersonalInfoResponse> GetPersonalInfo(int? Id , string? email)
+        public async Task<PersonalInfoResponse> GetPersonalInfo(int? Id, string? email)
         {
             try
             {
-                PersonalInfoResponse personalInfoResponse = new PersonalInfoResponse();
+                if (Id != 0 && email != null)
+                {
+                    PersonalInfoResponse personalInfoResponse = new PersonalInfoResponse();
 
                     GeneralInfoResponse? _general = _context.EmployeeGeneralDetails.Where(n => n.Login_ID == Id || n.Personal_Emailid == email).Select(general => new GeneralInfoResponse()
                     {
@@ -560,8 +562,13 @@ namespace EmployeeOnboarding.Repository
 
 
                     return personalInfoResponse;
+                }
+
+                else
+                {
+                    throw new NullReferenceException("Null exception");
+                }
             }
-           
             catch (Exception e)
             {
                 throw;
