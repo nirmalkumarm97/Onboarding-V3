@@ -7,6 +7,5 @@
         public DateOnly DOB { get; set; }
         public string Occupation { get; set; }
         public long contact { get; set; }
-
     }
 }

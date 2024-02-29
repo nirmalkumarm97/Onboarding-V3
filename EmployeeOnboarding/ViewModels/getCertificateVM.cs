@@ -9,7 +9,5 @@
         public int? Duration { get; set; }
         public string? Percentage { get; set; }
         public byte[]? proof { get; set; }
-
-
     }
 }

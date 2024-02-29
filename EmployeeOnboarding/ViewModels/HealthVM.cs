@@ -12,8 +12,5 @@
         public int CovidVaccine { get; set; }
         public string Vaccine_certificate { get; set; }
         public string? Health_documents { get; set; }
-
-
-
     }
 }
