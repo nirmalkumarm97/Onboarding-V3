@@ -10,6 +10,7 @@ using FluentMigrator.Runner;
 using System.Reflection;
 using EmployeeOnboarding.Migrations;
 using EmployeeOnboarding.Contracts;
+using EmployeeOnboarding.Helper;
 //using EmployeeOnboarding.Data.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -32,7 +33,7 @@ builder.Services.AddSwaggerGen();
 var connectionString = builder.Configuration.GetConnectionString("DefaultCOnnection");
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(connectionString));
 
-builder.Services.AddTransient<IEmailSender>(s => new EmailSender("smtp.office365.com", 587 , "podupadu@outlook.com"));
+builder.Services.AddTransient<IEmailSender>(s => new EmailSender("smtp.hostinger.com", 587 , "no-reply@onboarding.ideassion.in" , "N%P-tMmt5'{Wlpu"));
 
 builder.Services.AddTransient<onboardstatusService>();
 builder.Services.AddTransient<logindetailsService>();
