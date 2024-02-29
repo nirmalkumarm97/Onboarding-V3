@@ -19,6 +19,7 @@ namespace EmployeeOnboarding.Response
 
     public class GeneralInfoResponse
     {
+        public int Id { get; set; }
         public int LoginId { get; set; }
         public string Empname { get; set; }
         public string Personal_Emailid { get; set; }
