@@ -32,9 +32,9 @@ namespace EmployeeOnboarding.Controllers
 
 
         [HttpPost("AddPersonalInfo")]
-        public async Task<IActionResult> AddPersonalInfo([FromBody] PersonalInfoRequest personalInfoRequest)
+        public async Task<IActionResult> AddPersonalInfo(bool directAdd ,[FromBody] PersonalInfoRequest personalInfoRequest)
         {
-            var response = _userDetailsRepository.AddPersonalInfo(personalInfoRequest);
+            var response = _userDetailsRepository.AddPersonalInfo(directAdd ,personalInfoRequest);
             if (response != null)
             {
                 return Ok(response);
@@ -45,10 +45,10 @@ namespace EmployeeOnboarding.Controllers
             }
         }
 
-        [HttpGet("GetPersonalInfo/{loginId}")]
-        public async Task<IActionResult> GetPersonalInfo(int loginId)
+        [HttpGet("GetPersonalInfo/{genId}")]
+        public async Task<IActionResult> GetPersonalInfo(int genId)
         {
-            var response = _userDetailsRepository.GetPersonalInfo(loginId);
+            var response = _userDetailsRepository.GetPersonalInfo(genId);
             if (response != null)
             {
                 return Ok(response);
