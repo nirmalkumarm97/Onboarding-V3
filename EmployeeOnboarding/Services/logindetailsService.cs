@@ -16,8 +16,8 @@ namespace EmployeeOnboarding.Services
     public class logindetailsService
     {
 
-        private ApplicationDbContext _context;
-        private IEmailSender emailSender;
+        //private ApplicationDbContext _context;
+        //private IEmailSender emailSender;
 
         //public logindetailsService(ApplicationDbContext context, IEmailSender emailSender)
         //{

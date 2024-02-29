@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage;
 //using Org.BouncyCastle.Crypto;
 using System.Text.Encodings.Web;
 using System.Linq;
+using EmployeeOnboarding.Helper;
 
 namespace EmployeeOnboarding.Repository
 {
@@ -64,12 +65,14 @@ namespace EmployeeOnboarding.Repository
                 {
                     if (check == null)
                     {
-                        int Verifyotp = otpgeneration();
+                        // int Verifyotp = otpgeneration();
+                        string tempPass = Guid.NewGuid().ToString().Replace("-", "").Substring(0, 8); // Change length as needed
 
                         var _logindet = new Login()
                         {
                             Name = i.Name,
                             EmailId = i.Emailid,
+                            Password = tempPass,
                             Invited_Status = "Invited",
                             Date_Created = DateTime.UtcNow,
                             Date_Modified = DateTime.UtcNow,
@@ -77,18 +80,20 @@ namespace EmployeeOnboarding.Repository
                             Modified_by = "Admin",
                             Status = "A",
                             Role = "U",
-                            OTP = Verifyotp
+                           // OTP = Verifyotp
                         };
 
                         _context.Login.Add(_logindet);
                         _context.SaveChanges();
 
-                        var callbackUrl = "http://localhost:7136/swagger/index.html";
-                        //var callbackUrl = "http://localhost:7136/api/logindetails/confirm-login";
+                        //var callbackUrl = "http://localhost:7136/swagger/index.html";
+                        ////var callbackUrl = "http://localhost:7136/api/logindetails/confirm-login";
                         ///
-                        //await
-                        await _emailSender.SendEmailAsync(i.Emailid, "Confirm your email",
-                                    $"Please confirm your account by entering the OTP by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'> clicking here</a>. Your OTP is " + Verifyotp);
+                        //await _emailSender.SendEmailAsync(i.Emailid, "Confirm your email",
+                        //            $"Please confirm your account by entering the OTP by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'> clicking here</a>. Your OTP is " + Verifyotp);
+                        var callbackUrl = "https://onboarding-dev.ideassionlive.in/";
+                       // var callbackUrl = "http://192.168.0.139:3000/otp-verification";
+                        await _emailSender.SendEmailAsync(i.Emailid, "Confirm Your Email", $"Please enter into your login by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'> clicking here</a>. Your email is {i.Emailid} and password is {tempPass}");
 
                     }
                     else
