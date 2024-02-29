@@ -460,34 +460,33 @@ namespace EmployeeOnboarding.Repository
             return null;
         }
 
-        public async Task<PersonalInfoResponse> GetPersonalInfo(int genId)
+        public async Task<PersonalInfoResponse> GetPersonalInfo(int? Id , string? email)
         {
             try
             {
                 PersonalInfoResponse personalInfoResponse = new PersonalInfoResponse();
-                if (genId != 0)
-                {
-                    
-                    GeneralInfoResponse? _general = _context.EmployeeGeneralDetails.Where(n => n.Id == genId).Select(general => new GeneralInfoResponse()
+
+                    GeneralInfoResponse? _general = _context.EmployeeGeneralDetails.Where(n => n.Login_ID == Id || n.Personal_Emailid == email).Select(general => new GeneralInfoResponse()
                     {
+                        Id = general.Id,
                         LoginId = general.Login_ID,
                         Empname = general.Empname,
                         Personal_Emailid = general.Personal_Emailid,
                         Contact_no = general.Contact_no,
                         DOB = general.DOB,
                         Nationality = general.Nationality,
-                        Gender =    general.Gender,//((Gender)general.Gender).ToString(),
-                        MaritalStatus =   general.MaritalStatus,//((MartialStatus)general.Gender).ToString(),
+                        Gender = general.Gender,//((Gender)general.Gender).ToString(),
+                        MaritalStatus = general.MaritalStatus,//((MartialStatus)general.Gender).ToString(),
                         DateOfMarriage = general.DateOfMarriage,
-                        BloodGrp =     general.BloodGrp,//EnumExtensionMethods.GetEnumDescription((BloodGroup)general.BloodGrp),
-                        Profile_Pic =  GetFile(general.Profile_pic),
+                        BloodGrp = general.BloodGrp,//EnumExtensionMethods.GetEnumDescription((BloodGroup)general.BloodGrp),
+                        Profile_Pic = GetFile(general.Profile_pic),
 
                     }).FirstOrDefault();
-                    personalInfoResponse.GenId = genId;
+                    personalInfoResponse.GenId = _general.Id;
                     personalInfoResponse.loginId = _general.LoginId;
                     personalInfoResponse.generalVM = _general;
 
-                    var _contact = _context.EmployeeContactDetails.Where(n => n.EmpGen_Id == genId).Select(contact => new ContactResponse()
+                    var _contact = _context.EmployeeContactDetails.Where(n => n.EmpGen_Id == _general.Id).Select(contact => new ContactResponse()
                     {
                         Address1 = contact.Address1,
                         Address2 = contact.Address2,
@@ -499,7 +498,7 @@ namespace EmployeeOnboarding.Repository
                     }).ToList();
                     personalInfoResponse.contact = _contact;
 
-                    var family = _context.EmployeeFamilyDetails.Where(e => e.EmpGen_Id == genId && e.Family_no != null).Select(e => new FamilyResponse()
+                    var family = _context.EmployeeFamilyDetails.Where(e => e.EmpGen_Id == _general.Id && e.Family_no != null).Select(e => new FamilyResponse()
                     {
                         Relationship = e.Relationship,
                         Name = e.Name,
@@ -511,7 +510,7 @@ namespace EmployeeOnboarding.Repository
                     personalInfoResponse.families = family;
 
 
-                    var _hobby = _context.EmployeeHobbyMembership.Where(n => n.EmpGen_Id == genId).Select(hobby => new HobbyResponse()
+                    var _hobby = _context.EmployeeHobbyMembership.Where(n => n.EmpGen_Id == _general.Id).Select(hobby => new HobbyResponse()
                     {
                         ProfessionalBody = hobby.ProfessionalBody,
                         ProfessionalBody_name = hobby.ProfessionalBody_name,
@@ -521,7 +520,7 @@ namespace EmployeeOnboarding.Repository
 
                     personalInfoResponse.hobby = _hobby;
 
-                    var colleague = _context.EmployeeColleagueDetails.Where(e => e.EmpGen_Id == genId && e.colleague_no != null).Select(e => new ColleagueResponse
+                    var colleague = _context.EmployeeColleagueDetails.Where(e => e.EmpGen_Id == _general.Id && e.colleague_no != null).Select(e => new ColleagueResponse
                     {
                         Empid = e.Employee_id,
                         Colleague_Name = e.Colleague_Name,
@@ -535,7 +534,7 @@ namespace EmployeeOnboarding.Repository
                     }
 
 
-                    var emergencyContact = _context.EmployeeEmergencyContactDetails.Where(e => e.EmpGen_Id == genId && e.emergency_no != null).Select(e => new EmergencyContactResponse
+                    var emergencyContact = _context.EmployeeEmergencyContactDetails.Where(e => e.EmpGen_Id == _general.Id && e.emergency_no != null).Select(e => new EmergencyContactResponse
                     {
                         Relationship = e.Relationship,
                         Relation_name = e.Relation_name,
@@ -549,7 +548,7 @@ namespace EmployeeOnboarding.Repository
                         personalInfoResponse.emergencies = emergencyContact;
                     }
 
-                    RequiredDocumentsRespose requiredDocuments = _context.EmployeeRequiredDocuments.Where(x => x.EmpGen_Id == genId).Select(e => new RequiredDocumentsRespose
+                    RequiredDocumentsRespose requiredDocuments = _context.EmployeeRequiredDocuments.Where(x => x.EmpGen_Id == _general.Id).Select(e => new RequiredDocumentsRespose
                     {
                         Aadhar = GetFile(e.Aadhar),
                         Driving_license = GetFile(e.Driving_license),
@@ -561,8 +560,6 @@ namespace EmployeeOnboarding.Repository
 
 
                     return personalInfoResponse;
-                }
-                else return null;
             }
            
             catch (Exception e)
