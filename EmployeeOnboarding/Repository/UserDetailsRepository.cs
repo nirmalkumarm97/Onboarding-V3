@@ -16,7 +16,6 @@ using System;
 //using Org.BouncyCastle.Ocsp;
 using System.Runtime.CompilerServices;
 using System.Text.Encodings.Web;
-using Newtonsoft.Json;
 using System.Data.Entity;
 using System.Collections.Generic;
 
@@ -531,12 +530,13 @@ namespace EmployeeOnboarding.Repository
             return null;
         }
 
-        public async Task<PersonalInfoResponse> GetPersonalInfo(int? Id, string? email)
+        public async Task<OverallPersonalInfoResponse> GetPersonalInfo(int? Id, string? email)
         {
             try
             {
                 if (Id != 0 && email != null)
                 {
+                    OverallPersonalInfoResponse overallPersonalInfoResponse = new OverallPersonalInfoResponse();
                     PersonalInfoResponse personalInfoResponse = new PersonalInfoResponse();
 
                     GeneralInfoResponse _general = _context.EmployeeGeneralDetails.Where(n => n.Login_ID == Id || n.Personal_Emailid == email).Select(general => new GeneralInfoResponse()
@@ -552,7 +552,7 @@ namespace EmployeeOnboarding.Repository
                         MaritalStatus = general.MaritalStatus,//((MartialStatus)general.Gender).ToString(),
                         DateOfMarriage = general.DateOfMarriage,
                         BloodGrp = general.BloodGrp,//EnumExtensionMethods.GetEnumDescription((BloodGroup)general.BloodGrp),
-                        //Profile_Pic = GetFile(general.Profile_pic),
+                        Profile_Pic = GetFile(general.Profile_pic),
 
                     }).FirstOrDefault();
                     personalInfoResponse.GenId = _general.Id;
@@ -630,9 +630,9 @@ namespace EmployeeOnboarding.Repository
                     }).FirstOrDefault();
 
                     personalInfoResponse.RequiredDocuments = requiredDocuments;
+                    overallPersonalInfoResponse.result = personalInfoResponse;
 
-
-                    return personalInfoResponse;
+                    return overallPersonalInfoResponse;
                 }
 
                 else
@@ -650,7 +650,6 @@ namespace EmployeeOnboarding.Repository
 
             string data = await _context.Login.Where(x => x.Id == loginId).Select(x => x.Invited_Status).FirstOrDefaultAsync();
             return data;
-
         }
 
     }

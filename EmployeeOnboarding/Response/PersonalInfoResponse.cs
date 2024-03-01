@@ -4,6 +4,11 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace EmployeeOnboarding.Response
 {
+    public class OverallPersonalInfoResponse
+    {
+        public PersonalInfoResponse result { get; set; }
+
+    }
     public class PersonalInfoResponse
     {
         public int loginId { get; set; }
