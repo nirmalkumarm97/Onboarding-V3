@@ -186,7 +186,7 @@ namespace EmployeeOnboarding.Controllers
 
             return Ok(enumDictionary);
         }
-        [HttpGet("GetStatusByLoginId")]
+        [HttpGet("GetStatusByLoginId/{loginId}")]
         public async Task<IActionResult> GetStatusByLoginId(int loginId)
         {
             var response = await _userDetailsRepository.GetStatusByLoginId(loginId);
