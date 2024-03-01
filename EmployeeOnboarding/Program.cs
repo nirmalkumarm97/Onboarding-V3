@@ -36,7 +36,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql
 builder.Services.AddTransient<IEmailSender>(s => new EmailSender("smtp.hostinger.com", 587 , "no-reply@onboarding.ideassion.in" , "N%P-tMmt5'{Wlpu"));
 
 builder.Services.AddTransient<onboardstatusService>();
-builder.Services.AddTransient<logindetailsService>();
+//builder.Services.AddTransient<logindetailsService>();
 builder.Services.AddTransient<GeneralDetailService>();
 builder.Services.AddTransient<ContactService>();
 builder.Services.AddTransient<FamilyService>();
@@ -44,15 +44,16 @@ builder.Services.AddTransient<HobbyMembershipService>();
 builder.Services.AddTransient<ColleagueService>();
 builder.Services.AddTransient<EmergencyContactService>();
 builder.Services.AddTransient<RequiredService>();
-builder.Services.AddTransient<EducationService>();
-builder.Services.AddTransient<CertificateService>();
-builder.Services.AddTransient<WorkExperienceService>();
-builder.Services.AddTransient<ReferenceService>();
-builder.Services.AddTransient<HealthService>();
-builder.Services.AddTransient<ExistingBankService>();
+//builder.Services.AddTransient<EducationService>();
+//builder.Services.AddTransient<CertificateService>();
+//builder.Services.AddTransient<WorkExperienceService>();
+//builder.Services.AddTransient<ReferenceService>();
+//builder.Services.AddTransient<HealthService>();
+//builder.Services.AddTransient<ExistingBankService>();
 builder.Services.AddScoped<ILogin, AuthenticateLogin>();
 builder.Services.AddScoped<IAdminRepository, AdminRepository>();
 builder.Services.AddTransient<IUserDetailsRepository, UserDetailsRepository>();
+builder.Services.AddTransient<IUserRepository, UserRepository>();
 
 
 //Configuring Fluent Migrator

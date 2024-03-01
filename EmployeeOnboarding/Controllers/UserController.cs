@@ -8,6 +8,8 @@ using OnboardingWebsite.Models;
 using EmployeeOnboarding.Services;
 using DocumentFormat.OpenXml.Drawing.Charts;
 using System;
+using EmployeeOnboarding.Contracts;
+using EmployeeOnboarding.Repository;
 
 namespace EmployeeOnboarding.Controllers
 {
@@ -17,28 +19,32 @@ namespace EmployeeOnboarding.Controllers
     {
 
         //private readonly EducationService _educationService;
-        private readonly WorkExperienceService _experienceService; // Corrected the type here.
-        private readonly ReferenceService _referenceService;
-        private readonly EducationService _educationService;
-        private readonly CertificateService _certificateService;
-        private readonly ExistingBankService _existingBankservice;
-        private readonly HealthService _healthService;
+      //  private readonly WorkExperienceService _experienceService; // Corrected the type here.
+      //  private readonly ReferenceService _referenceService;
+      ////private readonly EducationService _educationService;
+      //  private readonly CertificateService _certificateService;
+      //  private readonly ExistingBankService _existingBankservice;
+      //  private readonly HealthService _healthService;
+        private readonly IUserRepository _userRepository;
 
-        public UserController(WorkExperienceService experienceService, ReferenceService referenceService, EducationService educationService,CertificateService certificateService,HealthService healthService,ExistingBankService existingBankService)
+
+        public UserController(IUserRepository userRepository)
         {
-            _educationService = educationService;
-            _experienceService = experienceService;
-            _referenceService = referenceService;
-            _certificateService = certificateService;
-            _healthService = healthService;
-            _existingBankservice = existingBankService;
-        }
+            //_educationService = educationService;
+            //_experienceService = experienceService;
+            //_referenceService = referenceService;
+            //_certificateService = certificateService;
+            //_healthService = healthService;
+            //_existingBankservice = existingBankService;
+            _userRepository = userRepository;
+
+    }
 
 
-        [HttpPost("add-education/{genId}")]
+    [HttpPost("add-education/{genId}")]
         public async Task<IActionResult> AddEducation(int genId, [FromBody] List<EducationVM> educations)
         {
-            var data = _educationService.AddEducation(genId, educations);
+            var data = _userRepository.AddEducation(genId, educations);
             return Ok(data + "Sucess");
         }
 
@@ -46,35 +52,35 @@ namespace EmployeeOnboarding.Controllers
         [HttpPost("add-certificate/{genId}")]
         public async Task<IActionResult> AddCertificate(int genId, [FromBody] List<CertificateVM> certificates)
         {
-            var data = _certificateService.AddCertificate(genId, certificates);
+            var data = _userRepository.AddCertificate(genId, certificates);
             return Ok(data + "Sucess");
         }
 
         [HttpPost("add-experience/{genId}")]
         public async Task<IActionResult> AddExperience(int genId, [FromBody] List<WorkExperienceVM> experiences)
         {
-           var data = _experienceService.AddExperiences(genId, experiences);
+           var data = _userRepository.AddExperiences(genId, experiences);
             return Ok(data + "Sucess");
         }
 
         [HttpPost("add-reference/{genId}")]
         public IActionResult AddReference(int genId, [FromBody] ReferenceVM reference)
         {
-            _referenceService.AddReference(genId, reference);
+            _userRepository.AddReference(genId, reference);
             return Ok();
         }
 
         [HttpPost("add-health/{genId}")]
         public IActionResult AddHealth(int genId, [FromBody] HealthVM health)
         {
-            _healthService.AddHealth(genId, health);
+            _userRepository.AddHealth(genId, health);
             return Ok();
         }
 
         [HttpPost("add-existing-bank/{genId}")]
         public IActionResult AddBank(int genId, [FromBody] ExistingBankVM health)
         {
-            _existingBankservice.AddBank(genId, health);
+            _userRepository.AddBank(genId, health);
             return Ok();
         }
 
@@ -85,7 +91,7 @@ namespace EmployeeOnboarding.Controllers
         [HttpGet("get-education/{genId}")]
         public IActionResult GetEducation(int genId)
         {
-            var education = _educationService.GetEducation(genId);
+            var education = _userRepository.GetEducation(genId);
             return Ok(education);
         }
 
@@ -93,7 +99,7 @@ namespace EmployeeOnboarding.Controllers
         [HttpGet("get-certificate/{genId}")]
         public IActionResult GetCertificate(int genId)
         {
-            var certificate = _certificateService.GetCertificate(genId);
+            var certificate = _userRepository.GetCertificate(genId);
             return Ok(certificate);
         }
 
@@ -101,28 +107,28 @@ namespace EmployeeOnboarding.Controllers
         [HttpGet("get-experience/{genId}")]
         public IActionResult GetCompanyExperiences(int genId)
         {
-            var companyExperiences = _experienceService.GetCompanyByEmpId(genId);
+            var companyExperiences = _userRepository.GetCompanyByEmpId(genId);
             return Ok(companyExperiences);
         }
 
         [HttpGet("get-reference/{genId}")]
         public IActionResult GetReference(int genId)
         {
-            var reference = _referenceService.Getreference(genId);
+            var reference = _userRepository.Getreference(genId);
             return Ok(reference);
         }
 
         [HttpGet("get-health/{genId}")]
         public IActionResult GetHealth(int genId)
         {
-            var healthInfo = _healthService.GetHealth(genId);
+            var healthInfo = _userRepository.GetHealth(genId);
             return Ok(healthInfo);
         }
 
         [HttpGet("get-existing-bank/{genId}")]
         public IActionResult GetBank(int genId)
         {
-            var bank = _existingBankservice.GetBank(genId);
+            var bank = _userRepository.GetBank(genId);
             return Ok(bank);
         }
 
