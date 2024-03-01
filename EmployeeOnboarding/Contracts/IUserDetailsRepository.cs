@@ -9,7 +9,7 @@ namespace EmployeeOnboarding.Contracts
     public interface IUserDetailsRepository 
     {
      Task<string> AddPersonalInfo(bool directAdd , PersonalInfoRequest personalInfoRequest);
-     Task<PersonalInfoResponse> GetPersonalInfo(int? Id , string? email);
+     Task<OverallPersonalInfoResponse> GetPersonalInfo(int? Id , string? email);
      Task<string>GetStatusByLoginId(int loginId);
     }
 }
