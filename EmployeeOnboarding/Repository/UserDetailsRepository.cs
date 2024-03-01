@@ -73,6 +73,7 @@ namespace EmployeeOnboarding.Repository
                     if (writeTask.IsCompleted)
                     {
                         await writeTask; // Ensure any exceptions are thrown
+                        fileStream.Close();
                     }
                     else
                     {
@@ -124,6 +125,7 @@ namespace EmployeeOnboarding.Repository
                     if (writeTask.IsCompleted)
                     {
                         await writeTask; // Ensure any exceptions are thrown
+                        fileStream.Close();
                     }
                     else
                     {
@@ -648,7 +650,7 @@ namespace EmployeeOnboarding.Repository
         public async Task<string> GetStatusByLoginId(int loginId)
         {
 
-            string data = await _context.Login.Where(x => x.Id == loginId).Select(x => x.Invited_Status).FirstOrDefaultAsync();
+            string data = _context.Login.Where(x => x.Id == loginId).Select(x => x.Invited_Status).FirstOrDefault();
             return data;
         }
 

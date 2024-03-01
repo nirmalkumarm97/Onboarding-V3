@@ -13,8 +13,8 @@ using EmployeeOnboarding.Data.Enum;
 
 namespace EmployeeOnboarding.Services
 {
-    public class logindetailsService
-    {
+    //public class logindetailsService
+    //{
 
         //private ApplicationDbContext _context;
         //private IEmailSender emailSender;
@@ -100,5 +100,5 @@ namespace EmployeeOnboarding.Services
         //        int otp = rn.Next(min,max);
         //        return otp;
         //    }
-    }
+    //}
 }
