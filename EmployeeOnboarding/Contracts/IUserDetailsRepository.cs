@@ -10,6 +10,6 @@ namespace EmployeeOnboarding.Contracts
     {
      Task<string> AddPersonalInfo(bool directAdd , PersonalInfoRequest personalInfoRequest);
      Task<OverallPersonalInfoResponse> GetPersonalInfo(int? Id , string? email);
-     Task<string>GetStatusByLoginId(int loginId);
+     Task<dynamic> GetStatusByLoginId(int loginId);
     }
 }
