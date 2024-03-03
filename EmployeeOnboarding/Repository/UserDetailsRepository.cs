@@ -647,13 +647,55 @@ namespace EmployeeOnboarding.Repository
                 throw;
             }
         }
-        public async Task<string> GetStatusByLoginId(int loginId)
+
+        public async Task<dynamic> GetStatusByLoginId(int loginId)
         {
+            try
+            {
 
-            string data = _context.Login.Where(x => x.Id == loginId).Select(x => x.Invited_Status).FirstOrDefault();
-            return data;
+                var role = _context.Login.Where(x => x.Id == loginId).Select(x => x.Role).FirstOrDefault();
+                if (role == "U")
+                {
+
+                    List<StatusCardResponse> detail = (from a in _context.Login
+                                                        join b in _context.EmployeeGeneralDetails on a.Id equals b.UserId
+                                                        where a.Role == "U" && a.Status == "A" && b.Status == "A" where b.UserId == loginId
+                                                        select new StatusCardResponse
+                                                        {
+                                                            UserId = b.UserId,
+                                                            GenId = b.Id,
+                                                            Email = b.Personal_Emailid,
+                                                            Status = a.Invited_Status,
+                                                            Role = a.Role
+                                                        }).ToList();
+                    return detail;
+
+                }
+                if (role == "A")
+                {
+                    List<StatusCardResponse> details = (from a in _context.Login
+                                                        join b in _context.EmployeeGeneralDetails on a.Id equals b.UserId
+                                                        where a.Role == "U" && a.Status == "A" && b.Status == "A"
+                                                        select new StatusCardResponse
+                                                        {
+                                                            UserId = b.UserId,
+                                                            GenId = b.Id,
+                                                            Email = b.Personal_Emailid,
+                                                            Status = a.Invited_Status,
+                                                            Role = a.Role
+                                                        }).ToList();
+                    return details;
+
+                }
+                return null;
+                    
+            }
+            catch(Exception e)
+            {
+                throw;
+            }
+
         }
-
     }
 }
 
