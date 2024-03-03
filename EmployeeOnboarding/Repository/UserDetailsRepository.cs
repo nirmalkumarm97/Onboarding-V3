@@ -662,7 +662,7 @@ namespace EmployeeOnboarding.Repository
                                                         where a.Role == "U" && a.Status == "A" && b.Status == "A" where b.UserId == loginId
                                                         select new StatusCardResponse
                                                         {
-                                                            UserId = b.UserId,
+                                                            UserId = (int)b.UserId,
                                                             GenId = b.Id,
                                                             Email = b.Personal_Emailid,
                                                             Status = a.Invited_Status,
@@ -678,7 +678,7 @@ namespace EmployeeOnboarding.Repository
                                                         where a.Role == "U" && a.Status == "A" && b.Status == "A"
                                                         select new StatusCardResponse
                                                         {
-                                                            UserId = b.UserId,
+                                                            UserId = (int)b.UserId,
                                                             GenId = b.Id,
                                                             Email = b.Personal_Emailid,
                                                             Status = a.Invited_Status,
