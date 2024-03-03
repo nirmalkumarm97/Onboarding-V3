@@ -148,6 +148,7 @@ namespace EmployeeOnboarding.Repository
                 {
                     if (personalInfoRequest != null)
                     {
+                        int UserId = 0;
                         if (directadd == true)
                         {
                             var checkemail =  _context.Login.Where(x => x.EmailId == personalInfoRequest.generalVM.Personal_Emailid).FirstOrDefault();
@@ -180,13 +181,13 @@ namespace EmployeeOnboarding.Repository
                                 _context.Login.Add(login);
                                 var callbackUrl = "https://onboarding-dev.ideassionlive.in/";
                                 await _emailSender.SendEmailAsync(personalInfoRequest.generalVM.Personal_Emailid, "Confirm Your Email", $"Please enter into your login by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'> clicking here</a>. Your email is {personalInfoRequest.generalVM.Personal_Emailid} and password is {tempPass}");
-
+                                UserId = login.Id;
                             }
                             _context.SaveChanges();
 
                         }
                         //General details:
-
+                        
                         var existingGeneral =  _context.EmployeeGeneralDetails.FirstOrDefault(e => e.Login_ID == personalInfoRequest.loginId);
                         int newGenId = 0;
                         if (existingGeneral != null)
@@ -232,8 +233,9 @@ namespace EmployeeOnboarding.Repository
                                 Date_Created = DateTime.UtcNow,
                                 Date_Modified = DateTime.UtcNow,
                                 Created_by = personalInfoRequest.loginId.ToString(),
-                                Modified_by = personalInfoRequest.loginId.ToString(),
-                                Status = "A"
+                                Modified_by = personalInfoRequest.loginId.ToString(),   
+                                Status = "A",
+                                UserId = directadd == true ? UserId : personalInfoRequest.loginId
                             };
                             _context.EmployeeGeneralDetails.Add(_general);
                             _context.SaveChanges();
@@ -532,16 +534,16 @@ namespace EmployeeOnboarding.Repository
             return null;
         }
 
-        public async Task<OverallPersonalInfoResponse> GetPersonalInfo(int? Id, string? email)
+        public async Task<OverallPersonalInfoResponse> GetPersonalInfo(int Id)
         {
             try
             {
-                if (Id != 0 && email != null)
+                if (Id != 0 || Id != null)
                 {
                     OverallPersonalInfoResponse overallPersonalInfoResponse = new OverallPersonalInfoResponse();
                     PersonalInfoResponse personalInfoResponse = new PersonalInfoResponse();
 
-                    GeneralInfoResponse _general = _context.EmployeeGeneralDetails.Where(n => n.Login_ID == Id || n.Personal_Emailid == email).Select(general => new GeneralInfoResponse()
+                    GeneralInfoResponse _general = _context.EmployeeGeneralDetails.Where(n => n.Id == Id).Select(general => new GeneralInfoResponse()
                     {
                         Id = general.Id,
                         LoginId = general.Login_ID,
