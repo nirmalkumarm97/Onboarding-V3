@@ -14,6 +14,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Data.Entity.Core.Mapping;
 using EmployeeOnboarding.ViewModels;
 using EmployeeOnboarding.Data.Enum;
+using OpenXmlPowerTools;
 
 namespace EmployeeOnboarding.Repository
 {
@@ -44,18 +45,20 @@ namespace EmployeeOnboarding.Repository
         {
             var RejectedDetails = (from e in _context.EmployeeGeneralDetails
                                    where e.Status == "A"
-                                   join l in _context.Login on e.Login_ID equals l.Id
-                                   where l.Status == "A"
+                                   join l in _context.Login on e.UserId equals l.Id
+                                   where l.Status == "A" && l.Role == "U"
                                    join a in _context.ApprovalStatus on e.Id equals a.EmpGen_Id
                                    where a.Status == "A" && a.Current_Status == 3
                                    select new Dashboard1VM()
                                    {
-                                       Login_Id = e.Login_ID,
+                                       Login_Id = (int)e.UserId,
                                        EmpGen_Id = a.EmpGen_Id,
                                        Name = e.Empname,
+                                       Contact_no = e.Contact_no,
                                        DateModified = a.Date_Modified,
                                        Email_id = l.EmailId,
-                                       Current_Status = ((Data.Enum.Status)a.Current_Status).ToString()
+                                       Current_Status = ((Data.Enum.Status)a.Current_Status).ToString(),
+                                       UserId = e.UserId
                                    }).ToList();
             return RejectedDetails;
         }
@@ -63,18 +66,20 @@ namespace EmployeeOnboarding.Repository
         public async Task<List<Dashboard1VM>> GetPendingEmployeeDetails()
         {
             var PendingDetails = (from l in _context.Login
-                                  where l.Status == "A"
-                                  join e in _context.EmployeeGeneralDetails on l.Id equals e.Login_ID
+                                  where l.Status == "A" && l.Role == "U"
+                                  join e in _context.EmployeeGeneralDetails on l.Id equals e.UserId
                                   join a in _context.ApprovalStatus on e.Id equals a.EmpGen_Id
                                   where a.Status == "A" && a.Current_Status == 2
                                   select new Dashboard1VM()
                                   {
                                       Login_Id = l.Id,
                                       EmpGen_Id = a.EmpGen_Id,
+                                      Contact_no = e.Contact_no,
                                       Name = l.Name,
                                       DateModified = a.Date_Modified,
                                       Email_id = l.EmailId,
-                                      Current_Status = ((Data.Enum.Status)a.Current_Status).ToString()
+                                      Current_Status = ((Data.Enum.Status)a.Current_Status).ToString(),
+                                      UserId = e.UserId
                                   }).ToList();
             return PendingDetails;
         }
@@ -82,11 +87,11 @@ namespace EmployeeOnboarding.Repository
         public async Task<List<DashboardVM>> GetEmployeeDetails()
         {
             var employeedetails = (from l in _context.Login
-                                   where l.Status == "A"
-                                   join e in _context.EmployeeGeneralDetails on l.Id equals e.Login_ID
-                                   where e.Status == "A"
+                                   where l.Status == "A" && l.Role == "U" 
+                                   join e in _context.EmployeeGeneralDetails on l.Id equals e.UserId
+                                   where e.Status == "A" 
                                    join al in _context.ApprovalStatus on e.Id equals al.EmpGen_Id
-                                   where  al.Status == "A"
+                                   where  al.Status == "A" && al.Current_Status == 1
                                    join ec in _context.EmployeeContactDetails on e.Id equals ec.EmpGen_Id
                                    where ec.Status == "A"
                                    select new DashboardVM()
@@ -94,9 +99,11 @@ namespace EmployeeOnboarding.Repository
                                        EmpGen_Id = e.Id,
                                        Empid = e.Empid,
                                        Empname = e.Empname,
-                                       Contact = e.Contact_no,
+                                       Contact_no = e.Contact_no,
                                        Email = e.Official_EmailId,
-                                       education = (_context.EmployeeEducationDetails.Where(x => x.EmpGen_Id == e.Id).Select(x => x.Degree_achieved).OrderBy(x => x).LastOrDefault())
+                                       education = (_context.EmployeeEducationDetails.Where(x => x.EmpGen_Id == e.Id).Select(x => x.Degree_achieved).OrderBy(x => x).LastOrDefault()),
+                                       UserId = (int)e.UserId,
+                                       Status = ((Data.Enum.Status)al.Current_Status).ToString()
                                    }).ToList();
             return employeedetails;
         }
