@@ -2,17 +2,27 @@
 using EmployeeOnboarding.Contracts;
 using EmployeeOnboarding.Data;
 using EmployeeOnboarding.Data.Enum;
+using EmployeeOnboarding.Helper;
 using EmployeeOnboarding.ViewModels;
+using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.Extensions.DependencyInjection;
 using OnboardingWebsite.Models;
+using System;
 
 namespace EmployeeOnboarding.Repository
 {
     public class UserRepository : IUserRepository
     {
         private readonly ApplicationDbContext _context;
-        public UserRepository(ApplicationDbContext context)
+        private readonly IServiceProvider _serviceProvider;
+
+        public UserRepository(ApplicationDbContext context, IServiceProvider serviceProvider)
         {
             _context = context;
+            _serviceProvider = serviceProvider;
+
         }
 
         private static byte[] GetFile(string filepath)
@@ -87,77 +97,103 @@ namespace EmployeeOnboarding.Repository
             }
         }
 
-//Education details
-        public async Task<List<EmployeeEducationDetails>> AddEducation(int genId, List<EducationVM> educations)
+        //Education details
+        public async Task<string> AddEducation(int genId, List<EducationVM> educations)
         {
-            try
+            using (IDbContextTransaction transaction = _context.Database.BeginTransaction())
             {
-                List<EmployeeEducationDetails> educationVMs = new List<EmployeeEducationDetails>();
-                int index1 = 1; // Initialize the Company_no sequence
-
-                foreach (var education in educations)
+                try
                 {
-                    var existingEducation = _context.EmployeeEducationDetails.FirstOrDefault(e => e.EmpGen_Id == genId && e.Education_no == index1);
+                    using (var scope = _serviceProvider.CreateScope())
+                    {
+                        var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
-                    if (existingEducation != null)
-                    {
-                        var certificateFileName = $"education{index1}.pdf"; // Generate the certificate filename
-                                                                            // Update existing record
-                        existingEducation.Qualification = education.Qualification;
-                        existingEducation.University = education.University;
-                        existingEducation.Institution_name = education.Institution_name;
-                        existingEducation.Degree_achieved = education.Degree_achieved;
-                        existingEducation.specialization = education.specialization;
-                        existingEducation.Passoutyear = education.Passoutyear;
-                        existingEducation.Percentage = education.Percentage;
-                        existingEducation.Edu_certificate = await SaveFileAsync(education.Edu_certificate, genId.ToString(), certificateFileName);
-                        existingEducation.Date_Modified = DateTime.UtcNow;
-                        existingEducation.Modified_by = genId.ToString();
-                        existingEducation.Status = "A";
-                    }
-                    else
-                    {
-                        // Add new record
-                        var certificateFileName = $"education{index1}.pdf"; // Generate the certificate filename
-                        var _education = new EmployeeEducationDetails()
+                        List<EmployeeEducationDetails> addEducations = new List<EmployeeEducationDetails>();
+                        List<EmployeeEducationDetails> updateEducations = new List<EmployeeEducationDetails>();
+                        int index1 = 1; // Initialize the Company_no sequence
+                        var existingEducations = dbContext.EmployeeEducationDetails.Where(e => e.EmpGen_Id == genId).ToList();
+
+                        foreach (var education in educations)
                         {
-                            EmpGen_Id = genId,
-                            Education_no = index1,
-                            Qualification = education.Qualification,
-                            University = education.University,
-                            Institution_name = education.Institution_name,
-                            Degree_achieved = education.Degree_achieved,
-                            specialization = education.specialization,
-                            Passoutyear = education.Passoutyear,
-                            Percentage = education.Percentage,
-                            Edu_certificate = await SaveFileAsync(education.Edu_certificate, genId.ToString(), certificateFileName),
-                            Date_Created = DateTime.UtcNow,
-                            Date_Modified = DateTime.UtcNow,
-                            Created_by = genId.ToString(),
-                            Modified_by = genId.ToString(),
-                            Status = "A"
-                        };
-                        educationVMs.Add(_education);
+                            var existingEducation = existingEducations.Where(x => x.Education_no == index1).FirstOrDefault();
+                            if (existingEducation != null)
+                            {
+                                var certificateFileName = $"education{index1}.pdf"; // Generate the certificate filename
+                                                                                    // Update existing record
+                                existingEducation.Qualification = education.Qualification;
+                                existingEducation.University = education.University;
+                                existingEducation.Institution_name = education.Institution_name;
+                                existingEducation.Degree_achieved = education.Degree_achieved;
+                                existingEducation.specialization = education.specialization;
+                                existingEducation.Passoutyear = education.Passoutyear;
+                                existingEducation.Percentage = education.Percentage;
+                                existingEducation.Edu_certificate = "";
+                                existingEducation.Date_Modified = DateTime.UtcNow;
+                                existingEducation.Modified_by = genId.ToString();
+                                existingEducation.Status = "A";
+                                existingEducation.Status = "A";
+                                existingEducation.Edu_certificate = await SaveFileAsync(education.Edu_certificate, genId.ToString(), certificateFileName);
+
+                                //_context.Update(existingEducation);
+                                updateEducations.Add(existingEducation);
+                            }
+                            else
+                            {
+                                // Add new record
+                                var certificateFileName = $"education{index1}.pdf"; // Generate the certificate filename
+                                var _education = new EmployeeEducationDetails()
+                                {
+                                    EmpGen_Id = genId,
+                                    Education_no = index1,
+                                    Qualification = education.Qualification,
+                                    University = education.University,
+                                    Institution_name = education.Institution_name,
+                                    Degree_achieved = education.Degree_achieved,
+                                    specialization = education.specialization,
+                                    Passoutyear = education.Passoutyear,
+                                    Percentage = education.Percentage,
+                                    Edu_certificate = await SaveFileAsync(education.Edu_certificate, genId.ToString(), certificateFileName),
+                                    Date_Created = DateTime.UtcNow,
+                                    Date_Modified = DateTime.UtcNow,
+                                    Created_by = genId.ToString(),
+                                    Modified_by = genId.ToString(),
+                                    Status = "A"
+                                };
+                                addEducations.Add(_education);
+                            }
+
+                            index1++;
+
+                        }
+                        if (addEducations.Count > 0)
+                        {
+                            _context.EmployeeEducationDetails.AddRange(addEducations); // Add new entities
+                            dbContext.SaveChanges();
+                        }
+                        // Save changes asynchronously
+                        if (updateEducations.Count > 0)
+                        {
+                            dbContext.EmployeeEducationDetails.UpdateRange(updateEducations); // Add new entities
+
+                            dbContext.SaveChanges(); // Save changes asynchronously
+                        }
+                        transaction.Commit();
+
+                        //_context.ChangeTracker.Clear();
+                        return "Succeed";
+
                     }
-
-                    index1++;
-
                 }
-                _context.EmployeeEducationDetails.AddRange(educationVMs);
-                _context.SaveChanges();
-                _context.ChangeTracker.Clear();
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    throw new Exception(ex.InnerException.Message);
+                }
 
-                //var id = educationVMs.Select(x => x.EmpGen_Id).FirstOrDefault();
-
-                return educationVMs;
-
-            }
-            catch (Exception ex)
-            {
-                throw;
             }
         }
-       
+
+
         public List<GetEducationVM> GetEducation(int genId)
         {
             var education = _context.EmployeeEducationDetails.Where(e => e.EmpGen_Id == genId && e.Education_no != null).Select(e => new GetEducationVM
@@ -178,67 +214,95 @@ namespace EmployeeOnboarding.Repository
         }
 
 
-//AddCertificates
+        //AddCertificates
 
-        public async Task<List<EmployeeCertifications>> AddCertificate(int genId, List<CertificateVM> certificates)
+        public async Task<string> AddCertificate(int genId, List<CertificateVM> certificates)
         {
-            List<EmployeeCertifications> certificateVMs = new List<EmployeeCertifications>();
-            int index1 = 1; // Initialize the Company_no sequence
-
-            foreach (var certificate in certificates)
+            using (IDbContextTransaction transaction = _context.Database.BeginTransaction())
             {
-                var existingCertificate = _context.EmployeeCertifications.FirstOrDefault(e => e.EmpGen_Id == genId && e.Certificate_no == index1);
-
-                if (existingCertificate != null)
+                try
                 {
-                    var certificateFileName = $"certificate{index1}.pdf"; // Generate the certificate filename
-                    // Update existing record
-                    existingCertificate.Certificate_name = certificate.Certificate_name;
-                    existingCertificate.Issued_by = certificate.Issued_by;
-                    DateOnly Valid_till = DateOnly.Parse(certificate.Valid_till);
-                    existingCertificate.Valid_till = Valid_till;
-                    existingCertificate.Duration = certificate.Duration;
-                    existingCertificate.Percentage = certificate.Percentage;
-                    existingCertificate.proof = await SaveFileAsync(certificate.proof, genId.ToString(), certificateFileName);
-                    existingCertificate.Date_Modified = DateTime.UtcNow;
-                    existingCertificate.Modified_by = genId.ToString();
-                    existingCertificate.Status = "A";
-
-                }
-                else
-                {
-                    // Add new record
-                    var certificateFileName = $"certificate{index1}.pdf"; // Generate the certificate filename
-                    var _certificate = new EmployeeCertifications()
+                    using (var scope = _serviceProvider.CreateScope())
                     {
-                        EmpGen_Id = genId,
-                        Certificate_no = index1,
-                        Certificate_name = certificate.Certificate_name,
-                        Issued_by = certificate.Issued_by,
-                        Valid_till = DateOnly.Parse(certificate.Valid_till),
-                        Duration = certificate.Duration,
-                        Percentage = certificate.Percentage,
-                        proof = await SaveFileAsync(certificate.proof, genId.ToString(), certificateFileName),
-                        Date_Created = DateTime.UtcNow,
-                        Date_Modified = DateTime.UtcNow,
-                        Created_by = genId.ToString(),
-                        Modified_by = genId.ToString(),
-                        Status = "A"
-                    };
-                    certificateVMs.Add(_certificate);
+                        var dbcontext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
+                        List<EmployeeCertifications> AddCertificates = new List<EmployeeCertifications>();
+                        List<EmployeeCertifications> UpdateCertificates = new List<EmployeeCertifications>();
+
+                        int index1 = 1; // Initialize the Company_no sequence
+                        var existingCertificates = dbcontext.EmployeeCertifications.Where(e => e.EmpGen_Id == genId).ToList();
+
+                        foreach (var certificate in certificates)
+                        {
+                            var existingCertificate = existingCertificates.Where(x => x.Certificate_no == index1).FirstOrDefault();
+                            if (existingCertificate != null)
+                            {
+                                var certificateFileName = $"certificate{index1}.pdf"; // Generate the certificate filename
+                                                                                      // Update existing record
+                                existingCertificate.Certificate_name = certificate.Certificate_name;
+                                existingCertificate.Issued_by = certificate.Issued_by;
+                                DateOnly Valid_till = DateOnly.Parse(certificate.Valid_till);
+                                existingCertificate.Valid_till = Valid_till;
+                                existingCertificate.Duration = certificate.Duration;
+                                existingCertificate.Percentage = certificate.Percentage;
+                                existingCertificate.proof = await SaveFileAsync(certificate.proof, genId.ToString(), certificateFileName);
+                                existingCertificate.Date_Modified = DateTime.UtcNow;
+                                existingCertificate.Modified_by = genId.ToString();
+                                existingCertificate.Status = "A";
+                                UpdateCertificates.Add(existingCertificate);
+
+                            }
+                            else
+                            {
+                                // Add new record
+                                var certificateFileName = $"certificate{index1}.pdf"; // Generate the certificate filename
+                                var _certificate = new EmployeeCertifications()
+                                {
+                                    EmpGen_Id = genId,
+                                    Certificate_no = index1,
+                                    Certificate_name = certificate.Certificate_name,
+                                    Issued_by = certificate.Issued_by,
+                                    Valid_till = DateOnly.Parse(certificate.Valid_till),
+                                    Duration = certificate.Duration,
+                                    Percentage = certificate.Percentage,
+                                    proof = await SaveFileAsync(certificate.proof, genId.ToString(), certificateFileName),
+                                    Date_Created = DateTime.UtcNow,
+                                    Date_Modified = DateTime.UtcNow,
+                                    Created_by = genId.ToString(),
+                                    Modified_by = genId.ToString(),
+                                    Status = "A"
+                                };
+                                AddCertificates.Add(_certificate);
+
+                            }
+
+                            index1++;
+
+                        }
+                        if (AddCertificates.Count > 0)
+                        {
+                            dbcontext.EmployeeCertifications.AddRange(AddCertificates);
+                        }
+                        if (UpdateCertificates.Count > 0)
+                        {
+                            dbcontext.EmployeeCertifications.UpdateRange(UpdateCertificates);
+                        }
+                        dbcontext.SaveChanges();
+                        transaction.Commit();
+                        dbcontext.ChangeTracker.Clear();
+                        var id = AddCertificates.Select(x => x.EmpGen_Id).FirstOrDefault();
+
+                        return "Succeed";
+                    }
                 }
-
-                index1++;
-
+                catch (Exception e)
+                {
+                    transaction.Rollback();
+                    throw new Exception(e.Message);
+                }
             }
-            _context.EmployeeCertifications.AddRange(certificateVMs);
-            _context.SaveChanges();
-            _context.ChangeTracker.Clear();
-            var id = certificateVMs.Select(x => x.EmpGen_Id).FirstOrDefault();
-
-            return certificateVMs;
         }
+    
         public List<getCertificateVM> GetCertificate(int genId)
         {
             var certificate = _context.EmployeeCertifications.Where(e => e.EmpGen_Id == genId && e.Certificate_no != null).Select(e => new getCertificateVM
@@ -257,87 +321,105 @@ namespace EmployeeOnboarding.Repository
         }
 
 
-//AddExperience
+        //AddExperience
         public async Task<List<EmployeeExperienceDetails>> AddExperiences(int genId, List<WorkExperienceVM> experiences)
         {
-            List<EmployeeExperienceDetails> experienceVMs = new List<EmployeeExperienceDetails>();
-            int index1 = 1; // Initialize the Company_no sequence
-
-            foreach (var experience in experiences)
+            using (IDbContextTransaction transaction = _context.Database.BeginTransaction())
             {
-                var existingExperience = _context.EmployeeExperienceDetails.FirstOrDefault(e => e.EmpGen_Id == genId && e.Company_no == index1);
-
-                if (existingExperience != null)
+                try
                 {
-                    var certificateFileName = $"experience{index1}.pdf"; // Generate the certificate filename
-                    // Update existing record
-                    existingExperience.Company_name = experience.Company_name;
-                    existingExperience.Designation = experience.Designation;
-                    DateOnly startDate = DateOnly.Parse(experience.StartDate);
-                    DateOnly endDate = DateOnly.Parse(experience.EndDate);
-                    existingExperience.StartDate = startDate;
-                    existingExperience.EndDate = endDate;
-                    existingExperience.Reporting_to = experience.Reporting_to;
-                    existingExperience.Reason = experience.Reason;
-                    existingExperience.Location = experience.Location;
-                    existingExperience.Exp_Certificate = await SaveFileAsync(experience.Exp_Certificate, genId.ToString(), certificateFileName);
-                    existingExperience.Date_Modified = DateTime.UtcNow;
-                    existingExperience.Modified_by = genId.ToString();
-                    existingExperience.Status = "A";
-                }
-                else
-                {
-                    // Add new record
-                    var certificateFileName = $"experience{index1}.pdf"; // Generate the certificate filename
-                    var _experience = new EmployeeExperienceDetails()
+                    using (var scope = _serviceProvider.CreateScope())
                     {
-                        EmpGen_Id = genId,
-                        Company_no = index1,
-                        Company_name = experience.Company_name,
-                        Designation = experience.Designation,
-                        // Parse and assign DateOnly values
-                        StartDate = DateOnly.Parse(experience.StartDate),
-                        EndDate = DateOnly.Parse(experience.EndDate),
-                        Reporting_to = experience.Reporting_to,
-                        Reason = experience.Reason,
-                        Location = experience.Location,
-                        Exp_Certificate = await SaveFileAsync(experience.Exp_Certificate, genId.ToString(), certificateFileName),
-                        Date_Created = DateTime.UtcNow,
-                        Date_Modified = DateTime.UtcNow,
-                        Created_by = genId.ToString(),
-                        Modified_by = genId.ToString(),
-                        Status = "A"
-                    };
-                    experienceVMs.Add(_experience);
+                        var dbcontext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                        List<EmployeeExperienceDetails> experienceVMs = new List<EmployeeExperienceDetails>();
+                        int index1 = 1; // Initialize the Company_no sequence
+                        var existingExperiences = dbcontext.EmployeeExperienceDetails.Where(e => e.EmpGen_Id == genId).ToList();
+                        foreach (var experience in experiences)
+                        {
+                            var existingExperience = existingExperiences.Where(x => x.Company_no == index1).FirstOrDefault();
 
+                            if (existingExperience != null)
+                            {
+                                var certificateFileName = $"experience{index1}.pdf"; // Generate the certificate filename
+                                                                                     // Update existing record
+                                existingExperience.Company_name = experience.Company_name;
+                                existingExperience.Designation = experience.Designation;
+                                DateOnly startDate = DateOnly.Parse(experience.StartDate);
+                                DateOnly endDate = DateOnly.Parse(experience.EndDate);
+                                existingExperience.StartDate = startDate;
+                                existingExperience.EndDate = endDate;
+                                existingExperience.Reporting_to = experience.Reporting_to;
+                                existingExperience.Reason = experience.Reason;
+                                existingExperience.Location = experience.Location;
+                                existingExperience.Exp_Certificate = await SaveFileAsync(experience.Exp_Certificate, genId.ToString(), certificateFileName);
+                                existingExperience.Date_Modified = DateTime.UtcNow;
+                                existingExperience.Modified_by = genId.ToString();
+                                existingExperience.Status = "A";
+                            }
+                            else
+                            {
+                                // Add new record
+                                var certificateFileName = $"experience{index1}.pdf"; // Generate the certificate filename
+                                var _experience = new EmployeeExperienceDetails()
+                                {
+                                    EmpGen_Id = genId,
+                                    Company_no = index1,
+                                    Company_name = experience.Company_name,
+                                    Designation = experience.Designation,
+                                    // Parse and assign DateOnly values
+                                    StartDate = DateOnly.Parse(experience.StartDate),
+                                    EndDate = DateOnly.Parse(experience.EndDate),
+                                    Reporting_to = experience.Reporting_to,
+                                    Reason = experience.Reason,
+                                    Location = experience.Location,
+                                    Exp_Certificate = await SaveFileAsync(experience.Exp_Certificate, genId.ToString(), certificateFileName),
+                                    Date_Created = DateTime.UtcNow,
+                                    Date_Modified = DateTime.UtcNow,
+                                    Created_by = genId.ToString(),
+                                    Modified_by = genId.ToString(),
+                                    Status = "A"
+                                };
+                                experienceVMs.Add(_experience);
+
+                            }
+
+                            index1++;
+
+                        }
+                        dbcontext.EmployeeExperienceDetails.AddRange(experienceVMs);
+                        dbcontext.SaveChanges();
+                        transaction.Commit();
+                        dbcontext.ChangeTracker.Clear();
+                        //pending status
+                        var _onboard = new ApprovalStatus()
+                        {
+                            EmpGen_Id = genId,
+                            Current_Status = (int)Status.Pending,
+                            Comments = "",
+                            Date_Created = DateTime.UtcNow,
+                            Date_Modified = DateTime.UtcNow,
+                            Created_by = genId.ToString(),
+                            Modified_by = "Admin",
+                            Status = "A",
+                        };
+                        _context.ApprovalStatus.Add(_onboard);
+                        dbcontext.SaveChanges();
+                        transaction.Commit();
+                        dbcontext.ChangeTracker.Clear();
+                        var id = experienceVMs.Select(x => x.EmpGen_Id).FirstOrDefault();
+
+                        return experienceVMs;
+
+                    }
                 }
-
-                index1++;
-
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    throw new Exception(ex.Message);
+                }
             }
-            _context.EmployeeExperienceDetails.AddRange(experienceVMs);
-            _context.SaveChanges();
-            _context.ChangeTracker.Clear();
-            //pending status
-            var _onboard = new ApprovalStatus()
-            {
-                EmpGen_Id = genId,
-                Current_Status = (int)Status.Pending,
-                Comments = "",
-                Date_Created = DateTime.UtcNow,
-                Date_Modified = DateTime.UtcNow,
-                Created_by = genId.ToString(),
-                Modified_by = "Admin",
-                Status = "A",
-            };
-            _context.ApprovalStatus.Add(_onboard);
-            _context.SaveChanges();
-            _context.ChangeTracker.Clear();
-            var id = experienceVMs.Select(x => x.EmpGen_Id).FirstOrDefault();
-
-            return experienceVMs;
-
         }
+                
 
         public List<getExperienceVM> GetCompanyByEmpId(int genId)
         {
@@ -357,47 +439,66 @@ namespace EmployeeOnboarding.Repository
         }
 
 
-//AddReferences
+        //AddReferences
         public async Task<string> AddReference(int genId, ReferenceVM reference)
         {
-            var existingreference = _context.EmployeeReferenceDetails.FirstOrDefault(e => e.EmpGen_Id == genId);
-
-            if (existingreference != null)
+            using (IDbContextTransaction transaction = _context.Database.BeginTransaction())
             {
-                existingreference.Referral_name = existingreference.Referral_name;
-                existingreference.Designation = existingreference.Designation;
-                existingreference.Company_name = existingreference.Company_name;
-                existingreference.Contact_number = existingreference.Contact_number;
-                existingreference.Email_Id = existingreference.Email_Id;
-                existingreference.Authorize = existingreference.Authorize;
-                existingreference.Date_Modified = DateTime.UtcNow;
-                existingreference.Modified_by = genId.ToString();
-                existingreference.Status = "A";
-            }
-            else
-            {
-                // Add new record
-                var _reference = new EmployeeReferenceDetails()
+                try
                 {
-                    EmpGen_Id = genId,
-                    Referral_name = reference.Referral_name,
-                    Designation = reference.Designation,
-                    Company_name = reference.Company_name,
-                    Contact_number = reference.Contact_number,
-                    Email_Id = reference.Email_Id,
-                    Authorize = reference.Authorize,
-                    Date_Created = DateTime.UtcNow,
-                    Date_Modified = DateTime.UtcNow,
-                    Created_by = genId.ToString(),
-                    Modified_by = genId.ToString(),
-                    Status = "A"
-                };
+                    using (var scope = _serviceProvider.CreateScope())
+                    {
+                        var dbcontext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                        var existingreference = _context.EmployeeReferenceDetails.FirstOrDefault(e => e.EmpGen_Id == genId);
+                        if (existingreference != null)
+                        {
+                            existingreference.Referral_name = existingreference.Referral_name;
+                            existingreference.Designation = existingreference.Designation;
+                            existingreference.Company_name = existingreference.Company_name;
+                            existingreference.Contact_number = existingreference.Contact_number;
+                            existingreference.Email_Id = existingreference.Email_Id;
+                            existingreference.Authorize = existingreference.Authorize;
+                            existingreference.Date_Modified = DateTime.UtcNow;
+                            existingreference.Modified_by = genId.ToString();
+                            existingreference.Status = "A";
+                            dbcontext.Update(existingreference);
+                            dbcontext.SaveChanges();
+                        }
+                        else
+                        {
+                            // Add new record
+                            var _reference = new EmployeeReferenceDetails()
+                            {
+                                EmpGen_Id = genId,
+                                Referral_name = reference.Referral_name,
+                                Designation = reference.Designation,
+                                Company_name = reference.Company_name,
+                                Contact_number = reference.Contact_number,
+                                Email_Id = reference.Email_Id,
+                                Authorize = reference.Authorize,
+                                Date_Created = DateTime.UtcNow,
+                                Date_Modified = DateTime.UtcNow,
+                                Created_by = genId.ToString(),
+                                Modified_by = genId.ToString(),
+                                Status = "A"
+                            };
+                           
+                                dbcontext.EmployeeReferenceDetails.Add(_reference);
+                                dbcontext.SaveChanges();
 
-                _context.EmployeeReferenceDetails.Add(_reference);
+                        }
+                        transaction.Commit();
+                        dbcontext.ChangeTracker.Clear();
+                        return "Succeed";
+
+                    }
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    throw new Exception(ex.Message);
+                }
             }
-            _context.SaveChanges();
-            _context.ChangeTracker.Clear();
-            return "Succeed";
         }
 
         public GetReferenceVM Getreference(int genId)
@@ -421,52 +522,72 @@ namespace EmployeeOnboarding.Repository
 //AddHealthservices
         public async Task<string> AddHealth(int genId, HealthVM health)
         {
-            var existingHealth = _context.EmployeeHealthInformation.FirstOrDefault(e => e.EmpGen_Id == genId);
-
-            if (existingHealth != null)
+            using (IDbContextTransaction transaction = _context.Database.BeginTransaction())
             {
-                existingHealth.Specific_health_condition = health.Specific_health_condition;
-                existingHealth.Allergies = health.Allergies;
-                existingHealth.surgery = health.surgery;
-                existingHealth.Surgery_explaination = health.Surgery_explaination;
-                existingHealth.Night_shifts = health.Night_shifts;
-                existingHealth.Disability = health.Disability;
-                existingHealth.Disability_explanation = health.Disability_explanation;
-                existingHealth.CovidVaccine = health.CovidVaccine;
-                existingHealth.Vaccine_certificate = await SaveFileAsync(health.Vaccine_certificate, genId.ToString(), "Vacc_Certificate.pdf");
-                existingHealth.Health_documents = await SaveFileAsync(health.Health_documents, genId.ToString(), "Health_Documents.pdf");
-                existingHealth.Date_Modified = DateTime.UtcNow;
-                existingHealth.Modified_by = genId.ToString();
-                existingHealth.Status = "A";
-            }
-            else
-            {
-                // Add new record
-                var _health = new EmployeeHealthInformation()
+                try
                 {
-                    EmpGen_Id = genId,
-                    Specific_health_condition = health.Specific_health_condition,
-                    Allergies = health.Allergies,
-                    surgery = health.surgery,
-                    Surgery_explaination = health.Surgery_explaination,
-                    Night_shifts = health.Night_shifts,
-                    Disability = health.Disability,
-                    Disability_explanation = health.Disability_explanation,
-                    CovidVaccine = health.CovidVaccine,
-                    Vaccine_certificate = await SaveFileAsync(health.Vaccine_certificate, genId.ToString(), "Vacc_Certificate.pdf"),
-                    Health_documents = await SaveFileAsync(health.Health_documents, genId.ToString(), "Health_Documents.pdf"),
-                    Date_Created = DateTime.UtcNow,
-                    Date_Modified = DateTime.UtcNow,
-                    Created_by = genId.ToString(),
-                    Modified_by = genId.ToString(),
-                    Status = "A"
-                };
+                    using (var scope = _serviceProvider.CreateScope())
+                    {
+                        var dbcontext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
-                _context.EmployeeHealthInformation.Add(_health);
+                        var existingHealth = _context.EmployeeHealthInformation.FirstOrDefault(e => e.EmpGen_Id == genId);
+
+                        if (existingHealth != null)
+                        {
+                            existingHealth.Specific_health_condition = health.Specific_health_condition;
+                            existingHealth.Allergies = health.Allergies;
+                            existingHealth.surgery = health.surgery;
+                            existingHealth.Surgery_explaination = health.Surgery_explaination;
+                            existingHealth.Night_shifts = health.Night_shifts;
+                            existingHealth.Disability = health.Disability;
+                            existingHealth.Disability_explanation = health.Disability_explanation;
+                            existingHealth.CovidVaccine = health.CovidVaccine;
+                            existingHealth.Vaccine_certificate = await SaveFileAsync(health.Vaccine_certificate, genId.ToString(), "Vacc_Certificate.pdf");
+                            existingHealth.Health_documents = await SaveFileAsync(health.Health_documents, genId.ToString(), "Health_Documents.pdf");
+                            existingHealth.Date_Modified = DateTime.UtcNow;
+                            existingHealth.Modified_by = genId.ToString();
+                            existingHealth.Status = "A";
+                            dbcontext.Update(existingHealth);
+                            dbcontext.SaveChanges();
+                        }
+                        else
+                        {
+                            // Add new record
+                            var _health = new EmployeeHealthInformation()
+                            {
+                                EmpGen_Id = genId,
+                                Specific_health_condition = health.Specific_health_condition,
+                                Allergies = health.Allergies,
+                                surgery = health.surgery,
+                                Surgery_explaination = health.Surgery_explaination,
+                                Night_shifts = health.Night_shifts,
+                                Disability = health.Disability,
+                                Disability_explanation = health.Disability_explanation,
+                                CovidVaccine = health.CovidVaccine,
+                                Vaccine_certificate = await SaveFileAsync(health.Vaccine_certificate, genId.ToString(), "Vacc_Certificate.pdf"),
+                                Health_documents = await SaveFileAsync(health.Health_documents, genId.ToString(), "Health_Documents.pdf"),
+                                Date_Created = DateTime.UtcNow,
+                                Date_Modified = DateTime.UtcNow,
+                                Created_by = genId.ToString(),
+                                Modified_by = genId.ToString(),
+                                Status = "A"
+                            };
+
+                            dbcontext.EmployeeHealthInformation.Add(_health);
+                            dbcontext.SaveChanges();
+
+                        }
+                        transaction.Commit();
+                        dbcontext.ChangeTracker.Clear();
+                        return "Succeed";
+                    }
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    throw new Exception(ex.Message);
+                }
             }
-            _context.SaveChanges();
-            _context.ChangeTracker.Clear();
-            return "Succeed";
         }
      
         public GetHealthVM GetHealth(int Id)
@@ -489,52 +610,73 @@ namespace EmployeeOnboarding.Repository
         }
 
 
-//Add Banking Details 
+        //Add Banking Details 
 
         public async Task<string> AddBank(int genId, ExistingBankVM bank)
         {
-            var existingBank = _context.EmployeeExistingBankAccount.FirstOrDefault(e => e.EmpGen_Id == genId);
-            if (existingBank != null)
+            using (IDbContextTransaction transaction = _context.Database.BeginTransaction())
             {
-                existingBank.Account_name = bank.Account_name;
-                existingBank.Bank_name = bank.Bank_name;
-                existingBank.Bank_Branch = bank.Bank_Branch;
-                existingBank.Account_number = bank.Account_number;
-                existingBank.IFSC_code = bank.IFSC_code;
-                existingBank.Joint_Account = bank.Joint_Account;
-                existingBank.Proof_submitted = string.Join(",", bank.ProofSubmitted);
-                existingBank.Bank_Documents = await SaveFileAsync(bank.Bank_Documents, genId.ToString(), "Bank_documents.jpeg");
-                existingBank.Date_Modified = DateTime.UtcNow;
-                existingBank.Modified_by = genId.ToString();
-                existingBank.Status = "A";
-
-            }
-            else
-            {
-                // Add new record
-                var _bank = new EmployeeExistingBankAccount()
+                try
                 {
-                    EmpGen_Id = genId,
-                    Account_name = bank.Account_name,
-                    Bank_name = bank.Bank_name,
-                    Bank_Branch = bank.Bank_Branch,
-                    Account_number = bank.Account_number,
-                    IFSC_code = bank.IFSC_code,
-                    Joint_Account = bank.Joint_Account,
-                    Proof_submitted = string.Join(",", bank.ProofSubmitted),
-                    Bank_Documents = await SaveFileAsync(bank.Bank_Documents, genId.ToString(), "Bank_documents.jpg"),
-                    Date_Created = DateTime.UtcNow,
-                    Date_Modified = DateTime.UtcNow,
-                    Created_by = genId.ToString(),
-                    Modified_by = genId.ToString(),
-                    Status = "A"
-                };
+                    using (var scope = _serviceProvider.CreateScope())
+                    {
+                        var dbcontext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
-                _context.EmployeeExistingBankAccount.Add(_bank);
+                        var existingBank = _context.EmployeeExistingBankAccount.FirstOrDefault(e => e.EmpGen_Id == genId);
+                        if (existingBank != null)
+                        {
+                            existingBank.Account_name = bank.Account_name;
+                            existingBank.Bank_name = bank.Bank_name;
+                            existingBank.Bank_Branch = bank.Bank_Branch;
+                            existingBank.Account_number = bank.Account_number;
+                            existingBank.IFSC_code = bank.IFSC_code;
+                            existingBank.Joint_Account = bank.Joint_Account;
+                            existingBank.Proof_submitted = string.Join(",", bank.ProofSubmitted);
+                            existingBank.Bank_Documents = await SaveFileAsync(bank.Bank_Documents, genId.ToString(), "Bank_documents.jpeg");
+                            existingBank.Date_Modified = DateTime.UtcNow;
+                            existingBank.Modified_by = genId.ToString();
+                            existingBank.Status = "A";
+
+                            dbcontext.Update(existingBank);
+                            dbcontext.SaveChanges();
+                        }
+                        else
+                        {
+                            // Add new record
+                            var _bank = new EmployeeExistingBankAccount()
+                            {
+                                EmpGen_Id = genId,
+                                Account_name = bank.Account_name,
+                                Bank_name = bank.Bank_name,
+                                Bank_Branch = bank.Bank_Branch,
+                                Account_number = bank.Account_number,
+                                IFSC_code = bank.IFSC_code,
+                                Joint_Account = bank.Joint_Account,
+                                Proof_submitted = string.Join(",", bank.ProofSubmitted),
+                                Bank_Documents = await SaveFileAsync(bank.Bank_Documents, genId.ToString(), "Bank_documents.jpg"),
+                                Date_Created = DateTime.UtcNow,
+                                Date_Modified = DateTime.UtcNow,
+                                Created_by = genId.ToString(),
+                                Modified_by = genId.ToString(),
+                                Status = "A"
+                            };
+
+                            dbcontext.EmployeeExistingBankAccount.Add(_bank);
+                            dbcontext.SaveChanges();
+
+                        }
+                        transaction.Commit();
+                        dbcontext.ChangeTracker.Clear();
+                        return "Succeed";
+                    }
+                }
+
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    throw new Exception(ex.Message);
+                }
             }
-            _context.SaveChanges();
-            _context.ChangeTracker.Clear();
-            return "Succeed";
         }
 
         public GetExistingBankVM GetBank(int genId)

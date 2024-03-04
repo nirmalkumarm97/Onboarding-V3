@@ -6,9 +6,9 @@ namespace EmployeeOnboarding.Contracts
 {
     public interface IUserRepository
     {
-        Task<List<EmployeeEducationDetails>> AddEducation(int genId, List<EducationVM> educations);
+        Task<string>AddEducation(int genId, List<EducationVM> educations);
         List<GetEducationVM> GetEducation(int genId);
-        Task<List<EmployeeCertifications>> AddCertificate(int genId, List<CertificateVM> certificates);
+        Task<string> AddCertificate(int genId, List<CertificateVM> certificates);
         List<getCertificateVM> GetCertificate(int genId); 
         Task<List<EmployeeExperienceDetails>> AddExperiences(int genId, List<WorkExperienceVM> experiences);
         List<getExperienceVM> GetCompanyByEmpId(int genId);
