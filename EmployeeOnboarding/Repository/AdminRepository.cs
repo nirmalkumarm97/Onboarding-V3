@@ -73,7 +73,7 @@ namespace EmployeeOnboarding.Repository
                                   select new Dashboard1VM()
                                   {
                                       Login_Id = l.Id,
-                                      EmpGen_Id = a.EmpGen_Id,
+                                      EmpGen_Id = e.Id,
                                       Contact_no = e.Contact_no,
                                       Name = l.Name,
                                       DateModified = a.Date_Modified,
