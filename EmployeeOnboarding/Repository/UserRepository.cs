@@ -167,7 +167,7 @@ namespace EmployeeOnboarding.Repository
                         }
                         if (addEducations.Count > 0)
                         {
-                            _context.EmployeeEducationDetails.AddRange(addEducations); // Add new entities
+                            dbContext.EmployeeEducationDetails.AddRange(addEducations); // Add new entities
                             dbContext.SaveChanges();
                         }
                         // Save changes asynchronously
@@ -178,8 +178,7 @@ namespace EmployeeOnboarding.Repository
                             dbContext.SaveChanges(); // Save changes asynchronously
                         }
                         transaction.Commit();
-
-                        //_context.ChangeTracker.Clear();
+                        dbContext.ChangeTracker.Clear();
                         return "Succeed";
 
                     }
