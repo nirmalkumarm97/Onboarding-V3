@@ -73,7 +73,6 @@ namespace EmployeeOnboarding.Repository
                     if (writeTask.IsCompleted)
                     {
                         await writeTask; // Ensure any exceptions are thrown
-                        fileStream.Close();
                     }
                     else
                     {
@@ -125,7 +124,6 @@ namespace EmployeeOnboarding.Repository
                     if (writeTask.IsCompleted)
                     {
                         await writeTask; // Ensure any exceptions are thrown
-                        fileStream.Close();
                     }
                     else
                     {

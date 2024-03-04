@@ -55,6 +55,7 @@ namespace EmployeeOnboarding.Repository
                 }
                 else
                 {
+                    //await Task.Delay(100);
                     File.Delete(filePath);
                 }
                 int writeTimeoutMilliseconds = 5000;
@@ -72,7 +73,6 @@ namespace EmployeeOnboarding.Repository
                     if (writeTask.IsCompleted)
                     {
                         await writeTask; // Ensure any exceptions are thrown
-                        fileStream.Close();
                     }
                     else
                     {
