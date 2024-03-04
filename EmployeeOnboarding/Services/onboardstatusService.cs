@@ -57,7 +57,7 @@ namespace EmployeeOnboarding.Services
                 _context.SaveChanges();
             }
 
-            var official = _context.EmployeeGeneralDetails.FirstOrDefault(e => e.Login_ID == genId);
+            var official = _context.EmployeeGeneralDetails.FirstOrDefault(e => e.Id == genId);
 
             official.Empid = onboardstatus.Emp_id;
             official.Official_EmailId = onboardstatus.Official_EmailId;
