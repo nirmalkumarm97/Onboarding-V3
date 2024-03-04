@@ -648,43 +648,88 @@ namespace EmployeeOnboarding.Repository
             }
         }
 
-        public async Task<dynamic> GetStatusByLoginId(int loginId)
+        public async Task<List<StatusCardResponse>> GetStatusByLoginId(int loginId)
         {
             try
             {
+                List<StatusCardResponse> UserResponse = new List<StatusCardResponse>();
+                List<StatusCardResponse> Adminresponse = new List<StatusCardResponse>();
 
-                var role = _context.Login.Where(x => x.Id == loginId).Select(x => x.Role).FirstOrDefault();
-                if (role == "U")
+
+                var role = _context.Login.Where(x => x.Id == loginId).FirstOrDefault();
+                if (role.Role == "U")
                 {
+                    if (role.Invited_Status == "Invited")
+                    {
+                        StatusCardResponse userdet = (from a in _context.Login
+                                                            where a.Role == "U" && a.Status == "A"
+                                                            where a.Id == loginId
+                                                            select new StatusCardResponse
+                                                            {
+                                                                LoginId = a.Id,
+                                                                Email = a.EmailId,
+                                                                Status = a.Invited_Status,
+                                                                Role = a.Role
+                                                            }).FirstOrDefault();
+                        UserResponse.Add(userdet);
+                        return UserResponse;
 
-                    List<StatusCardResponse> detail = (from a in _context.Login
-                                                        join b in _context.EmployeeGeneralDetails on a.Id equals b.UserId
-                                                        where a.Role == "U" && a.Status == "A" && b.Status == "A" where b.UserId == loginId
-                                                        select new StatusCardResponse
-                                                        {
-                                                            UserId = (int)b.UserId,
-                                                            GenId = b.Id,
-                                                            Email = b.Personal_Emailid,
-                                                            Status = a.Invited_Status,
-                                                            Role = a.Role
-                                                        }).ToList();
-                    return detail;
+                    }
+                    else
+                    {
+
+                        StatusCardResponse OtherStatusUser = (from a in _context.Login
+                                                           join b in _context.EmployeeGeneralDetails on a.Id equals b.UserId into
+                                                           logGen
+                                                           from lg in logGen.DefaultIfEmpty()
+                                                           where a.Role == "U" && a.Status == "A" && lg.Status == "A"
+                                                           where lg.UserId == loginId
+                                                           select new StatusCardResponse
+                                                           {
+                                                               LoginId = a.Id,
+                                                               UserId = lg.UserId,
+                                                               GenId = lg.Id,
+                                                               Email = a.EmailId,
+                                                               Status = a.Invited_Status,
+                                                               Role = a.Role
+                                                           }).FirstOrDefault();
+                        UserResponse.Add(OtherStatusUser);
+
+                        return UserResponse;
+                    }
 
                 }
-                if (role == "A")
+                if (role.Role == "A")
                 {
-                    List<StatusCardResponse> details = (from a in _context.Login
-                                                        join b in _context.EmployeeGeneralDetails on a.Id equals b.UserId
-                                                        where a.Role == "U" && a.Status == "A" && b.Status == "A"
+                    List<StatusCardResponse> InvitedUsers = (from a in _context.Login
+                                                        where a.Role == "U" && a.Status == "A" && a.Invited_Status == "Invited"
                                                         select new StatusCardResponse
                                                         {
-                                                            UserId = (int)b.UserId,
-                                                            GenId = b.Id,
-                                                            Email = b.Personal_Emailid,
+                                                            LoginId = a.Id,
+                                                            Email = a.EmailId,
                                                             Status = a.Invited_Status,
                                                             Role = a.Role
                                                         }).ToList();
-                    return details;
+
+                    Adminresponse.AddRange(InvitedUsers);
+
+
+                    List<StatusCardResponse> OtherUsers = (from a in _context.Login
+                                                        join b in _context.EmployeeGeneralDetails on a.Id equals b.UserId into
+                                                        logGen
+                                                        from lg in logGen.DefaultIfEmpty()
+                                                        where a.Role == "U" && a.Status == "A" && lg.Status == "A" && a.Invited_Status != "Invited"
+                                                        select new StatusCardResponse
+                                                        {
+                                                            LoginId = a.Id,
+                                                            UserId = lg.UserId,
+                                                            GenId = lg.Id,
+                                                            Email = a.EmailId,
+                                                            Status = a.Invited_Status,
+                                                            Role = a.Role
+                                                        }).ToList();
+                    return OtherUsers;
+
 
                 }
                 return null;

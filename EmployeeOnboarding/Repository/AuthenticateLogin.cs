@@ -10,6 +10,9 @@ using Microsoft.EntityFrameworkCore.Storage;
 using System.Text.Encodings.Web;
 using System.Linq;
 using EmployeeOnboarding.Helper;
+using EmployeeOnboarding.Response;
+using DocumentFormat.OpenXml.Wordprocessing;
+using EmployeeOnboarding.Data.Enum;
 
 namespace EmployeeOnboarding.Repository
 {
@@ -55,7 +58,7 @@ namespace EmployeeOnboarding.Repository
             return _context.Login.ToList();
         }
 
-        public async Task<bool> LoginInvite(List<logininviteVM> logindet)
+        public async Task<string> LoginInvite(List<logininviteVM> logindet)
         {
             try
             {
@@ -63,11 +66,21 @@ namespace EmployeeOnboarding.Repository
                                            let check = _context.Login.Where(x => x.EmailId == i.Emailid).FirstOrDefault()
                                            select (i, check))
                 {
-                    if (check == null)
+                    string tempPass = Guid.NewGuid().ToString().Replace("-", "").Substring(0, 8); // Change length as needed
+
+                    if (check != null)
                     {
                         // int Verifyotp = otpgeneration();
-                        string tempPass = Guid.NewGuid().ToString().Replace("-", "").Substring(0, 8); // Change length as needed
 
+                        check.Name = i.Name;
+                        check.EmailId = i.Emailid;
+                        check.Password = tempPass;
+                        check.Date_Modified = DateTime.UtcNow;
+                        _context.Login.Update(check);
+                        _context.SaveChanges();
+                    }
+                    else
+                    {
                         var _logindet = new Login()
                         {
                             Name = i.Name,
@@ -79,31 +92,26 @@ namespace EmployeeOnboarding.Repository
                             Created_by = "Admin",
                             Modified_by = "Admin",
                             Status = "A",
-                            Role = "U",
-                           // OTP = Verifyotp
+                            Role = "U"
+                            // OTP = Verifyotp
                         };
 
                         _context.Login.Add(_logindet);
                         _context.SaveChanges();
-
-                        //var callbackUrl = "http://localhost:7136/swagger/index.html";
-                        ////var callbackUrl = "http://localhost:7136/api/logindetails/confirm-login";
-                        ///
-                        //await _emailSender.SendEmailAsync(i.Emailid, "Confirm your email",
-                        //            $"Please confirm your account by entering the OTP by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'> clicking here</a>. Your OTP is " + Verifyotp);
-                        var callbackUrl = "https://onboarding-dev.ideassionlive.in/";
-                       // var callbackUrl = "http://192.168.0.139:3000/otp-verification";
-                        await _emailSender.SendEmailAsync(i.Emailid, "Confirm Your Email", $"Please enter into your login by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'> clicking here</a>. Your email is {i.Emailid} and password is {tempPass}");
-
                     }
-                    else
-                    {
-                        throw new Exception($"{i.Emailid} already exists");
-                    }
+
+                    //var callbackUrl = "http://localhost:7136/swagger/index.html";
+                    ////var callbackUrl = "http://localhost:7136/api/logindetails/confirm-login";
+                    ///
+                    //await _emailSender.SendEmailAsync(i.Emailid, "Confirm your email",
+                    //            $"Please confirm your account by entering the OTP by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'> clicking here</a>. Your OTP is " + Verifyotp);
+                    var callbackUrl = "https://onboarding-dev.ideassionlive.in/";
+                    // var callbackUrl = "http://192.168.0.139:3000/otp-verification";
+                    await _emailSender.SendEmailAsync(i.Emailid, "Confirm Your Email", $"Please enter into your login by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'> clicking here</a>. Your email is {i.Emailid} and password is {tempPass}");
+
                 }
 
-                return true;
-
+                return "Succeed";
             }
 
             catch (Exception e)
