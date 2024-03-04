@@ -27,6 +27,16 @@ namespace EmployeeOnboarding.Services
                 approved.Status = "A";
                 _context.ApprovalStatus.Update(approved);
                 _context.SaveChanges();
+
+
+                var User = _context.EmployeeGeneralDetails.Where(x => x.Id == genId).Select(x => x.UserId).FirstOrDefault();
+                var  login = _context.Login.Where(x => x.Id == User).FirstOrDefault();
+                if(login != null)
+                {
+                    login.Invited_Status = "Approved";
+                }
+                _context.Login.Update(login);
+                _context.SaveChanges();
             }
             else
             {
@@ -66,9 +76,9 @@ namespace EmployeeOnboarding.Services
             _context.SaveChanges();
         }
 
-        public void ChangeCancelStatus(int Empid,commentVM onboardstatus)
+        public void ChangeCancelStatus(int genId,commentVM onboardstatus)
         {
-            var reject = _context.ApprovalStatus.FirstOrDefault(e => e.EmpGen_Id == Empid && e.Current_Status == 2);
+            var reject = _context.ApprovalStatus.FirstOrDefault(e => e.EmpGen_Id == genId && e.Current_Status == 2);
 
             if (reject != null)
             {
@@ -81,10 +91,19 @@ namespace EmployeeOnboarding.Services
                 reject.Status = "A";
                 _context.ApprovalStatus.Update(reject);
                 _context.SaveChanges();
+
+                var User = _context.EmployeeGeneralDetails.Where(x => x.Id == genId).Select(x => x.UserId).FirstOrDefault();
+                var login = _context.Login.Where(x => x.Id == User).FirstOrDefault();
+                if (login != null)
+                {
+                    login.Invited_Status = "Rejected";
+                }
+                _context.Login.Update(login);
+                _context.SaveChanges();
             }
             else
             {
-                var rejected = _context.ApprovalStatus.FirstOrDefault(e => e.EmpGen_Id == Empid && e.Current_Status == 3);
+                var rejected = _context.ApprovalStatus.FirstOrDefault(e => e.EmpGen_Id == genId && e.Current_Status == 3);
 
                 if (rejected != null)
                 {
@@ -97,7 +116,7 @@ namespace EmployeeOnboarding.Services
                 }
                 var _onboard = new ApprovalStatus()
                 {
-                    EmpGen_Id = Empid,
+                    EmpGen_Id = genId,
                     Current_Status = (int)Status.Rejected,
                     Comments = onboardstatus.Comments,
                     Date_Created = DateTime.UtcNow,
