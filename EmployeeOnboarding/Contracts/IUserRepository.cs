@@ -17,7 +17,7 @@ namespace EmployeeOnboarding.Contracts
         Task<string> AddHealth(int genId, HealthVM health);
         GetHealthVM GetHealth(int Id);
         Task<string> AddBank(int genId, ExistingBankVM bank);
-        public GetExistingBankVM GetBank(int genId);
+        GetExistingBankVM GetBank(int genId);
 
 
 

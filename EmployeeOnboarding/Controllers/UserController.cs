@@ -1,8 +1,13 @@
-﻿using EmployeeOnboarding.Contracts;
+﻿using DocumentFormat.OpenXml.Drawing.Charts;
+using DocumentFormat.OpenXml.Office2010.Excel;
+using EmployeeOnboarding.Contracts;
+using EmployeeOnboarding.Repository;
+using EmployeeOnboarding.Services;
 using EmployeeOnboarding.ViewModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using OnboardingWebsite.Models;
+using System.ComponentModel.Design;
 
 namespace EmployeeOnboarding.Controllers
 {
@@ -10,7 +15,8 @@ namespace EmployeeOnboarding.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        private IUserRepository _userRepository;
+        private readonly IUserRepository _userRepository;
+
         public UserController(IUserRepository userRepository)
         {
             _userRepository = userRepository;
@@ -19,44 +25,86 @@ namespace EmployeeOnboarding.Controllers
         [HttpPost("add-education/{genId}")]
         public async Task<IActionResult> AddEducation(int genId, [FromBody] List<EducationVM> educations)
         {
-            var data = _userRepository.AddEducation(genId, educations);
-            return Ok(data + "Sucess");
+            var response = await _userRepository.AddEducation(genId , educations);
+            if (response != null)
+            {
+                return Ok(response);
+            }
+            else
+            {
+                return NoContent();
+            }
         }
 
 
         [HttpPost("add-certificate/{genId}")]
         public async Task<IActionResult> AddCertificate(int genId, [FromBody] List<CertificateVM> certificates)
         {
-            var data = _userRepository.AddCertificate(genId, certificates);
-            return Ok(data + "Sucess");
+            var response = await _userRepository.AddCertificate(genId, certificates);
+            if (response != null)
+            {
+                return Ok(response);
+            }
+            else
+            {
+                return NoContent();
+            }
         }
 
         [HttpPost("add-experience/{genId}")]
         public async Task<IActionResult> AddExperience(int genId, [FromBody] List<WorkExperienceVM> experiences)
         {
-            var data = _userRepository.AddExperiences(genId, experiences);
-            return Ok(data + "Sucess");
+            var response = await _userRepository.AddExperiences(genId, experiences);
+            if (response != null)
+            {
+                return Ok(response);
+            }
+            else
+            {
+                return NoContent();
+            }
         }
 
         [HttpPost("add-reference/{genId}")]
-        public IActionResult AddReference(int genId, [FromBody] ReferenceVM reference)
+        public async Task<IActionResult> AddReference(int genId, [FromBody] ReferenceVM reference)
         {
-            _userRepository.AddReference(genId, reference);
-            return Ok();
+            var response = await _userRepository.AddReference(genId, reference);
+            if (response != null)
+            {
+                return Ok(response);
+            }
+            else
+            {
+                return NoContent();
+            }
         }
 
         [HttpPost("add-health/{genId}")]
-        public IActionResult AddHealth(int genId, [FromBody] HealthVM health)
+        public async Task<IActionResult> AddHealth(int genId, [FromBody] HealthVM health)
         {
-            _userRepository.AddHealth(genId, health);
-            return Ok();
+            var response = await _userRepository.AddHealth(genId, health);
+            if (response != null)
+            {
+                return Ok(response);
+            }
+            else
+            {
+                return NoContent();
+            }
         }
 
         [HttpPost("add-existing-bank/{genId}")]
-        public IActionResult AddBank(int genId, [FromBody] ExistingBankVM health)
+        public async Task<IActionResult> AddBank(int genId, [FromBody] ExistingBankVM health)
         {
-            _userRepository.AddBank(genId, health);
-            return Ok();
+            var response = await _userRepository.AddBank(genId, health);
+            if (response != null)
+            {
+                return Ok(response);
+            }
+            else
+            {
+                return NoContent();
+            }
         }
 
 

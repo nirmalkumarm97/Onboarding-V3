@@ -444,53 +444,48 @@ namespace EmployeeOnboarding.Repository
             using (IDbContextTransaction transaction = _context.Database.BeginTransaction())
             {
                 try
-                {
-                    using (var scope = _serviceProvider.CreateScope())
+                {     
+                    EmployeeReferenceDetails existingreference = _context.EmployeeReferenceDetails.Where(e => e.EmpGen_Id == genId).FirstOrDefault();
+                    if (existingreference != null)
                     {
-                        var dbcontext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-                        var existingreference = _context.EmployeeReferenceDetails.FirstOrDefault(e => e.EmpGen_Id == genId);
-                        if (existingreference != null)
+                        existingreference.Referral_name = reference.Referral_name;
+                        existingreference.Designation = reference.Designation;
+                        existingreference.Company_name = reference.Company_name;
+                        existingreference.Contact_number = reference.Contact_number;
+                        existingreference.Email_Id = reference.Email_Id;
+                        existingreference.Authorize = reference.Authorize;
+                        existingreference.Date_Modified = DateTime.UtcNow;
+                        existingreference.Modified_by = genId.ToString();
+                        existingreference.Status = "A";
+                        _context.Update(existingreference);
+                        _context.SaveChanges();
+                    }
+                    else
+                    {
+                        // Add new record
+                        var _reference = new EmployeeReferenceDetails()
                         {
-                            existingreference.Referral_name = existingreference.Referral_name;
-                            existingreference.Designation = existingreference.Designation;
-                            existingreference.Company_name = existingreference.Company_name;
-                            existingreference.Contact_number = existingreference.Contact_number;
-                            existingreference.Email_Id = existingreference.Email_Id;
-                            existingreference.Authorize = existingreference.Authorize;
-                            existingreference.Date_Modified = DateTime.UtcNow;
-                            existingreference.Modified_by = genId.ToString();
-                            existingreference.Status = "A";
-                            dbcontext.Update(existingreference);
-                            dbcontext.SaveChanges();
-                        }
-                        else
-                        {
-                            // Add new record
-                            var _reference = new EmployeeReferenceDetails()
-                            {
-                                EmpGen_Id = genId,
-                                Referral_name = reference.Referral_name,
-                                Designation = reference.Designation,
-                                Company_name = reference.Company_name,
-                                Contact_number = reference.Contact_number,
-                                Email_Id = reference.Email_Id,
-                                Authorize = reference.Authorize,
-                                Date_Created = DateTime.UtcNow,
-                                Date_Modified = DateTime.UtcNow,
-                                Created_by = genId.ToString(),
-                                Modified_by = genId.ToString(),
-                                Status = "A"
-                            };
-                           
-                                dbcontext.EmployeeReferenceDetails.Add(_reference);
-                                dbcontext.SaveChanges();
+                            EmpGen_Id = genId,
+                            Referral_name = reference.Referral_name,
+                            Designation = reference.Designation,
+                            Company_name = reference.Company_name,
+                            Contact_number = reference.Contact_number,
+                            Email_Id = reference.Email_Id,
+                            Authorize = reference.Authorize,
+                            Date_Created = DateTime.UtcNow,
+                            Date_Modified = DateTime.UtcNow,
+                            Created_by = genId.ToString(),
+                            Modified_by = genId.ToString(),
+                            Status = "A"
+                        };
 
-                        }
-                        transaction.Commit();
-                        dbcontext.ChangeTracker.Clear();
-                        return "Succeed";
+                        _context.EmployeeReferenceDetails.Add(_reference);
+                        _context.SaveChanges();
 
                     }
+                    transaction.Commit();
+                    _context.ChangeTracker.Clear();
+                    return "succeed";
                 }
                 catch (Exception ex)
                 {
