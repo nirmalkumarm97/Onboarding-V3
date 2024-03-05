@@ -444,8 +444,7 @@ namespace EmployeeOnboarding.Repository
             using (IDbContextTransaction transaction = _context.Database.BeginTransaction())
             {
                 try
-                {
-                   
+                {     
                     EmployeeReferenceDetails existingreference = _context.EmployeeReferenceDetails.Where(e => e.EmpGen_Id == genId).FirstOrDefault();
                     if (existingreference != null)
                     {
