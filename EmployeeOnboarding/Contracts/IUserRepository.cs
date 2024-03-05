@@ -10,7 +10,7 @@ namespace EmployeeOnboarding.Contracts
         List<GetEducationVM> GetEducation(int genId);
         Task<string> AddCertificate(int genId, List<CertificateVM> certificates);
         List<getCertificateVM> GetCertificate(int genId); 
-        Task<List<EmployeeExperienceDetails>> AddExperiences(int genId, List<WorkExperienceVM> experiences);
+        Task<string> AddExperiences(int genId, List<WorkExperienceVM> experiences);
         List<getExperienceVM> GetCompanyByEmpId(int genId);
         Task<string> AddReference(int genId, ReferenceVM reference);
         GetReferenceVM Getreference(int genId);

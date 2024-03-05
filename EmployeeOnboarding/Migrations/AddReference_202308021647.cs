@@ -19,7 +19,7 @@ namespace EmployeeOnboarding.Migrations
                .WithColumn("Referral_name").AsString(100).Nullable()
                .WithColumn("Designation").AsString(100).Nullable()
                .WithColumn("Company_name").AsString(100).Nullable()
-               .WithColumn("Contact_number").AsInt32().Nullable()
+               .WithColumn("Contact_number").AsInt64().Nullable()
                .WithColumn("Email_Id").AsString(100).Nullable()
                .WithColumn("Authorize").AsBoolean().Nullable()
                .WithColumn("Date_Created").AsDateTime().Nullable()
