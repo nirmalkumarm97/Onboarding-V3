@@ -321,7 +321,7 @@ namespace EmployeeOnboarding.Repository
 
 
         //AddExperience
-        public async Task<List<EmployeeExperienceDetails>> AddExperiences(int genId, List<WorkExperienceVM> experiences)
+        public async Task<string> AddExperiences(int genId, List<WorkExperienceVM> experiences)
         {
             using (IDbContextTransaction transaction = _context.Database.BeginTransaction())
             {
@@ -330,7 +330,9 @@ namespace EmployeeOnboarding.Repository
                     using (var scope = _serviceProvider.CreateScope())
                     {
                         var dbcontext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-                        List<EmployeeExperienceDetails> experienceVMs = new List<EmployeeExperienceDetails>();
+                        List<EmployeeExperienceDetails> addExperiences = new List<EmployeeExperienceDetails>();
+                        List<EmployeeExperienceDetails> updateExperiences = new List<EmployeeExperienceDetails>();
+
                         int index1 = 1; // Initialize the Company_no sequence
                         var existingExperiences = dbcontext.EmployeeExperienceDetails.Where(e => e.EmpGen_Id == genId).ToList();
                         foreach (var experience in experiences)
@@ -354,6 +356,8 @@ namespace EmployeeOnboarding.Repository
                                 existingExperience.Date_Modified = DateTime.UtcNow;
                                 existingExperience.Modified_by = genId.ToString();
                                 existingExperience.Status = "A";
+
+                                updateExperiences.Add(existingExperience);
                             }
                             else
                             {
@@ -378,36 +382,54 @@ namespace EmployeeOnboarding.Repository
                                     Modified_by = genId.ToString(),
                                     Status = "A"
                                 };
-                                experienceVMs.Add(_experience);
+                                addExperiences.Add(_experience);
 
                             }
 
                             index1++;
 
                         }
-                        dbcontext.EmployeeExperienceDetails.AddRange(experienceVMs);
-                        dbcontext.SaveChanges();
-                        transaction.Commit();
-                        dbcontext.ChangeTracker.Clear();
-                        //pending status
-                        var _onboard = new ApprovalStatus()
+                        if (addExperiences.Count > 0)
                         {
-                            EmpGen_Id = genId,
-                            Current_Status = (int)Status.Pending,
-                            Comments = "",
-                            Date_Created = DateTime.UtcNow,
-                            Date_Modified = DateTime.UtcNow,
-                            Created_by = genId.ToString(),
-                            Modified_by = "Admin",
-                            Status = "A",
-                        };
-                        _context.ApprovalStatus.Add(_onboard);
-                        dbcontext.SaveChanges();
+                            dbcontext.EmployeeExperienceDetails.AddRange(addExperiences);
+                            dbcontext.SaveChanges();
+                        }
+                        if (updateExperiences.Count > 0)
+                        {
+                            dbcontext.EmployeeExperienceDetails.UpdateRange(updateExperiences);
+                            dbcontext.SaveChanges();
+                        }
+
+                        //pending status
+                        var existingpending = dbcontext.ApprovalStatus.Where(x => x.EmpGen_Id == genId).FirstOrDefault();
+                        if (existingpending != null)
+                        {
+                            existingpending.EmpGen_Id = genId;
+                            existingpending.Current_Status = (int)Status.Pending;
+                            existingpending.Comments = "";
+                            existingpending.Date_Modified = DateTime.UtcNow;
+                            existingpending.Modified_by = genId.ToString();
+                            dbcontext.ApprovalStatus.Update(existingpending);
+                            dbcontext.SaveChanges();
+                        }
+                        else
+                        {
+                            var _onboard = new ApprovalStatus()
+                            {
+                                EmpGen_Id = genId,
+                                Current_Status = (int)Status.Pending,
+                                Comments = "",
+                                Date_Created = DateTime.UtcNow,
+                                Date_Modified = DateTime.UtcNow,
+                                Created_by = genId.ToString(),
+                                Status = "A",
+                            };
+                            dbcontext.ApprovalStatus.Add(_onboard);
+                            dbcontext.SaveChanges();
+                        }
                         transaction.Commit();
                         dbcontext.ChangeTracker.Clear();
-                        var id = experienceVMs.Select(x => x.EmpGen_Id).FirstOrDefault();
-
-                        return experienceVMs;
+                        return "Succeed";
 
                     }
                 }
