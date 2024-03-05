@@ -18,11 +18,5 @@ namespace EmployeeOnboarding.Contracts
         GetHealthVM GetHealth(int Id);
         Task<string> AddBank(int genId, ExistingBankVM bank);
         GetExistingBankVM GetBank(int genId);
-
-
-
-
-
-
     }
 }
