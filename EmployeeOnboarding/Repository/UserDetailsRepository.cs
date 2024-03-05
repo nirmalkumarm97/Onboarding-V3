@@ -201,7 +201,7 @@ namespace EmployeeOnboarding.Repository
                             existingGeneral.Gender = personalInfoRequest.generalVM.Gender;
                             existingGeneral.MaritalStatus = (int)personalInfoRequest.generalVM.MaritalStatus;
 
-                            DateOnly DateOfMarriage = DateOnly.Parse(personalInfoRequest.generalVM.DateOfMarriage);
+                            DateOnly? DateOfMarriage = personalInfoRequest.generalVM.DateOfMarriage != String.Empty ? DateOnly.Parse(personalInfoRequest.generalVM.DateOfMarriage) : null;
                             existingGeneral.DateOfMarriage = DateOfMarriage;
 
                             existingGeneral.BloodGrp = personalInfoRequest.generalVM.BloodGrp;
@@ -225,7 +225,7 @@ namespace EmployeeOnboarding.Repository
                                 Nationality = personalInfoRequest.generalVM.Nationality,
                                 Gender = personalInfoRequest.generalVM.Gender,
                                 MaritalStatus = (int)personalInfoRequest.generalVM.MaritalStatus,
-                                DateOfMarriage = DateOnly.Parse(personalInfoRequest.generalVM.DateOfMarriage),
+                                DateOfMarriage = personalInfoRequest.generalVM.DateOfMarriage != String.Empty ? DateOnly.Parse(personalInfoRequest.generalVM.DateOfMarriage) : null,
                                 BloodGrp = personalInfoRequest.generalVM.BloodGrp,
                                 Profile_pic = await SaveImageFile(personalInfoRequest.generalVM.Profile_pic, personalInfoRequest.loginId.ToString(), "Profile.jpg"),
                                 Date_Created = DateTime.UtcNow,

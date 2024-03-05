@@ -92,8 +92,8 @@ namespace EmployeeOnboarding.Repository
                                    where e.Status == "A" 
                                    join al in _context.ApprovalStatus on e.Id equals al.EmpGen_Id
                                    where  al.Status == "A" && al.Current_Status == 1
-                                   join ec in _context.EmployeeContactDetails on e.Id equals ec.EmpGen_Id
-                                   where ec.Status == "A"
+                                   //join ec in _context.EmployeeContactDetails on e.Id equals ec.EmpGen_Id
+                                   //where ec.Status == "A"
                                    select new DashboardVM()
                                    {
                                        EmpGen_Id = e.Id,
