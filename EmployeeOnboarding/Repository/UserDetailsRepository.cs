@@ -36,6 +36,7 @@ namespace EmployeeOnboarding.Repository
         {
             await fileStream.WriteAsync(data, 0, data.Length, cancellationToken);
             await fileStream.FlushAsync();
+                  fileStream.Close();
         }
 
         private async Task<string> SaveImageFile(string image, string Id, string fileName)

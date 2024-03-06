@@ -522,7 +522,7 @@ namespace EmployeeOnboarding.Repository
                         _context.ChangeTracker.Clear();
                         return genId;
                     }
-                    else throw new NullReferenceException("Request Cannot be null");
+                    return 0;
                 }
                 catch (Exception ex)
                 {
