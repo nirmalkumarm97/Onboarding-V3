@@ -181,7 +181,7 @@ namespace EmployeeOnboarding.Repository
                             }
                             transaction.Commit();
                             dbContext.ChangeTracker.Clear();
-                            return "Succeed";
+                            return $"Succeed,GenId : {genId}";
                         }
                     }
                     else throw new NullReferenceException("Request Cannot be null");
@@ -296,7 +296,7 @@ namespace EmployeeOnboarding.Repository
                             dbcontext.ChangeTracker.Clear();
                             var id = AddCertificates.Select(x => x.EmpGen_Id).FirstOrDefault();
 
-                            return "Succeed";
+                            return $"Succeed,GenId : {genId}";
                         }
                     }
                     else throw new NullReferenceException("Request Cannot be null");
@@ -438,7 +438,7 @@ namespace EmployeeOnboarding.Repository
                             }
                             transaction.Commit();
                             dbcontext.ChangeTracker.Clear();
-                            return "Succeed";
+                            return $"Succeed,GenId : {genId}";
 
                         }
                     }
@@ -520,7 +520,7 @@ namespace EmployeeOnboarding.Repository
                         }
                         transaction.Commit();
                         _context.ChangeTracker.Clear();
-                        return "succeed";
+                        return $"Succeed,GenId : {genId}";
                     }
                     else throw new NullReferenceException("Request Cannot be null");
                 }
@@ -612,7 +612,7 @@ namespace EmployeeOnboarding.Repository
                             }
                             transaction.Commit();
                             dbcontext.ChangeTracker.Clear();
-                            return "Succeed";
+                            return $"Succeed,GenId : {genId}";
                         }
                     }
                     else throw new NullReferenceException("Request Cannot be null");
@@ -704,7 +704,7 @@ namespace EmployeeOnboarding.Repository
                             }
                             transaction.Commit();
                             dbcontext.ChangeTracker.Clear();
-                            return "Succeed";
+                            return $"Succeed,GenId : {genId}";
                         }
                     }
                     else throw new NullReferenceException("Request Cannot be null");
