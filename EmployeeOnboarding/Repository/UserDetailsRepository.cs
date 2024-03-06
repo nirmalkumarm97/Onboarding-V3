@@ -35,6 +35,7 @@ namespace EmployeeOnboarding.Repository
         private async Task WriteToFileAsync(FileStream fileStream, byte[] data, CancellationToken cancellationToken)
         {
             await fileStream.WriteAsync(data, 0, data.Length, cancellationToken);
+            await fileStream.FlushAsync();
         }
 
         private async Task<string> SaveImageFile(string image, string Id, string fileName)
@@ -138,7 +139,7 @@ namespace EmployeeOnboarding.Repository
             }
         }
 
-        public async Task<string> AddPersonalInfo(bool directadd, PersonalInfoRequest personalInfoRequest)
+        public async Task<int> AddPersonalInfo(bool directadd, PersonalInfoRequest personalInfoRequest)
         {
             using (IDbContextTransaction transaction = _context.Database.BeginTransaction())
             {
@@ -500,7 +501,7 @@ namespace EmployeeOnboarding.Repository
                         _context.SaveChanges();
                         transaction.Commit();
                         _context.ChangeTracker.Clear();
-                        return $"Succeed , GenId : {GenId}";
+                        return GenId;
 
                     }
                     else

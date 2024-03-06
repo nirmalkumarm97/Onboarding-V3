@@ -94,9 +94,9 @@ namespace EmployeeOnboarding.Controllers
         }
 
         [HttpPost("add-existing-bank/{genId}")]
-        public async Task<IActionResult> AddBank(int genId, [FromBody] ExistingBankVM health)
+        public async Task<IActionResult> AddBank(int genId, [FromBody] ExistingBankVM bank)
         {
-            var response = await _userRepository.AddBank(genId, health);
+            var response = await _userRepository.AddBank(genId, bank);
             if (response != null)
             {
                 return Ok(response);
