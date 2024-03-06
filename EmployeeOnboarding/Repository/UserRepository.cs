@@ -98,7 +98,7 @@ namespace EmployeeOnboarding.Repository
         }
 
         //Education details
-        public async Task<string> AddEducation(int genId, List<EducationVM> educations)
+        public async Task<int> AddEducation(int genId, List<EducationVM> educations)
         {
             using (IDbContextTransaction transaction = _context.Database.BeginTransaction())
             {
@@ -181,7 +181,7 @@ namespace EmployeeOnboarding.Repository
                             }
                             transaction.Commit();
                             dbContext.ChangeTracker.Clear();
-                            return $"Succeed,GenId : {genId}";
+                            return genId;
                         }
                     }
                     else throw new NullReferenceException("Request Cannot be null");
@@ -218,7 +218,7 @@ namespace EmployeeOnboarding.Repository
 
         //AddCertificates
 
-        public async Task<string> AddCertificate(int genId, List<CertificateVM> certificates)
+        public async Task<int> AddCertificate(int genId, List<CertificateVM> certificates)
         {
             using (IDbContextTransaction transaction = _context.Database.BeginTransaction())
             {
@@ -296,7 +296,7 @@ namespace EmployeeOnboarding.Repository
                             dbcontext.ChangeTracker.Clear();
                             var id = AddCertificates.Select(x => x.EmpGen_Id).FirstOrDefault();
 
-                            return $"Succeed,GenId : {genId}";
+                            return genId;
                         }
                     }
                     else throw new NullReferenceException("Request Cannot be null");
@@ -328,7 +328,7 @@ namespace EmployeeOnboarding.Repository
 
 
         //AddExperience
-        public async Task<string> AddExperiences(int genId, List<WorkExperienceVM> experiences)
+        public async Task<int> AddExperiences(int genId, List<WorkExperienceVM> experiences)
         {
             using (IDbContextTransaction transaction = _context.Database.BeginTransaction())
             {
@@ -438,7 +438,7 @@ namespace EmployeeOnboarding.Repository
                             }
                             transaction.Commit();
                             dbcontext.ChangeTracker.Clear();
-                            return $"Succeed,GenId : {genId}";
+                            return genId;
 
                         }
                     }
@@ -472,7 +472,7 @@ namespace EmployeeOnboarding.Repository
 
 
         //AddReferences
-        public async Task<string> AddReference(int genId, ReferenceVM reference)
+        public async Task<int> AddReference(int genId, ReferenceVM reference)
         {
             using (IDbContextTransaction transaction = _context.Database.BeginTransaction())
             {
@@ -520,7 +520,7 @@ namespace EmployeeOnboarding.Repository
                         }
                         transaction.Commit();
                         _context.ChangeTracker.Clear();
-                        return $"Succeed,GenId : {genId}";
+                        return genId;
                     }
                     else throw new NullReferenceException("Request Cannot be null");
                 }
@@ -551,7 +551,7 @@ namespace EmployeeOnboarding.Repository
 
 
 //AddHealthservices
-        public async Task<string> AddHealth(int genId, HealthVM health)
+        public async Task<int> AddHealth(int genId, HealthVM health)
         {
             using (IDbContextTransaction transaction = _context.Database.BeginTransaction())
             {
@@ -612,7 +612,7 @@ namespace EmployeeOnboarding.Repository
                             }
                             transaction.Commit();
                             dbcontext.ChangeTracker.Clear();
-                            return $"Succeed,GenId : {genId}";
+                            return genId;
                         }
                     }
                     else throw new NullReferenceException("Request Cannot be null");
@@ -647,7 +647,7 @@ namespace EmployeeOnboarding.Repository
 
         //Add Banking Details 
 
-        public async Task<string> AddBank(int genId, ExistingBankVM bank)
+        public async Task<int> AddBank(int genId, ExistingBankVM bank)
         {
             using (IDbContextTransaction transaction = _context.Database.BeginTransaction())
             {
@@ -704,7 +704,7 @@ namespace EmployeeOnboarding.Repository
                             }
                             transaction.Commit();
                             dbcontext.ChangeTracker.Clear();
-                            return $"Succeed,GenId : {genId}";
+                            return genId;
                         }
                     }
                     else throw new NullReferenceException("Request Cannot be null");
