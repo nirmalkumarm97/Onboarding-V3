@@ -8,7 +8,7 @@ namespace EmployeeOnboarding.Contracts
 {
     public interface IUserDetailsRepository 
     {
-     Task<string> AddPersonalInfo(bool directAdd , PersonalInfoRequest personalInfoRequest);
+     Task<int> AddPersonalInfo(bool directAdd , PersonalInfoRequest personalInfoRequest);
      Task<OverallPersonalInfoResponse> GetPersonalInfo(int Id);
      Task<List<StatusCardResponse>> GetStatusByLoginId(int loginId);
     }
