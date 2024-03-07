@@ -29,17 +29,23 @@ namespace EmployeeOnboarding.Repository
         {
             if (System.IO.File.Exists(filepath))
             {
-                System.IO.FileStream fs = System.IO.File.OpenRead(filepath);
-                byte[] file = new byte[fs.Length];
-                int br = fs.Read(file, 0, file.Length);
-                if (br != fs.Length)
+                byte[] file = null;
+
+                using (System.IO.FileStream fs = System.IO.File.OpenRead(filepath))
                 {
-                    throw new IOException("Invalid path");
+                    file = new byte[fs.Length];
+                    int br = fs.Read(file, 0, file.Length);
+
+                    if (br != fs.Length)
+                    {
+                        throw new IOException("Invalid path");
+                    }
                 }
                 return file;
             }
             return null;
         }
+
         private async Task WriteToFileAsync(FileStream fileStream, byte[] data, CancellationToken cancellationToken)
         {
             await fileStream.WriteAsync(data, 0, data.Length, cancellationToken);
