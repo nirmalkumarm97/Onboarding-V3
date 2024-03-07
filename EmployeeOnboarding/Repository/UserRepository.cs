@@ -467,6 +467,7 @@ namespace EmployeeOnboarding.Repository
                 Company_name = e.Company_name,
                 Designation = e.Designation,
                 Reason = e.Reason,
+                Location = e.Location,
                 StartDate = e.StartDate,
                 EndDate = e.EndDate,
                 Exp_Certificate = GetFile(e.Exp_Certificate),
