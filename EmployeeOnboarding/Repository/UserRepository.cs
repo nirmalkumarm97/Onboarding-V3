@@ -305,7 +305,7 @@ namespace EmployeeOnboarding.Repository
                             return genId;
                         }
                     }
-                    else throw new NullReferenceException("Request Cannot be null");
+                    return 0;
                 }
                 catch (Exception e)
                 {
@@ -415,40 +415,40 @@ namespace EmployeeOnboarding.Repository
                                 dbcontext.SaveChanges();
                             }
 
-                            //pending status
-                            var existingpending = dbcontext.ApprovalStatus.Where(x => x.EmpGen_Id == genId).FirstOrDefault();
-                            if (existingpending != null)
-                            {
-                                existingpending.EmpGen_Id = genId;
-                                existingpending.Current_Status = (int)Status.Pending;
-                                existingpending.Comments = "";
-                                existingpending.Date_Modified = DateTime.UtcNow;
-                                existingpending.Modified_by = genId.ToString();
-                                dbcontext.ApprovalStatus.Update(existingpending);
-                                dbcontext.SaveChanges();
-                            }
-                            else
-                            {
-                                var _onboard = new ApprovalStatus()
-                                {
-                                    EmpGen_Id = genId,
-                                    Current_Status = (int)Status.Pending,
-                                    Comments = "",
-                                    Date_Created = DateTime.UtcNow,
-                                    Date_Modified = DateTime.UtcNow,
-                                    Created_by = genId.ToString(),
-                                    Status = "A",
-                                };
-                                dbcontext.ApprovalStatus.Add(_onboard);
-                                dbcontext.SaveChanges();
-                            }
+                            ////pending status
+                            //var existingpending = dbcontext.ApprovalStatus.Where(x => x.EmpGen_Id == genId).FirstOrDefault();
+                            //if (existingpending != null)
+                            //{
+                            //    existingpending.EmpGen_Id = genId;
+                            //    existingpending.Current_Status = (int)Status.Pending;
+                            //    existingpending.Comments = "";
+                            //    existingpending.Date_Modified = DateTime.UtcNow;
+                            //    existingpending.Modified_by = genId.ToString();
+                            //    dbcontext.ApprovalStatus.Update(existingpending);
+                            //    dbcontext.SaveChanges();
+                            //}
+                            //else
+                            //{
+                            //    var _onboard = new ApprovalStatus()
+                            //    {
+                            //        EmpGen_Id = genId,
+                            //        Current_Status = (int)Status.Pending,
+                            //        Comments = "",
+                            //        Date_Created = DateTime.UtcNow,
+                            //        Date_Modified = DateTime.UtcNow,
+                            //        Created_by = genId.ToString(),
+                            //        Status = "A",
+                            //    };
+                            //    dbcontext.ApprovalStatus.Add(_onboard);
+                            //    dbcontext.SaveChanges();
+                            //}
                             transaction.Commit();
                             dbcontext.ChangeTracker.Clear();
                             return genId;
 
                         }
                     }
-                    else throw new NullReferenceException("Request Cannot be null");
+                    return 0;
                 }
                 catch (Exception ex)
                 {
@@ -708,6 +708,43 @@ namespace EmployeeOnboarding.Repository
                                 dbcontext.SaveChanges();
 
                             }
+                            //pending status
+                            var existingpending = dbcontext.ApprovalStatus.Where(x => x.EmpGen_Id == genId).FirstOrDefault();
+                            if (existingpending != null)
+                            {
+                                existingpending.EmpGen_Id = genId;
+                                existingpending.Current_Status = (int)Status.Pending;
+                                existingpending.Comments = "";
+                                existingpending.Date_Modified = DateTime.UtcNow;
+                                existingpending.Modified_by = genId.ToString();
+                                dbcontext.ApprovalStatus.Update(existingpending);
+                                dbcontext.SaveChanges();
+                            }
+                            else
+                            {
+                                var _onboard = new ApprovalStatus()
+                                {
+                                    EmpGen_Id = genId,
+                                    Current_Status = (int)Status.Pending,
+                                    Comments = "",
+                                    Date_Created = DateTime.UtcNow,
+                                    Date_Modified = DateTime.UtcNow,
+                                    Created_by = genId.ToString(),
+                                    Status = "A",
+                                };
+                                dbcontext.ApprovalStatus.Add(_onboard);
+                                dbcontext.SaveChanges();
+                            }
+                            var userId = _context.EmployeeGeneralDetails.Where(x => x.Id == genId).Select(x => x.UserId).FirstOrDefault();
+                            if (userId != null)
+                            {
+                                var userlogin = _context.Login.Where(x => x.Id == userId).FirstOrDefault();
+                                if(userlogin != null)
+                                {
+                                    userlogin.Invited_Status = Status.Pending.ToString();
+                                }
+                            }
+                            
                             transaction.Commit();
                             dbcontext.ChangeTracker.Clear();
                             return genId;
