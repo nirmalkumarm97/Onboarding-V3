@@ -254,6 +254,7 @@ namespace EmployeeOnboarding.Repository
                                     DateOnly Valid_till = DateOnly.Parse(certificate.Valid_till);
                                     existingCertificate.Valid_till = Valid_till;
                                     existingCertificate.Duration = certificate.Duration;
+                                    existingCertificate.Specialization = certificate.Specialization;
                                     existingCertificate.Percentage = certificate.Percentage;
                                     existingCertificate.proof = await SaveFileAsync(certificate.proof, genId.ToString(), certificateFileName);
                                     existingCertificate.Date_Modified = DateTime.UtcNow;
@@ -274,6 +275,7 @@ namespace EmployeeOnboarding.Repository
                                         Issued_by = certificate.Issued_by,
                                         Valid_till = DateOnly.Parse(certificate.Valid_till),
                                         Duration = certificate.Duration,
+                                        Specialization = certificate.Specialization,
                                         Percentage = certificate.Percentage,
                                         proof = await SaveFileAsync(certificate.proof, genId.ToString(), certificateFileName),
                                         Date_Created = DateTime.UtcNow,
@@ -324,6 +326,7 @@ namespace EmployeeOnboarding.Repository
                 Issued_by = e.Issued_by,
                 Valid_till = e.Valid_till,
                 Duration = e.Duration,
+                Specialization = e.Specialization,
                 Percentage = e.Percentage,
                 proof = GetFile(e.proof),
             })
