@@ -230,8 +230,8 @@ namespace EmployeeOnboarding.Repository
             {
                 try
                 {
-                    if (certificates.Count > 0)
-                    {
+                    //if (certificates.Count > 0)
+                    //{
                         using (var scope = _serviceProvider.CreateScope())
                         {
                             var dbcontext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
@@ -306,8 +306,8 @@ namespace EmployeeOnboarding.Repository
 
                             return genId;
                         }
-                    }
-                    return 0;
+                    //}
+                    //return 0;
                 }
                 catch (Exception e)
                 {
@@ -343,8 +343,8 @@ namespace EmployeeOnboarding.Repository
             {
                 try
                 {
-                    if (experiences.Count > 0)
-                    {
+                    //if (experiences.Count > 0)
+                    //{
                         using (var scope = _serviceProvider.CreateScope())
                         {
                             var dbcontext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
@@ -450,8 +450,8 @@ namespace EmployeeOnboarding.Repository
                             return genId;
 
                         }
-                    }
-                    return 0;
+                    //}
+                    //return 0;
                 }
                 catch (Exception ex)
                 {
@@ -488,8 +488,8 @@ namespace EmployeeOnboarding.Repository
             {
                 try
                 {
-                    if (reference != null)
-                    {
+                    //if (reference != null)
+                    //{
                         EmployeeReferenceDetails existingreference = _context.EmployeeReferenceDetails.Where(e => e.EmpGen_Id == genId).FirstOrDefault();
                         if (existingreference != null)
                         {
@@ -531,8 +531,8 @@ namespace EmployeeOnboarding.Repository
                         transaction.Commit();
                         _context.ChangeTracker.Clear();
                         return genId;
-                    }
-                    return 0;
+                    //}
+                    //return 0;
                 }
                 catch (Exception ex)
                 {
