@@ -182,12 +182,15 @@ namespace EmployeeOnboarding.Repository
                                 UserId = login.Id;
                             }
                             _context.SaveChanges();
-
                         }
+
                         //General details:
-                        
-                        var existingGeneral =  _context.EmployeeGeneralDetails.Where(e => e.Login_ID == personalInfoRequest.loginId).FirstOrDefault();
+
                         int newGenId = 0;
+                        var existingGeneral = personalInfoRequest.GenId == null ?
+                            _context.EmployeeGeneralDetails.FirstOrDefault(e => e.Login_ID == personalInfoRequest.loginId) :
+                            _context.EmployeeGeneralDetails.FirstOrDefault(e => e.Login_ID == personalInfoRequest.loginId && e.Id == personalInfoRequest.GenId);
+
                         if (existingGeneral != null)
                         {
                             existingGeneral.Empname = personalInfoRequest.generalVM.Empname;
@@ -250,7 +253,6 @@ namespace EmployeeOnboarding.Repository
                         _context.SaveChanges();
 
                         int GenId = existingGeneral != null ? existingGeneral.Id : newGenId;
-
 
 
 
