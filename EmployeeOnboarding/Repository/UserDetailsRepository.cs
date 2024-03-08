@@ -150,17 +150,17 @@ namespace EmployeeOnboarding.Repository
                         if (directadd == true)
                         {
                             var checkemail =  _context.Login.Where(x => x.EmailId == personalInfoRequest.generalVM.Personal_Emailid).FirstOrDefault();
-                            if (checkemail != null)
-                            {
-                                checkemail.Modified_by = personalInfoRequest.loginId.ToString();
-                                checkemail.Created_by = personalInfoRequest.loginId.ToString();
-                                checkemail.Date_Created = DateTime.Now;
-                                checkemail.Date_Modified = DateTime.Now;
-                                checkemail.Status = "A";
-                                checkemail.EmailId = personalInfoRequest.generalVM.Personal_Emailid;
-                                checkemail.Name = personalInfoRequest.generalVM.Empname;
-                            }
-                            else
+                            if (checkemail == null)
+                            //{
+                            //    checkemail.Modified_by = personalInfoRequest.loginId.ToString();
+                            //    checkemail.Created_by = personalInfoRequest.loginId.ToString();
+                            //    checkemail.Date_Created = DateTime.Now;
+                            //    checkemail.Date_Modified = DateTime.Now;
+                            //    checkemail.Status = "A";
+                            //    checkemail.EmailId = personalInfoRequest.generalVM.Personal_Emailid;
+                            //    checkemail.Name = personalInfoRequest.generalVM.Empname;
+                            //}
+                            //else
                             {
                                 string tempPass = Guid.NewGuid().ToString().Replace("-", "").Substring(0, 8); // Change length as needed
 
@@ -186,7 +186,7 @@ namespace EmployeeOnboarding.Repository
                         }
                         //General details:
                         
-                        var existingGeneral =  _context.EmployeeGeneralDetails.FirstOrDefault(e => e.Login_ID == personalInfoRequest.loginId);
+                        var existingGeneral =  _context.EmployeeGeneralDetails.LastOrDefault(e => e.Login_ID == personalInfoRequest.loginId);
                         int newGenId = 0;
                         if (existingGeneral != null)
                         {
