@@ -186,7 +186,7 @@ namespace EmployeeOnboarding.Repository
                         }
                         //General details:
                         
-                        var existingGeneral =  _context.EmployeeGeneralDetails.Where(e => e.Login_ID == personalInfoRequest.loginId).OrderBy(e => e.Date_Created).LastOrDefault();
+                        var existingGeneral =  _context.EmployeeGeneralDetails.Where(e => e.Login_ID == personalInfoRequest.loginId).FirstOrDefault();
                         int newGenId = 0;
                         if (existingGeneral != null)
                         {
