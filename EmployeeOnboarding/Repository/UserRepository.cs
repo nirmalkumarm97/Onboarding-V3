@@ -251,7 +251,7 @@ namespace EmployeeOnboarding.Repository
                                                                                           // Update existing record
                                     existingCertificate.Certificate_name = certificate.Certificate_name;
                                     existingCertificate.Issued_by = certificate.Issued_by;
-                                    DateOnly Valid_till = DateOnly.Parse(certificate.Valid_till);
+                                    DateOnly? Valid_till = certificate.Valid_till == null ? null : DateOnly.Parse(certificate.Valid_till);
                                     existingCertificate.Valid_till = Valid_till;
                                     existingCertificate.Duration = certificate.Duration;
                                     existingCertificate.Specialization = certificate.Specialization;
@@ -363,8 +363,8 @@ namespace EmployeeOnboarding.Repository
                                                                                          // Update existing record
                                     existingExperience.Company_name = experience.Company_name;
                                     existingExperience.Designation = experience.Designation;
-                                    DateOnly startDate = DateOnly.Parse(experience.StartDate);
-                                    DateOnly endDate = DateOnly.Parse(experience.EndDate);
+                                    DateOnly? startDate = experience.StartDate == null ? null : DateOnly.Parse(experience.StartDate);
+                                    DateOnly? endDate = experience.EndDate == null ? null : DateOnly.Parse(experience.EndDate);
                                     existingExperience.StartDate = startDate;
                                     existingExperience.EndDate = endDate;
                                     existingExperience.Reporting_to = experience.Reporting_to;
