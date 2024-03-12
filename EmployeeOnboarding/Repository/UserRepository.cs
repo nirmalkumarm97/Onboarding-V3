@@ -473,6 +473,7 @@ namespace EmployeeOnboarding.Repository
                 Location = e.Location,
                 StartDate = e.StartDate,
                 EndDate = e.EndDate,
+                Reporting_to = e.Reporting_to,
                 Exp_Certificate = GetFile(e.Exp_Certificate),
             })
                 .ToList();
