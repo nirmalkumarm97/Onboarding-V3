@@ -9,6 +9,7 @@
         public string? Location { get; set;}
         public DateOnly? StartDate { get; set; }
         public DateOnly? EndDate { get; set; }
+        public string? Reporting_to { get; set; }
         public byte[]? Exp_Certificate { get; set; }
         //public byte[]? getCertificate { get; set; }
     }  
