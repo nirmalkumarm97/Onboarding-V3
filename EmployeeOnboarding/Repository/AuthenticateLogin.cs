@@ -62,56 +62,63 @@ namespace EmployeeOnboarding.Repository
         {
             try
             {
-                foreach (var (i, check) in from i in logindet
-                                           let check = _context.Login.Where(x => x.EmailId == i.Emailid).FirstOrDefault()
-                                           select (i, check))
+                if (logindet.Count > 0)
                 {
-                    string tempPass = Guid.NewGuid().ToString().Replace("-", "").Substring(0, 8); // Change length as needed
-
-                    if (check != null)
+                    foreach (var (i, check) in from i in logindet
+                                               let check = _context.Login.Where(x => x.EmailId == i.Emailid).FirstOrDefault()
+                                               select (i, check))
                     {
-                        // int Verifyotp = otpgeneration();
+                        string tempPass = Guid.NewGuid().ToString().Replace("-", "").Substring(0, 8); // Change length as needed
 
-                        check.Name = i.Name;
-                        check.EmailId = i.Emailid;
-                        check.Password = tempPass;
-                        check.Date_Modified = DateTime.UtcNow;
-                        _context.Login.Update(check);
-                        _context.SaveChanges();
-                    }
-                    else
-                    {
-                        var _logindet = new Login()
+                        if (check != null)
                         {
-                            Name = i.Name,
-                            EmailId = i.Emailid,
-                            Password = tempPass,
-                            Invited_Status = "Invited",
-                            Date_Created = DateTime.UtcNow,
-                            Date_Modified = DateTime.UtcNow,
-                            Created_by = "Admin",
-                            Modified_by = "Admin",
-                            Status = "A",
-                            Role = "U"
-                            // OTP = Verifyotp
-                        };
+                            // int Verifyotp = otpgeneration();
 
-                        _context.Login.Add(_logindet);
-                        _context.SaveChanges();
+                            check.Name = i.Name;
+                            check.EmailId = i.Emailid;
+                            check.Password = tempPass;
+                            check.Date_Modified = DateTime.UtcNow;
+                            _context.Login.Update(check);
+                            _context.SaveChanges();
+                        }
+                        else
+                        {
+                            var _logindet = new Login()
+                            {
+                                Name = i.Name,
+                                EmailId = i.Emailid,
+                                Password = tempPass,
+                                Invited_Status = "Invited",
+                                Date_Created = DateTime.UtcNow,
+                                Date_Modified = DateTime.UtcNow,
+                                Created_by = "Admin",
+                                Modified_by = "Admin",
+                                Status = "A",
+                                Role = "U"
+                                // OTP = Verifyotp
+                            };
+
+                            _context.Login.Add(_logindet);
+                            _context.SaveChanges();
+                        }
+
+                        //var callbackUrl = "http://localhost:7136/swagger/index.html";
+                        ////var callbackUrl = "http://localhost:7136/api/logindetails/confirm-login";
+                        ///
+                        //await _emailSender.SendEmailAsync(i.Emailid, "Confirm your email",
+                        //            $"Please confirm your account by entering the OTP by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'> clicking here</a>. Your OTP is " + Verifyotp);
+                        var callbackUrl = "https://onboarding-dev.ideassionlive.in/";
+                        // var callbackUrl = "http://192.168.0.139:3000/otp-verification";
+                        await _emailSender.SendEmailAsync(i.Emailid, "Confirm Your Email", $"Please enter into your login by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'> clicking here</a>. Your email is {i.Emailid} and password is {tempPass}");
+
                     }
 
-                    //var callbackUrl = "http://localhost:7136/swagger/index.html";
-                    ////var callbackUrl = "http://localhost:7136/api/logindetails/confirm-login";
-                    ///
-                    //await _emailSender.SendEmailAsync(i.Emailid, "Confirm your email",
-                    //            $"Please confirm your account by entering the OTP by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'> clicking here</a>. Your OTP is " + Verifyotp);
-                    var callbackUrl = "https://onboarding-dev.ideassionlive.in/";
-                    // var callbackUrl = "http://192.168.0.139:3000/otp-verification";
-                    await _emailSender.SendEmailAsync(i.Emailid, "Confirm Your Email", $"Please enter into your login by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'> clicking here</a>. Your email is {i.Emailid} and password is {tempPass}");
-
+                    return "Succeed";
                 }
-
-                return "Succeed";
+                else
+                {
+                    throw new NullReferenceException("Request is null");
+                }
             }
 
             catch (Exception e)
