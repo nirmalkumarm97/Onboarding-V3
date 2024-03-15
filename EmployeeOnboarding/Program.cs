@@ -10,7 +10,15 @@ using FluentMigrator.Runner;
 using System.Reflection;
 using EmployeeOnboarding.Migrations;
 using EmployeeOnboarding.Contracts;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using DocumentFormat.OpenXml.Office.CustomUI;
+using EmployeeOnboarding.Handler;
 using EmployeeOnboarding.Helper;
+using Microsoft.OpenApi.Models;
+using OpenXmlPowerTools;
 //using EmployeeOnboarding.Data.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -22,13 +30,70 @@ builder.Services.AddCors(options =>
         .AllowAnyMethod()
         .AllowAnyHeader()
                     ));
-
+#region
+//JWT
+var jwtSettings = builder.Configuration.GetSection("JwtSettings:SecretKey").Value;
+//builder.Services.AddSingleton(jwtSettings);
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = builder.Configuration.GetSection("JwtSettings:Issuer").Value,
+            ValidAudience = builder.Configuration.GetSection("JwtSettings:Audience").Value,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings)),
+            ClockSkew = TimeSpan.Zero
+        };
+    });
+//var authKey = builder.Configuration.GetValue<string>("JWTSettings:SecretKey");
+//builder.Services.AddAuthentication(x =>
+//{
+//    x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme; x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+//}).AddJwtBearer(x =>
+//{
+//    x.RequireHttpsMetadata = true; x.SaveToken = true; x.TokenValidationParameters = new TokenValidationParameters()
+//    {
+//        ValidateIssuerSigningKey = true,
+//        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(authKey)),
+//        ValidateIssuer = false,
+//        ValidateAudience = false
+//    };
+//});
+#endregion
 // Add services to the container.
 //
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen( c =>
+{
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Description = "JWT Authorization",
+        Name = "Authorization",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer",
+    });
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+                 {
+                     new OpenApiSecurityScheme
+                     {
+                         Reference = new OpenApiReference
+                         {
+                              Type = ReferenceType.SecurityScheme,
+                              Id = "Bearer"
+                         }
+                     },
+                     new string[]{}
+                 }
+    });
+});
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultCOnnection");
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(connectionString));
@@ -74,6 +139,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseCors("CorsPolicy");
+
+
 app.UseHttpsRedirection();
 
 using (var scope = app.Services.CreateScope())
@@ -83,7 +150,7 @@ using (var scope = app.Services.CreateScope())
         db.MigrateUp();
     }
 }
-
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
