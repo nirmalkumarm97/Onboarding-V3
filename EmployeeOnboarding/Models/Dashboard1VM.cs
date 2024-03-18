@@ -10,5 +10,6 @@
         public string Email_id { get; set; }
         public string Current_Status { get; set; }
         public int? UserId { get; set; }
+        public string? RejectedComments { get; set; }
     }
 }

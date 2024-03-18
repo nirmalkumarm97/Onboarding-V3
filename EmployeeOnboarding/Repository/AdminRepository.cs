@@ -58,7 +58,8 @@ namespace EmployeeOnboarding.Repository
                                        DateModified = a.Date_Modified,
                                        Email_id = l.EmailId,
                                        Current_Status = ((Data.Enum.Status)a.Current_Status).ToString(),
-                                       UserId = e.UserId
+                                       UserId = e.UserId,
+                                       RejectedComments = a.Comments
                                    }).ToList();
             return RejectedDetails;
         }
@@ -107,6 +108,11 @@ namespace EmployeeOnboarding.Repository
                                    }).ToList();
             return employeedetails;
         }
+        public async Task<string> FindUsers()
+        {
+
+        }
+
 
         //       // EnumExtensionMethods.GetEnumDescription((BloodGroup) general.BloodGrp)
         //        public async Task<List<PersonalInfoVM>>? GetPersonalInfo(int id)
