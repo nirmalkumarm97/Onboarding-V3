@@ -730,16 +730,16 @@ namespace EmployeeOnboarding.Repository
                                 };
                                 dbcontext.ApprovalStatus.Add(_onboard);
 
-                                var userId = _context.EmployeeGeneralDetails.Where(x => x.Id == genId).Select(x => x.UserId).FirstOrDefault();
-                                if (userId != null)
-                                {
-                                    var userlogin = _context.Login.Where(x => x.Id == userId).FirstOrDefault();
-                                    if (userlogin != null)
-                                    {
-                                        userlogin.Invited_Status = Status.Pending.ToString();
-                                        dbcontext.Login.Update(userlogin);
-                                    }
-                                }
+                                //var userId = _context.EmployeeGeneralDetails.Where(x => x.Id == genId).Select(x => x.UserId).FirstOrDefault();
+                                //if (userId != null)
+                                //{
+                                //    var userlogin = _context.Login.Where(x => x.Id == userId).FirstOrDefault();
+                                //    if (userlogin != null)
+                                //    {
+                                //        userlogin.Invited_Status = Status.Pending.ToString();
+                                //        dbcontext.Login.Update(userlogin);
+                                //    }
+                                //}
                                 dbcontext.SaveChanges();
                             }
                             transaction.Commit();
