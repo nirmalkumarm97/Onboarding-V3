@@ -139,7 +139,62 @@ namespace EmployeeOnboarding.Repository
                 throw new Exception(ex.Message);
             }
         }
+        private async Task SendConfirmationEmail(string email, string name, string url, string tempPass)
+        {
+            string subject = "Confirm Your Email";
+            string body = $@"
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {{
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+        }}
+        .container {{
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }}
+        h1 {{
+            color: #333;
+        }}
+        p {{
+            margin-bottom: 20px;
+        }}
+        a {{
+            color: #007bff;
+            text-decoration: none;
+        }}
+        a:hover {{
+            text-decoration: underline;
+        }}
+    </style>
+</head>
+<body>
+    <div class='container'>
+        <h1>Hi {name},</h1>
+        <p>Please login into your profile by <a href='{HtmlEncoder.Default.Encode(url)}'>clicking here</a>.</p>
+        <p>Your email is {email} and password is {tempPass}.</p>
+        <p>Regards,<br />HR Team</p>
+    </div>
+</body>
+</html>";
 
+            try
+            {
+                await _emailSender.SendEmailAsync(email, subject, body);
+            }
+            catch (Exception ex)
+            {
+                // Handle email sending exceptions
+                // You might want to log the exception
+                throw new Exception("Error sending confirmation email: " + ex.Message);
+            }
+        }
         public async Task<int> AddPersonalInfo(bool directadd, PersonalInfoRequest personalInfoRequest)
         {
             using (IDbContextTransaction transaction = _context.Database.BeginTransaction())
@@ -180,7 +235,7 @@ namespace EmployeeOnboarding.Repository
                                 };
                                 _context.Login.Add(login);
                                 string url = _configuration.GetSection("ApplicationURL").Value;
-                                await _emailSender.SendEmailAsync(personalInfoRequest.generalVM.Personal_Emailid, "Confirm Your Email", $"Please enter into your login by <a href='{HtmlEncoder.Default.Encode(url)}'> clicking here</a>. Your email is {personalInfoRequest.generalVM.Personal_Emailid} and password is {tempPass}");
+                                await SendConfirmationEmail(login.EmailId, login.Name, url, tempPass);
                                 UserId = login.Id;
                             }
                             _context.SaveChanges();
