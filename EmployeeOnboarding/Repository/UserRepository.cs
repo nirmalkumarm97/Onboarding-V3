@@ -715,18 +715,9 @@ namespace EmployeeOnboarding.Repository
                             }
                             //pending status
                             var existingpending = dbcontext.ApprovalStatus.Where(x => x.EmpGen_Id == genId).FirstOrDefault();
-                            if (existingpending != null)
+                            if (existingpending == null)
                             {
-                                existingpending.EmpGen_Id = genId;
-                                existingpending.Current_Status = (int)Status.Pending;
-                                existingpending.Comments = "";
-                                existingpending.Date_Modified = DateTime.UtcNow;
-                                existingpending.Modified_by = genId.ToString();
-                                dbcontext.ApprovalStatus.Update(existingpending);
-                                dbcontext.SaveChanges();
-                            }
-                            else
-                            {
+
                                 var _onboard = new ApprovalStatus()
                                 {
                                     EmpGen_Id = genId,
@@ -738,18 +729,18 @@ namespace EmployeeOnboarding.Repository
                                     Status = "A",
                                 };
                                 dbcontext.ApprovalStatus.Add(_onboard);
+
+                                var userId = _context.EmployeeGeneralDetails.Where(x => x.Id == genId).Select(x => x.UserId).FirstOrDefault();
+                                if (userId != null)
+                                {
+                                    var userlogin = _context.Login.Where(x => x.Id == userId).FirstOrDefault();
+                                    if (userlogin != null)
+                                    {
+                                        userlogin.Invited_Status = Status.Pending.ToString();
+                                    }
+                                }
                                 dbcontext.SaveChanges();
                             }
-                            var userId = _context.EmployeeGeneralDetails.Where(x => x.Id == genId).Select(x => x.UserId).FirstOrDefault();
-                            if (userId != null)
-                            {
-                                var userlogin = _context.Login.Where(x => x.Id == userId).FirstOrDefault();
-                                if(userlogin != null)
-                                {
-                                    userlogin.Invited_Status = Status.Pending.ToString();
-                                }
-                            }
-                            
                             transaction.Commit();
                             dbcontext.ChangeTracker.Clear();
                             return genId;
