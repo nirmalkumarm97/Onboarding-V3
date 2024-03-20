@@ -17,17 +17,19 @@ using EmployeeOnboarding.Data.Enum;
 namespace EmployeeOnboarding.Repository
 {
 
-    public class AuthenticateLogin  : ILogin
+    public class AuthenticateLogin : ILogin
     {
-        
+
         private readonly ApplicationDbContext _context;
         private readonly IEmailSender _emailSender;
+        private readonly IConfiguration _configuration;
 
-        public AuthenticateLogin(ApplicationDbContext context , IEmailSender emailSender)
+
+        public AuthenticateLogin(ApplicationDbContext context, IEmailSender emailSender, IConfiguration configuration)
         {
             _context = context;
             _emailSender = emailSender;
-
+            _configuration = configuration;
         }
         public async Task<employloginVM> AuthenticateEmp(string email, string password)
         {
@@ -39,7 +41,7 @@ namespace EmployeeOnboarding.Repository
                        EmpId = succeeded.Id,
                        Name = succeeded.Name,
                        Email = succeeded.EmailId,
-                       Role = succeeded.Role  == "U" ?  "User" : "Admin"
+                       Role = succeeded.Role == "U" ? "User" : "Admin"
                    }).FirstOrDefault();
 
                 if (_succeeded == null)
@@ -47,7 +49,7 @@ namespace EmployeeOnboarding.Repository
                 else
                     return _succeeded;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 throw new Exception(e.InnerException.Message);
             }
@@ -107,12 +109,12 @@ namespace EmployeeOnboarding.Repository
                         ///
                         //await _emailSender.SendEmailAsync(i.Emailid, "Confirm your email",
                         //            $"Please confirm your account by entering the OTP by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'> clicking here</a>. Your OTP is " + Verifyotp);
-                        var callbackUrl = "https://onboarding-dev.ideassionlive.in/";
+                        //var callbackUrl = "https://onboarding-dev.ideassionlive.in/";
                         // var callbackUrl = "http://192.168.0.139:3000/otp-verification";
-                        await _emailSender.SendEmailAsync(i.Emailid, "Confirm Your Email", $"Please enter into your login by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'> clicking here</a>. Your email is {i.Emailid} and password is {tempPass}");
+                        string url = _configuration.GetSection("ApplicationURL").Value;
 
+                        await SendConfirmationEmail(i.Emailid, i.Name, url, tempPass);
                     }
-
                     return "Succeed";
                 }
                 else
@@ -126,6 +128,63 @@ namespace EmployeeOnboarding.Repository
                 throw new Exception(e.InnerException.Message);
             }
         }
+        private async Task SendConfirmationEmail(string email, string name, string url, string tempPass)
+        {
+            string subject = "Confirm Your Email";
+            string body = $@"
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {{
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+        }}
+        .container {{
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }}
+        h1 {{
+            color: #333;
+        }}
+        p {{
+            margin-bottom: 20px;
+        }}
+        a {{
+            color: #007bff;
+            text-decoration: none;
+        }}
+        a:hover {{
+            text-decoration: underline;
+        }}
+    </style>
+</head>
+<body>
+    <div class='container'>
+        <h1>Hi {name},</h1>
+        <p>Please login into your profile by <a href='{HtmlEncoder.Default.Encode(url)}'>clicking here</a>.</p>
+        <p>Your email is {email} and password is {tempPass}.</p>
+        <p>Regards,<br />HR Team</p>
+    </div>
+</body>
+</html>";
+
+            try
+            {
+                await _emailSender.SendEmailAsync(email, subject, body);
+            }
+            catch (Exception ex)
+            {
+                // Handle email sending exceptions
+                // You might want to log the exception
+                throw new Exception("Error sending confirmation email: " + ex.Message);
+            }
+        }
+
         public async Task<Login> LoginCmp(string Emailid, loginconfirmVM logindet)
         {
             try
@@ -147,7 +206,7 @@ namespace EmployeeOnboarding.Repository
                 else
                     return (null);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 throw new Exception(e.InnerException.Message);
             }
@@ -160,7 +219,7 @@ namespace EmployeeOnboarding.Repository
                 if (check != null)
                 {
                     int getOTP = otpgeneration();
-                    await _emailSender.SendEmailAsync(emailId, "Reset Password", $"Please reset your password by entering the OTP. Your OTP is {getOTP}");
+                    await _emailSender.SendEmailAsync(emailId, "Reset Password", $"Please reset your password by entering the OTP. Your OTP is {getOTP}.");
                     check.OTP = getOTP;
                     _context.SaveChanges();
                     return true;
@@ -168,7 +227,7 @@ namespace EmployeeOnboarding.Repository
                 else return false;
             }
             catch (Exception ex)
-                {
+            {
                 throw new Exception(ex.InnerException.Message);
             }
         }

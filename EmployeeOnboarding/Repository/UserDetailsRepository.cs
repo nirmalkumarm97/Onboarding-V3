@@ -23,13 +23,15 @@ namespace EmployeeOnboarding.Repository
 {
     public class UserDetailsRepository : IUserDetailsRepository
     {
-        private ApplicationDbContext _context;
-        private IEmailSender _emailSender;
+        private readonly ApplicationDbContext _context;
+        private readonly IEmailSender _emailSender;
+        private readonly IConfiguration _configuration;
 
-        public UserDetailsRepository(ApplicationDbContext context, IEmailSender emailSender)
+        public UserDetailsRepository(ApplicationDbContext context, IEmailSender emailSender, IConfiguration configuration)
         {
             _context = context;
-
+            _emailSender = emailSender;
+            _configuration = configuration;
         }
 
         private async Task WriteToFileAsync(FileStream fileStream, byte[] data, CancellationToken cancellationToken)
@@ -177,8 +179,8 @@ namespace EmployeeOnboarding.Repository
                                     Role = "U",
                                 };
                                 _context.Login.Add(login);
-                                var callbackUrl = "https://onboarding-dev.ideassionlive.in/";
-                                await _emailSender.SendEmailAsync(personalInfoRequest.generalVM.Personal_Emailid, "Confirm Your Email", $"Please enter into your login by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'> clicking here</a>. Your email is {personalInfoRequest.generalVM.Personal_Emailid} and password is {tempPass}");
+                                string url = _configuration.GetSection("ApplicationURL").Value;
+                                await _emailSender.SendEmailAsync(personalInfoRequest.generalVM.Personal_Emailid, "Confirm Your Email", $"Please enter into your login by <a href='{HtmlEncoder.Default.Encode(url)}'> clicking here</a>. Your email is {personalInfoRequest.generalVM.Personal_Emailid} and password is {tempPass}");
                                 UserId = login.Id;
                             }
                             _context.SaveChanges();
