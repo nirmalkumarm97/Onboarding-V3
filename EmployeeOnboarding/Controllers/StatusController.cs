@@ -27,16 +27,16 @@ namespace EmployeeOnboarding.Controllers
         }
 
         [HttpPost("approve/{genId}")]
-        public IActionResult ChangeApprovalStatus(int genId, [FromBody] onboardstatusVM onboardstatus)
+        public async Task<IActionResult> ChangeApprovalStatus(int genId, [FromBody] onboardstatusVM onboardstatus)
         {
-            _onboardstatusService.ChangeApprovalStatus(genId, onboardstatus);
+            await _onboardstatusService.ChangeApprovalStatus(genId, onboardstatus);
             return Ok("Approved");
         }
-
+         
         [HttpPost("reject/{genId}")]
-        public IActionResult ChangeCancelStatus(int genId, [FromBody] commentVM onboardstatus)
+        public async Task<IActionResult> ChangeCancelStatus(int genId, [FromBody] commentVM onboardstatus)
         {
-            _onboardstatusService.ChangeCancelStatus(genId, onboardstatus);
+           await _onboardstatusService.ChangeCancelStatus(genId, onboardstatus);
             return Ok("Rejected");
         }
 
