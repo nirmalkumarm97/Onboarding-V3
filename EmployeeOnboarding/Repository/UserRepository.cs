@@ -737,6 +737,7 @@ namespace EmployeeOnboarding.Repository
                                     if (userlogin != null)
                                     {
                                         userlogin.Invited_Status = Status.Pending.ToString();
+                                        dbcontext.Login.Update(userlogin);
                                     }
                                 }
                                 dbcontext.SaveChanges();
