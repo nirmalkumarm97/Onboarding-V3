@@ -18,6 +18,7 @@ using System.Runtime.CompilerServices;
 using System.Text.Encodings.Web;
 using System.Data.Entity;
 using System.Collections.Generic;
+using NuGet.Protocol.Plugins;
 
 namespace EmployeeOnboarding.Repository
 {
@@ -208,16 +209,6 @@ namespace EmployeeOnboarding.Repository
                         {
                             var checkemail =  _context.Login.Where(x => x.EmailId == personalInfoRequest.generalVM.Personal_Emailid).FirstOrDefault();
                             if (checkemail == null)
-                            //{
-                            //    checkemail.Modified_by = personalInfoRequest.loginId.ToString();
-                            //    checkemail.Created_by = personalInfoRequest.loginId.ToString();
-                            //    checkemail.Date_Created = DateTime.Now;
-                            //    checkemail.Date_Modified = DateTime.Now;
-                            //    checkemail.Status = "A";
-                            //    checkemail.EmailId = personalInfoRequest.generalVM.Personal_Emailid;
-                            //    checkemail.Name = personalInfoRequest.generalVM.Empname;
-                            //}
-                            //else
                             {
                                 string tempPass = Guid.NewGuid().ToString().Replace("-", "").Substring(0, 8); // Change length as needed
 
@@ -234,19 +225,18 @@ namespace EmployeeOnboarding.Repository
                                     Role = "U",
                                 };
                                 _context.Login.Add(login);
+                                _context.SaveChanges();
+                                UserId = login.Id;
                                 string url = _configuration.GetSection("ApplicationURL").Value;
                                 await SendConfirmationEmail(login.EmailId, login.Name, url, tempPass);
-                                UserId = login.Id;
                             }
-                            _context.SaveChanges();
                         }
 
                         //General details:
 
                         int newGenId = 0;
-                        var existingGeneral = personalInfoRequest.GenId == null ?
-                            _context.EmployeeGeneralDetails.FirstOrDefault(e => e.Login_ID == personalInfoRequest.loginId) :
-                            _context.EmployeeGeneralDetails.FirstOrDefault(e => e.Login_ID == personalInfoRequest.loginId && e.Id == personalInfoRequest.GenId);
+                        var existingGeneral = personalInfoRequest.GenId == null ? null :
+                            _context.EmployeeGeneralDetails.FirstOrDefault(e => e.Id == personalInfoRequest.GenId);
 
                         if (existingGeneral != null)
                         {
@@ -730,7 +720,7 @@ namespace EmployeeOnboarding.Repository
                                                             where a.Id == loginId
                                                             select new StatusCardResponse
                                                             {
-                                                                LoginId = a.Id,
+                                                                UserId = a.Id,
                                                                 Email = a.EmailId,
                                                                 Status = a.Invited_Status,
                                                                 Role = a.Role
@@ -750,7 +740,6 @@ namespace EmployeeOnboarding.Repository
                                                            where lg.UserId == loginId
                                                            select new StatusCardResponse
                                                            {
-                                                               LoginId = a.Id,
                                                                UserId = lg.UserId,
                                                                GenId = lg.Id,
                                                                Email = a.EmailId,
@@ -769,7 +758,7 @@ namespace EmployeeOnboarding.Repository
                                                         where a.Role == "U" && a.Status == "A" && a.Invited_Status == "Invited"
                                                         select new StatusCardResponse
                                                         {
-                                                            LoginId = a.Id,
+                                                            UserId = a.Id,
                                                             Email = a.EmailId,
                                                             Status = a.Invited_Status,
                                                             Role = a.Role
@@ -785,7 +774,6 @@ namespace EmployeeOnboarding.Repository
                                                         where a.Role == "U" && a.Status == "A" && lg.Status == "A" && a.Invited_Status != "Invited"
                                                         select new StatusCardResponse
                                                         {
-                                                            LoginId = a.Id,
                                                             UserId = lg.UserId,
                                                             GenId = lg.Id,
                                                             Email = a.EmailId,
