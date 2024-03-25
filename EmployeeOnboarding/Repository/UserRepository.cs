@@ -3,13 +3,17 @@ using EmployeeOnboarding.Contracts;
 using EmployeeOnboarding.Data;
 using EmployeeOnboarding.Data.Enum;
 using EmployeeOnboarding.Helper;
+using EmployeeOnboarding.Request;
 using EmployeeOnboarding.ViewModels;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.DependencyInjection;
 using OnboardingWebsite.Models;
 using System;
+using System.Globalization;
+using System.Security.Principal;
 
 namespace EmployeeOnboarding.Repository
 {
@@ -734,11 +738,11 @@ namespace EmployeeOnboarding.Repository
                                 var userId = dbcontext.EmployeeGeneralDetails.Where(x => x.Id == genId).FirstOrDefault();
                                 if (userId != null)
                                 {
-                                      var userlogin = dbcontext.Login.Where(x => x.Id == userId.UserId).FirstOrDefault();
-                                      if (userlogin != null)
-                                      {
+                                    var userlogin = dbcontext.Login.Where(x => x.Id == userId.UserId).FirstOrDefault();
+                                    if (userlogin != null)
+                                    {
                                         await SendOnboardingSubmissionEmail(userlogin.EmailId, userlogin.Name);
-                                      }
+                                    }
                                 }
 
                                 dbcontext.SaveChanges();
@@ -836,5 +840,32 @@ namespace EmployeeOnboarding.Repository
             }
         }
 
+
+        public async Task<string> CreateSelfDeclaration(int genId, SelfDeclarationRequest selfDeclarationRequest)
+        {
+            try
+            {
+                var existingself = _context.SelfDeclaration.Where(x => x.EmpGen_Id == genId).FirstOrDefault();
+
+                if (existingself == null)
+                {
+                    SelfDeclaration self = new SelfDeclaration()
+                    {
+                        EmpGen_Id = genId,
+                        Name = selfDeclarationRequest.Name,
+                        CreatedBy = selfDeclarationRequest.CreatedBy,
+                        CreatedDate = DateTime.ParseExact(selfDeclarationRequest.Date, "dd-MM-yyyy", CultureInfo.InvariantCulture),
+                    };
+                    _context.Add(self);
+                    _context.SaveChanges();
+                    return "succeed";
+                }
+                return "succeed";
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
     }
 }

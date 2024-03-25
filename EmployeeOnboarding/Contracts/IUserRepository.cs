@@ -1,4 +1,5 @@
 ﻿using EmployeeOnboarding.Data;
+using EmployeeOnboarding.Request;
 using EmployeeOnboarding.ViewModels;
 using OnboardingWebsite.Models;
 
@@ -18,5 +19,6 @@ namespace EmployeeOnboarding.Contracts
         GetHealthVM GetHealth(int Id);
         Task<int> AddBank(int genId, ExistingBankVM bank);
         GetExistingBankVM GetBank(int genId);
+        Task<string> CreateSelfDeclaration(int genId, SelfDeclarationRequest selfDeclarationRequest);
     }
 }
