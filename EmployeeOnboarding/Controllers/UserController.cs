@@ -1,12 +1,15 @@
 ﻿using DocumentFormat.OpenXml.Drawing.Charts;
 using DocumentFormat.OpenXml.Office2010.Excel;
 using EmployeeOnboarding.Contracts;
+using EmployeeOnboarding.Data;
 using EmployeeOnboarding.Repository;
+using EmployeeOnboarding.Request;
 using EmployeeOnboarding.Services;
 using EmployeeOnboarding.ViewModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using OnboardingWebsite.Models;
+using System;
 using System.ComponentModel.Design;
 
 namespace EmployeeOnboarding.Controllers
@@ -16,10 +19,12 @@ namespace EmployeeOnboarding.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserRepository _userRepository;
+        private readonly ApplicationDbContext _context;
 
-        public UserController(IUserRepository userRepository)
+        public UserController(IUserRepository userRepository , ApplicationDbContext applicationDbContext)
         {
             _userRepository = userRepository;
+            _context = applicationDbContext;
         }
 
         [HttpPost("add-education/{genId}")]
@@ -107,7 +112,24 @@ namespace EmployeeOnboarding.Controllers
             }
         }
 
-
+        [HttpPost("CreateSelfDeclaration/{genId}")]
+        public async Task<IActionResult> CreateSelfDeclaration(int genId,[FromBody] SelfDeclarationRequest selfDeclarationRequest)
+        {
+            var name = _context.EmployeeGeneralDetails.Where(x => x.Id == genId && x.Empname.Contains(selfDeclarationRequest.Name)).Select(x => x.Empname).FirstOrDefault();
+            if (name != null)
+            {
+                var response = await _userRepository.CreateSelfDeclaration(genId, selfDeclarationRequest);
+                if (response != null)
+                {
+                    return Ok(response);
+                }
+                else
+                {
+                    return NoContent();
+                }
+            }
+            else return BadRequest("Name should be same as like PersonalInformation");
+        }
 
         //*************************************************************************************************************
 

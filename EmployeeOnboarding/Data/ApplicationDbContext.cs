@@ -23,6 +23,7 @@ namespace EmployeeOnboarding.Data
         public DbSet<EmployeeHobbyMembership> EmployeeHobbyMembership { get; set; }
         public DbSet<EmployeeReferenceDetails> EmployeeReferenceDetails { get; set; }
         public DbSet<EmployeeRequiredDocuments> EmployeeRequiredDocuments { get; set; }
+        public virtual DbSet<SelfDeclaration> SelfDeclaration { get; set; }
         public DbSet<ApprovalStatus> ApprovalStatus { get; set; }
         public DbSet<Country> Country { get; set; }
         public DbSet<State> State { get; set; }
