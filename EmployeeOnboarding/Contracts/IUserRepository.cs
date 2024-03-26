@@ -1,5 +1,6 @@
 ﻿using EmployeeOnboarding.Data;
 using EmployeeOnboarding.Request;
+using EmployeeOnboarding.Response;
 using EmployeeOnboarding.ViewModels;
 using OnboardingWebsite.Models;
 
@@ -20,5 +21,6 @@ namespace EmployeeOnboarding.Contracts
         Task<int> AddBank(int genId, ExistingBankVM bank);
         GetExistingBankVM GetBank(int genId);
         Task<string> CreateSelfDeclaration(int genId, SelfDeclarationRequest selfDeclarationRequest);
+        Task<SelfDeclarationResponse> GetSelfDeclaration(int genId);
     }
 }

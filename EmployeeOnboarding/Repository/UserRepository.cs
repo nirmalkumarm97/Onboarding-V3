@@ -4,6 +4,7 @@ using EmployeeOnboarding.Data;
 using EmployeeOnboarding.Data.Enum;
 using EmployeeOnboarding.Helper;
 using EmployeeOnboarding.Request;
+using EmployeeOnboarding.Response;
 using EmployeeOnboarding.ViewModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity.UI.Services;
@@ -867,5 +868,20 @@ namespace EmployeeOnboarding.Repository
                 throw new Exception(ex.Message);
             }
         }
+        public async Task<SelfDeclarationResponse> GetSelfDeclaration(int genId)
+        {
+            var data = (from a in _context.SelfDeclaration
+                        where a.EmpGen_Id == genId
+                        select a).FirstOrDefault();
+
+            SelfDeclarationResponse selfDec = new SelfDeclarationResponse()
+            {
+                Name = data == null ? null : data.Name,
+                Date = data == null ? null : data.CreatedDate.Date.ToShortDateString(),
+                IsSelfDeclared = data == null ? false : true
+            };
+            return selfDec;
+        }
+
     }
 }
