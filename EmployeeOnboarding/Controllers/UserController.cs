@@ -178,7 +178,7 @@ namespace EmployeeOnboarding.Controllers
             return Ok(bank);
         }
 
-        [HttpGet("GetSelfDeclaration")]
+        [HttpGet("GetSelfDeclaration{genId}")]
         public async Task<IActionResult> GetSelfDeclaration(int genId)
         {
             var response = await _userRepository.GetSelfDeclaration(genId);
