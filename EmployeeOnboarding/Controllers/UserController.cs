@@ -4,6 +4,7 @@ using EmployeeOnboarding.Contracts;
 using EmployeeOnboarding.Data;
 using EmployeeOnboarding.Repository;
 using EmployeeOnboarding.Request;
+using EmployeeOnboarding.Response;
 using EmployeeOnboarding.Services;
 using EmployeeOnboarding.ViewModels;
 using Microsoft.AspNetCore.Http;
@@ -21,7 +22,7 @@ namespace EmployeeOnboarding.Controllers
         private readonly IUserRepository _userRepository;
         private readonly ApplicationDbContext _context;
 
-        public UserController(IUserRepository userRepository , ApplicationDbContext applicationDbContext)
+        public UserController(IUserRepository userRepository, ApplicationDbContext applicationDbContext)
         {
             _userRepository = userRepository;
             _context = applicationDbContext;
@@ -30,7 +31,7 @@ namespace EmployeeOnboarding.Controllers
         [HttpPost("add-education/{genId}")]
         public async Task<IActionResult> AddEducation(int genId, [FromBody] List<EducationVM> educations)
         {
-            var response = await _userRepository.AddEducation(genId , educations);
+            var response = await _userRepository.AddEducation(genId, educations);
             if (response != null)
             {
                 return Ok(response);
@@ -113,7 +114,7 @@ namespace EmployeeOnboarding.Controllers
         }
 
         [HttpPost("CreateSelfDeclaration/{genId}")]
-        public async Task<IActionResult> CreateSelfDeclaration(int genId,[FromBody] SelfDeclarationRequest selfDeclarationRequest)
+        public async Task<IActionResult> CreateSelfDeclaration(int genId, [FromBody] SelfDeclarationRequest selfDeclarationRequest)
         {
             var name = _context.EmployeeGeneralDetails.Where(x => x.Id == genId && x.Empname.Contains(selfDeclarationRequest.Name)).Select(x => x.Empname).FirstOrDefault();
             if (name != null)
@@ -177,5 +178,18 @@ namespace EmployeeOnboarding.Controllers
             return Ok(bank);
         }
 
+        [HttpGet("GetSelfDeclaration")]
+        public async Task<IActionResult> GetSelfDeclaration(int genId)
+        {
+            var response = await _userRepository.GetSelfDeclaration(genId);
+            if (response != null)
+            {
+                return Ok(response);
+            }
+            else
+            {
+                return NoContent();
+            }
+        }
     }
 }
