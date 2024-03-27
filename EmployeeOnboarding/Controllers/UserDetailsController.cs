@@ -32,9 +32,9 @@ namespace EmployeeOnboarding.Controllers
 
 
         [HttpPost("AddPersonalInfo")]
-        public async Task<IActionResult> AddPersonalInfo(bool directAdd ,[FromBody] PersonalInfoRequest personalInfoRequest)
+        public async Task<IActionResult> AddPersonalInfo(bool directAdd, [FromBody] PersonalInfoRequest personalInfoRequest)
         {
-            var response = await  _userDetailsRepository.AddPersonalInfo(directAdd ,personalInfoRequest);
+            var response = await _userDetailsRepository.AddPersonalInfo(directAdd, personalInfoRequest);
             if (response != null)
             {
                 return Ok(response);
@@ -215,31 +215,49 @@ namespace EmployeeOnboarding.Controllers
             }
         }
         [HttpGet("GetStates")]
-        public async Task<IActionResult> GetSates()
+        public async Task<IActionResult> GetSates(int? id)
         {
-            var response = await _context.State.ToListAsync();
-            if (response != null)
+            if (id == null)
             {
+                var response = await _context.State.ToListAsync();
+                if (response != null)
+                {
+                    return Ok(response);
+                }
+                else
+                {
+                    return NoContent();
+                }
+            }
+            else if (id.HasValue)
+            {
+                var response = await _context.State.Where(x => x.Country_Id == id).ToListAsync();
                 return Ok(response);
             }
-            else
-            {
-                return NoContent();
-            }
+            return BadRequest();
         }
 
         [HttpGet("GetCities")]
-        public async Task<IActionResult> GetCities()
+        public async Task<IActionResult> GetCities(int? id)
         {
-            var response = await _context.City.ToListAsync();
-            if (response != null)
+            if (id == null)
             {
+                var response = await _context.City.ToListAsync();
+                if (response != null)
+                {
+                    return Ok(response);
+                }
+                else
+                {
+                    return NoContent();
+                }
+            }
+            else if (id.HasValue)
+            {
+                var response = await _context.City.Where(x => x.State_Id == id).ToListAsync();
                 return Ok(response);
             }
-            else
-            {
-                return NoContent();
-            }
+            return BadRequest();
         }
 
         //[HttpGet("GetStatesByCountryId/{Id}")]
@@ -273,6 +291,5 @@ namespace EmployeeOnboarding.Controllers
 }
 
 
-        
 
-       
+
