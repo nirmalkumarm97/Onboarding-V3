@@ -13,6 +13,7 @@ using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.DependencyInjection;
 using OnboardingWebsite.Models;
 using System;
+using System.Data.Entity;
 using System.Globalization;
 using System.Security.Principal;
 
@@ -423,38 +424,9 @@ namespace EmployeeOnboarding.Repository
                             dbcontext.EmployeeExperienceDetails.UpdateRange(updateExperiences);
                             dbcontext.SaveChanges();
                         }
-
-                        ////pending status
-                        //var existingpending = dbcontext.ApprovalStatus.Where(x => x.EmpGen_Id == genId).FirstOrDefault();
-                        //if (existingpending != null)
-                        //{
-                        //    existingpending.EmpGen_Id = genId;
-                        //    existingpending.Current_Status = (int)Status.Pending;
-                        //    existingpending.Comments = "";
-                        //    existingpending.Date_Modified = DateTime.UtcNow;
-                        //    existingpending.Modified_by = genId.ToString();
-                        //    dbcontext.ApprovalStatus.Update(existingpending);
-                        //    dbcontext.SaveChanges();
-                        //}
-                        //else
-                        //{
-                        //    var _onboard = new ApprovalStatus()
-                        //    {
-                        //        EmpGen_Id = genId,
-                        //        Current_Status = (int)Status.Pending,
-                        //        Comments = "",
-                        //        Date_Created = DateTime.UtcNow,
-                        //        Date_Modified = DateTime.UtcNow,
-                        //        Created_by = genId.ToString(),
-                        //        Status = "A",
-                        //    };
-                        //    dbcontext.ApprovalStatus.Add(_onboard);
-                        //    dbcontext.SaveChanges();
-                        //}
                         transaction.Commit();
                         dbcontext.ChangeTracker.Clear();
                         return genId;
-
                     }
                     //}
                     //return 0;
@@ -719,35 +691,35 @@ namespace EmployeeOnboarding.Repository
                                 dbcontext.SaveChanges();
 
                             }
-                            //pending status
-                            var existingpending = dbcontext.ApprovalStatus.Where(x => x.EmpGen_Id == genId).FirstOrDefault();
-                            if (existingpending == null)
-                            {
+                            ////pending status
+                            //var existingpending = dbcontext.ApprovalStatus.Where(x => x.EmpGen_Id == genId).FirstOrDefault();
+                            //if (existingpending == null)
+                            //{
 
-                                var _onboard = new ApprovalStatus()
-                                {
-                                    EmpGen_Id = genId,
-                                    Current_Status = (int)Status.Pending,
-                                    Comments = "",
-                                    Date_Created = DateTime.UtcNow,
-                                    Date_Modified = DateTime.UtcNow,
-                                    Created_by = genId.ToString(),
-                                    Status = "A",
-                                };
-                                dbcontext.ApprovalStatus.Add(_onboard);
+                            //    var _onboard = new ApprovalStatus()
+                            //    {
+                            //        EmpGen_Id = genId,
+                            //        Current_Status = (int)Status.Pending,
+                            //        Comments = "",
+                            //        Date_Created = DateTime.UtcNow,
+                            //        Date_Modified = DateTime.UtcNow,
+                            //        Created_by = genId.ToString(),
+                            //        Status = "A",
+                            //    };
+                            //    dbcontext.ApprovalStatus.Add(_onboard);
 
-                                var userId = dbcontext.EmployeeGeneralDetails.Where(x => x.Id == genId).FirstOrDefault();
-                                if (userId != null)
-                                {
-                                    var userlogin = dbcontext.Login.Where(x => x.Id == userId.UserId).FirstOrDefault();
-                                    if (userlogin != null)
-                                    {
-                                        await SendOnboardingSubmissionEmail(userlogin.EmailId, userlogin.Name);
-                                    }
-                                }
+                            //    var userId = dbcontext.EmployeeGeneralDetails.Where(x => x.Id == genId).FirstOrDefault();
+                            //    if (userId != null)
+                            //    {
+                            //        var userlogin = dbcontext.Login.Where(x => x.Id == userId.UserId).FirstOrDefault();
+                            //        if (userlogin != null)
+                            //        {
+                            //            await SendOnboardingSubmissionEmail(userlogin.EmailId, userlogin.Name);
+                            //        }
+                            //    }
 
-                                dbcontext.SaveChanges();
-                            }
+                            //    dbcontext.SaveChanges();
+                            //}
                             transaction.Commit();
                             dbcontext.ChangeTracker.Clear();
                             return genId;
@@ -841,36 +813,170 @@ namespace EmployeeOnboarding.Repository
             }
         }
 
-
-        public async Task<string> CreateSelfDeclaration(int genId, SelfDeclarationRequest selfDeclarationRequest)
+        private async Task SendOnboardingReSubmissionEmail(string email, string name)
         {
+            string subject = "Form Resubmission Confirmation";
+            string body = $@"
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <style>
+                body {{
+                    font-family: Arial, sans-serif;
+                    line-height: 1.6;
+                }}
+                .container {{
+                    max-width: 600px;
+                    margin: 0 auto;
+                    padding: 20px;
+                    border: 1px solid #ccc;
+                    border-radius: 5px;
+                    background-color: #f9f9f9;
+                }}
+                h1 {{
+                    color: #333;
+                }}
+                p {{
+                    margin-bottom: 20px;
+                }}
+            </style>
+        </head>
+        <body>
+            <div class='container'>
+                <h1>Hi {name},</h1>
+                <p>Your form has been resubmitted successfully.</p>
+                <p>We have received your updated information. Please wait for further instructions or confirmation.</p>
+                <p>Thank you for your cooperation.</p>
+                <p>Regards,<br />HR Team</p>
+            </div>
+        </body>
+        </html>";
+
             try
             {
-                var existingself = _context.SelfDeclaration.Where(x => x.EmpGen_Id == genId).FirstOrDefault();
-
-                if (existingself == null)
-                {
-                    SelfDeclaration self = new SelfDeclaration()
-                    {
-                        EmpGen_Id = genId,
-                        Name = selfDeclarationRequest.Name,
-                        CreatedBy = selfDeclarationRequest.CreatedBy,
-                        CreatedDate = DateTime.ParseExact(selfDeclarationRequest.Date, "dd-MM-yyyy", CultureInfo.InvariantCulture),
-                    };
-                    _context.Add(self);
-                    _context.SaveChanges();
-                    return "succeed";
-                }
-                return "succeed";
+                // Assuming _emailSender is an instance of an email sending service
+                await _emailSender.SendEmailAsync(email, subject, body);
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                // Log the exception
+                Console.WriteLine("Error sending form resubmission confirmation email: " + ex.Message);
+                // Rethrow the exception to propagate it further if necessary
+                throw;
             }
         }
+
+
+        public async Task<string> CreateSelfDeclaration(int genId, SelfDeclarationRequest selfDeclarationRequest)
+        {
+            using (IDbContextTransaction transaction = _context.Database.BeginTransaction())
+            {
+                try
+                {
+                    var existingSelfDeclaration = _context.SelfDeclaration.FirstOrDefault(x => x.EmpGen_Id == genId);
+
+                    if (existingSelfDeclaration == null)
+                    {
+                        CreateNewSelfDeclaration(genId, selfDeclarationRequest);
+
+                        var userId = _context.EmployeeGeneralDetails.FirstOrDefault(x => x.Id == genId)?.UserId;
+                        var userLogin = _context.Login.FirstOrDefault(x => x.Id == userId);
+                        if (userLogin != null)
+                        {
+                            await SendOnboardingSubmissionEmail(userLogin.EmailId, userLogin.Name);
+                        }
+                    }
+                    else
+                    {
+                        UpdateExistingSelfDeclaration(existingSelfDeclaration, selfDeclarationRequest);
+                        if (UpdateApprovalStatusIfRejected(genId))
+                        {
+                            // If approval status was updated from Rejected to Pending, send resubmission email
+                            var userId = _context.EmployeeGeneralDetails.FirstOrDefault(x => x.Id == genId)?.UserId;
+                            var userLogin = _context.Login.FirstOrDefault(x => x.Id == userId);
+                            if (userLogin != null)
+                            {
+                                await SendOnboardingReSubmissionEmail(userLogin.EmailId, userLogin.Name);
+                            }
+                        }
+                    }
+                    await _context.SaveChangesAsync();
+                    transaction.Commit();
+
+                    return "succeed";
+                }
+                catch (FormatException ex)
+                {
+                    transaction.Rollback();
+                    throw new Exception(ex.Message);
+                }
+               
+            }
+        }
+
+#region Create process
+        private void CreateNewSelfDeclaration(int genId, SelfDeclarationRequest selfDeclarationRequest)
+        {
+            SelfDeclaration self = new SelfDeclaration()
+            {
+                EmpGen_Id = genId,
+                Name = selfDeclarationRequest.Name,
+                CreatedBy = selfDeclarationRequest.CreatedBy,
+                CreatedDate = DateTime.ParseExact(selfDeclarationRequest.Date, "dd-MM-yyyy", CultureInfo.InvariantCulture),
+                Status =  "A"
+            };
+            _context.Add(self);
+            CreateApprovalStatusIfNotExists(genId);
+        }
+
+        private void CreateApprovalStatusIfNotExists(int genId)
+        {
+            var existingPendingStatus = _context.ApprovalStatus.FirstOrDefault(x => x.EmpGen_Id == genId);
+            if (existingPendingStatus == null)
+            {
+                var onboardStatus = new ApprovalStatus()
+                {
+                    EmpGen_Id = genId,
+                    Current_Status = (int)Status.Pending,
+                    Comments = "",
+                    Date_Created = DateTime.UtcNow,
+                    Date_Modified = DateTime.UtcNow,
+                    Created_by = genId.ToString(),
+                    Status = "A",
+                };
+                _context.ApprovalStatus.Add(onboardStatus);
+            }
+        }
+        #endregion Create Process
+
+#region UpdateProcess
+        private void UpdateExistingSelfDeclaration(SelfDeclaration existingSelfDeclaration, SelfDeclarationRequest selfDeclarationRequest)
+        {
+            existingSelfDeclaration.Name = selfDeclarationRequest.Name;
+            existingSelfDeclaration.CreatedBy = selfDeclarationRequest.CreatedBy;
+            existingSelfDeclaration.CreatedDate = DateTime.ParseExact(selfDeclarationRequest.Date, "dd-MM-yyyy", CultureInfo.InvariantCulture);
+
+            _context.Update(existingSelfDeclaration);
+        }
+
+        private bool UpdateApprovalStatusIfRejected(int genId)
+        {
+            var existingStatus = _context.ApprovalStatus.FirstOrDefault(x => x.EmpGen_Id == genId && x.Current_Status == (int)Status.Rejected);
+            if (existingStatus != null)
+            {
+                existingStatus.Current_Status = (int)Status.Pending;
+                existingStatus.Comments = ""; // Clear comments for resubmission
+                existingStatus.Date_Modified = DateTime.UtcNow;
+                _context.Update(existingStatus);
+                return true; // Status was updated
+            }
+            return false; // Status was not updated
+        }
+#endregion Update Process
         public async Task<SelfDeclarationResponse> GetSelfDeclaration(int genId)
         {
             var data = (from a in _context.SelfDeclaration
+                       // join b in _context.EmployeeGeneralDetails on a.EmpGen_Id equals b.Id
                         where a.EmpGen_Id == genId
                         select a).FirstOrDefault();
 

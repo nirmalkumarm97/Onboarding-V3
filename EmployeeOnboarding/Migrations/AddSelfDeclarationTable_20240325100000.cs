@@ -18,7 +18,8 @@ namespace EmployeeOnboarding.Migrations
               .WithColumn("CreatedDate").AsDateTime().NotNullable()
               .WithColumn("CreatedBy").AsInt32().NotNullable()
               .WithColumn("ModifiedDate").AsDateTime().Nullable()
-              .WithColumn("ModifiedBy").AsInt32().Nullable();
+              .WithColumn("ModifiedBy").AsInt32().Nullable()
+              .WithColumn("Status").AsString().NotNullable();
         }
     }
 }
