@@ -19,9 +19,11 @@ using EmployeeOnboarding.Handler;
 using EmployeeOnboarding.Helper;
 using Microsoft.OpenApi.Models;
 using OpenXmlPowerTools;
+using EmployeeOnboarding.BackgroundTask;
 //using EmployeeOnboarding.Data.Services;
 
 var builder = WebApplication.CreateBuilder(args);
+
 //Cors Policy
 builder.Services.AddCors(options =>
                 options.AddPolicy(
@@ -33,7 +35,6 @@ builder.Services.AddCors(options =>
 #region
 //JWT
 var jwtSettings = builder.Configuration.GetSection("JwtSettings:SecretKey").Value;
-//builder.Services.AddSingleton(jwtSettings);
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -49,23 +50,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ClockSkew = TimeSpan.Zero
         };
     });
-//var authKey = builder.Configuration.GetValue<string>("JWTSettings:SecretKey");
-//builder.Services.AddAuthentication(x =>
-//{
-//    x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme; x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-//}).AddJwtBearer(x =>
-//{
-//    x.RequireHttpsMetadata = true; x.SaveToken = true; x.TokenValidationParameters = new TokenValidationParameters()
-//    {
-//        ValidateIssuerSigningKey = true,
-//        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(authKey)),
-//        ValidateIssuer = false,
-//        ValidateAudience = false
-//    };
-//});
 #endregion
 // Add services to the container.
-//
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -99,22 +85,7 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultCOnnect
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(connectionString));
 
 builder.Services.AddTransient<IEmailSender>(s => new EmailSender("smtp.hostinger.com", 587 , "no-reply@onboarding.ideassion.in" , "N%P-tMmt5'{Wlpu"));
-
 builder.Services.AddTransient<onboardstatusService>();
-//builder.Services.AddTransient<logindetailsService>();
-builder.Services.AddTransient<GeneralDetailService>();
-builder.Services.AddTransient<ContactService>();
-builder.Services.AddTransient<FamilyService>();
-builder.Services.AddTransient<HobbyMembershipService>();
-builder.Services.AddTransient<ColleagueService>();
-builder.Services.AddTransient<EmergencyContactService>();
-builder.Services.AddTransient<RequiredService>();
-//builder.Services.AddTransient<EducationService>();
-//builder.Services.AddTransient<CertificateService>();
-//builder.Services.AddTransient<WorkExperienceService>();
-//builder.Services.AddTransient<ReferenceService>();
-//builder.Services.AddTransient<HealthService>();
-//builder.Services.AddTransient<ExistingBankService>();
 builder.Services.AddScoped<ILogin, AuthenticateLogin>();
 builder.Services.AddScoped<IAdminRepository, AdminRepository>();
 builder.Services.AddTransient<IUserDetailsRepository, UserDetailsRepository>();
@@ -127,6 +98,14 @@ builder.Services.AddLogging(c => c.AddFluentMigratorConsole())
     .ConfigureRunner(c => c.AddPostgres().WithGlobalConnectionString("DefaultConnection")
     .ScanIn(typeof(AddLogin_202308021630).Assembly).For.Migrations().For.EmbeddedResources());
 
+#region BackGround Task
+builder.Services.AddHostedService<StatusUpdateService>();
+//builder.Services.AddLogging(loggingBuilder =>
+//{
+//    loggingBuilder.AddConsole();
+//    loggingBuilder.AddFile("logs/ExpiredItemCleanup-.txt");
+//});
+#endregion BackGround Task
 var app = builder.Build();
 
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);

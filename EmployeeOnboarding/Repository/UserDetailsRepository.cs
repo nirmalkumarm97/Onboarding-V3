@@ -37,7 +37,7 @@ namespace EmployeeOnboarding.Repository
 
         private async Task WriteToFileAsync(FileStream fileStream, byte[] data, CancellationToken cancellationToken)
         {
-            await fileStream.WriteAsync(data, 0, data.Length, cancellationToken);         
+            await fileStream.WriteAsync(data, 0, data.Length, cancellationToken);
         }
 
         private async Task<string> SaveImageFile(string image, string Id, string fileName)
@@ -71,7 +71,7 @@ namespace EmployeeOnboarding.Repository
                     var writeTask = WriteToFileAsync(fileStream, certificateBytes, cancellationTokenSource.Token);
 
                     // Wait for either the writeTask to complete or the timeout
-                     await Task.WhenAny(writeTask, Task.Delay(-1, cancellationTokenSource.Token));
+                    await Task.WhenAny(writeTask, Task.Delay(-1, cancellationTokenSource.Token));
                     // fileStream.WriteAsync(certificateBytes, 0, certificateBytes.Length);
                     if (writeTask.IsCompleted)
                     {
@@ -89,7 +89,7 @@ namespace EmployeeOnboarding.Repository
                 throw new Exception(ex.Message);
             }
         }
-       
+
         private async Task<string> SaveCertificateFile(string certificateFile, string Id, string fileName)
         {
             try
@@ -207,7 +207,7 @@ namespace EmployeeOnboarding.Repository
                         int UserId = 0;
                         if (directadd == true)
                         {
-                            var checkemail =  _context.Login.Where(x => x.EmailId == personalInfoRequest.generalVM.Personal_Emailid).FirstOrDefault();
+                            var checkemail = _context.Login.Where(x => x.EmailId == personalInfoRequest.generalVM.Personal_Emailid).FirstOrDefault();
                             if (checkemail == null)
                             {
                                 string tempPass = Guid.NewGuid().ToString().Replace("-", "").Substring(0, 8); // Change length as needed
@@ -256,7 +256,7 @@ namespace EmployeeOnboarding.Repository
 
                             existingGeneral.BloodGrp = personalInfoRequest.generalVM.BloodGrp;
 
-                            existingGeneral.Profile_pic = await SaveImageFile(personalInfoRequest.generalVM.Profile_pic, personalInfoRequest.generalVM.Empname+personalInfoRequest.loginId.ToString(), "Profile.jpg");
+                            existingGeneral.Profile_pic = await SaveImageFile(personalInfoRequest.generalVM.Profile_pic, personalInfoRequest.generalVM.Empname + personalInfoRequest.loginId.ToString(), "Profile.jpg");
 
                             existingGeneral.Date_Modified = DateTime.UtcNow;
                             existingGeneral.Modified_by = personalInfoRequest.loginId.ToString();
@@ -281,7 +281,7 @@ namespace EmployeeOnboarding.Repository
                                 Date_Created = DateTime.UtcNow,
                                 Date_Modified = DateTime.UtcNow,
                                 Created_by = personalInfoRequest.loginId.ToString(),
-                                Modified_by = personalInfoRequest.loginId.ToString(),   
+                                Modified_by = personalInfoRequest.loginId.ToString(),
                                 Status = "A",
                                 UserId = directadd == true ? UserId : personalInfoRequest.loginId
                             };
@@ -303,57 +303,63 @@ namespace EmployeeOnboarding.Repository
 
 
 
-                        //Present And Permanent Address:
+                        // Present And Permanent Address:
+                        var existingContacts = _context.EmployeeContactDetails.Where(e => e.EmpGen_Id == GenId).ToList();
                         foreach (var type in personalInfoRequest.contact)
                         {
-                            var existingContact =  _context.EmployeeContactDetails.FirstOrDefault(e => e.EmpGen_Id == GenId && e.Address_Type == type.AddressType);
+                            var existingContact = existingContacts.FirstOrDefault(e => e.Address_Type == type.AddressType);
 
-                            if (existingContact != null)
+                            switch (type.AddressType)
                             {
-                                //Update existing record
-                                existingContact.Address1 = type.Address1;
-                                existingContact.Address2 = type.Address2;
-                                existingContact.Country_Id = type.Country_Id;
-                                existingContact.State_Id = type.State_Id;
-                                existingContact.City_Id = type.City_Id;
-                                existingContact.Pincode = type.Pincode;
-                                existingContact.Date_Modified = DateTime.UtcNow;
-                                existingContact.Modified_by = GenId.ToString();
-                                existingContact.Status = "A";
-                            }
-                            else
-                            {
-                                //Add new record
-                                var _contact = new EmployeeContactDetails()
-                                {
-                                    EmpGen_Id = GenId,
-                                    Address_Type = type.AddressType,
-                                    Address1 = type.Address1,
-                                    Address2 = type.Address2,
-                                    Country_Id = type.Country_Id,
-                                    State_Id = type.State_Id,
-                                    City_Id = type.City_Id,
-                                    Pincode = type.Pincode,
-                                    Date_Created = DateTime.UtcNow,
-                                    Date_Modified = DateTime.UtcNow,
-                                    Created_by = GenId.ToString(),
-                                    Modified_by = GenId.ToString(),
-                                    Status = "A"
-                                };
-                                _context.EmployeeContactDetails.Add(_contact);
+                                case "Present":
+                                case "Permanent":
+                                    if (existingContact != null)
+                                    {
+                                        // Update existing record
+                                        existingContact.Address1 = type.Address1;
+                                        existingContact.Address2 = type.Address2;
+                                        existingContact.Country_Id = type.Country_Id;
+                                        existingContact.State_Id = type.State_Id;
+                                        existingContact.City_Id = type.City_Id;
+                                        existingContact.Pincode = type.Pincode;
+                                        existingContact.Date_Modified = DateTime.UtcNow;
+                                        existingContact.Modified_by = GenId.ToString();
+                                        existingContact.Status = "A";
+                                    }
+                                    else
+                                    {
+                                        // Add new record
+                                        var _contact = new EmployeeContactDetails()
+                                        {
+                                            EmpGen_Id = GenId,
+                                            Address_Type = type.AddressType,
+                                            Address1 = type.Address1,
+                                            Address2 = type.Address2,
+                                            Country_Id = type.Country_Id,
+                                            State_Id = type.State_Id,
+                                            City_Id = type.City_Id,
+                                            Pincode = type.Pincode,
+                                            Date_Created = DateTime.UtcNow,
+                                            Date_Modified = DateTime.UtcNow,
+                                            Created_by = GenId.ToString(),
+                                            Modified_by = GenId.ToString(),
+                                            Status = "A"
+                                        };
+                                        _context.EmployeeContactDetails.Add(_contact);
+                                    }
+                                    break;
                             }
                         }
-
 
                         //Family Details
 
                         List<EmployeeFamilyDetails> familyVMs = new List<EmployeeFamilyDetails>();
                         int index1 = 1; // Initialize the Company_no sequence
-                        var existingFamilies = _context.EmployeeFamilyDetails.Where(x => x.EmpGen_Id == GenId); 
+                        var existingFamilies = _context.EmployeeFamilyDetails.Where(x => x.EmpGen_Id == GenId);
 
                         foreach (var family in personalInfoRequest.families)
                         {
-                           var existingFamily = existingFamilies.FirstOrDefault(e => e.EmpGen_Id == GenId && e.Family_no == index1);
+                            var existingFamily = existingFamilies.FirstOrDefault(e => e.EmpGen_Id == GenId && e.Family_no == index1);
                             if (existingFamily != null)
                             {
                                 // Update existing record
@@ -395,7 +401,7 @@ namespace EmployeeOnboarding.Repository
 
                         // hobbies and membership
 
-                        var existingHobby =  _context.EmployeeHobbyMembership.FirstOrDefault(e => e.EmpGen_Id == GenId);
+                        var existingHobby = _context.EmployeeHobbyMembership.FirstOrDefault(e => e.EmpGen_Id == GenId);
                         if (existingHobby != null)
                         {
                             existingHobby.ProfessionalBody = personalInfoRequest.hobby.ProfessionalBody;
@@ -429,11 +435,11 @@ namespace EmployeeOnboarding.Repository
                         {
                             List<EmployeeColleagueDetails> colleagueVMs = new List<EmployeeColleagueDetails>();
                             int index2 = 1;
-                            var existingColleagues = _context.EmployeeColleagueDetails.Where(x => x.EmpGen_Id == GenId).ToList(); 
+                            var existingColleagues = _context.EmployeeColleagueDetails.Where(x => x.EmpGen_Id == GenId).ToList();
 
                             foreach (var colleague in personalInfoRequest.colleagues)
                             {
-                              var existingColleague = existingColleagues.FirstOrDefault(e => e.EmpGen_Id == GenId && e.colleague_no == index2);
+                                var existingColleague = existingColleagues.FirstOrDefault(e => e.EmpGen_Id == GenId && e.colleague_no == index2);
                                 if (existingColleague != null)
                                 {
                                     existingColleague.Employee_id = colleague.Empid;
@@ -535,7 +541,7 @@ namespace EmployeeOnboarding.Repository
                                 EmpGen_Id = GenId,
                                 Aadhar = await SaveCertificateFile(personalInfoRequest.RequiredDocuments.Aadhar, GenId.ToString(), "Aadhar.pdf"),
                                 Pan = await SaveCertificateFile(personalInfoRequest.RequiredDocuments.Pan, GenId.ToString(), "Pan.pdf"),
-                                Driving_license =await SaveCertificateFile(personalInfoRequest.RequiredDocuments.Driving_license, GenId.ToString(), "Driving_license.pdf"),
+                                Driving_license = await SaveCertificateFile(personalInfoRequest.RequiredDocuments.Driving_license, GenId.ToString(), "Driving_license.pdf"),
                                 Passport = await SaveCertificateFile(personalInfoRequest.RequiredDocuments.Passport, GenId.ToString(), "Passport.pdf"),
                                 Date_Created = DateTime.UtcNow,
                                 Date_Modified = DateTime.UtcNow,
@@ -575,7 +581,7 @@ namespace EmployeeOnboarding.Repository
                 {
                     file = new byte[fs.Length];
                     int br = fs.Read(file, 0, file.Length);
-                   
+
                     if (br != fs.Length)
                     {
                         throw new IOException("Invalid path");
@@ -615,7 +621,7 @@ namespace EmployeeOnboarding.Repository
                     personalInfoResponse.loginId = _general.LoginId;
                     personalInfoResponse.generalVM = _general;
 
-                    var _contact =  _context.EmployeeContactDetails.Where(n => n.EmpGen_Id == _general.Id).Select(contact => new ContactResponse()
+                    var _contact = _context.EmployeeContactDetails.Where(n => n.EmpGen_Id == _general.Id).Select(contact => new ContactResponse()
                     {
                         Address1 = contact.Address1,
                         Address2 = contact.Address2,
@@ -627,7 +633,7 @@ namespace EmployeeOnboarding.Repository
                     }).ToList();
                     personalInfoResponse.contact = _contact;
 
-                    var family =  _context.EmployeeFamilyDetails.Where(e => e.EmpGen_Id == _general.Id && e.Family_no != null).Select(e => new FamilyResponse()
+                    var family = _context.EmployeeFamilyDetails.Where(e => e.EmpGen_Id == _general.Id && e.Family_no != null).Select(e => new FamilyResponse()
                     {
                         Relationship = e.Relationship,
                         Name = e.Name,
@@ -649,7 +655,7 @@ namespace EmployeeOnboarding.Repository
 
                     personalInfoResponse.hobby = _hobby;
 
-                    var colleague =  _context.EmployeeColleagueDetails.Where(e => e.EmpGen_Id == _general.Id && e.colleague_no != null).Select(e => new ColleagueResponse
+                    var colleague = _context.EmployeeColleagueDetails.Where(e => e.EmpGen_Id == _general.Id && e.colleague_no != null).Select(e => new ColleagueResponse
                     {
                         Empid = e.Employee_id,
                         Colleague_Name = e.Colleague_Name,
@@ -716,15 +722,15 @@ namespace EmployeeOnboarding.Repository
                     if (role.Invited_Status == "Invited")
                     {
                         StatusCardResponse userdet = (from a in _context.Login
-                                                            where a.Role == "U" && a.Status == "A"
-                                                            where a.Id == loginId
-                                                            select new StatusCardResponse
-                                                            {
-                                                                UserId = a.Id,
-                                                                Email = a.EmailId,
-                                                                Status = a.Invited_Status,
-                                                                Role = a.Role
-                                                            }).FirstOrDefault();
+                                                      where a.Role == "U" && a.Status == "A"
+                                                      where a.Id == loginId
+                                                      select new StatusCardResponse
+                                                      {
+                                                          UserId = a.Id,
+                                                          Email = a.EmailId,
+                                                          Status = a.Invited_Status,
+                                                          Role = a.Role
+                                                      }).FirstOrDefault();
                         UserResponse.Add(userdet);
                         return UserResponse;
 
@@ -733,19 +739,19 @@ namespace EmployeeOnboarding.Repository
                     {
 
                         StatusCardResponse OtherStatusUser = (from a in _context.Login
-                                                           join b in _context.EmployeeGeneralDetails on a.Id equals b.UserId into
-                                                           logGen
-                                                           from lg in logGen.DefaultIfEmpty()
-                                                           where a.Role == "U" && a.Status == "A" && lg.Status == "A"
-                                                           where lg.UserId == loginId
-                                                           select new StatusCardResponse
-                                                           {
-                                                               UserId = lg.UserId,
-                                                               GenId = lg.Id,
-                                                               Email = a.EmailId,
-                                                               Status = a.Invited_Status,
-                                                               Role = a.Role
-                                                           }).FirstOrDefault();
+                                                              join b in _context.EmployeeGeneralDetails on a.Id equals b.UserId into
+                                                              logGen
+                                                              from lg in logGen.DefaultIfEmpty()
+                                                              where a.Role == "U" && a.Status == "A" && lg.Status == "A"
+                                                              where lg.UserId == loginId
+                                                              select new StatusCardResponse
+                                                              {
+                                                                  UserId = lg.UserId,
+                                                                  GenId = lg.Id,
+                                                                  Email = a.EmailId,
+                                                                  Status = a.Invited_Status,
+                                                                  Role = a.Role
+                                                              }).FirstOrDefault();
                         UserResponse.Add(OtherStatusUser);
 
                         return UserResponse;
@@ -755,39 +761,39 @@ namespace EmployeeOnboarding.Repository
                 if (role.Role == "A")
                 {
                     List<StatusCardResponse> InvitedUsers = (from a in _context.Login
-                                                        where a.Role == "U" && a.Status == "A" && a.Invited_Status == "Invited"
-                                                        select new StatusCardResponse
-                                                        {
-                                                            UserId = a.Id,
-                                                            Email = a.EmailId,
-                                                            Status = a.Invited_Status,
-                                                            Role = a.Role
-                                                        }).ToList();
+                                                             where a.Role == "U" && a.Status == "A" && a.Invited_Status == "Invited"
+                                                             select new StatusCardResponse
+                                                             {
+                                                                 UserId = a.Id,
+                                                                 Email = a.EmailId,
+                                                                 Status = a.Invited_Status,
+                                                                 Role = a.Role
+                                                             }).ToList();
 
                     Adminresponse.AddRange(InvitedUsers);
 
 
                     List<StatusCardResponse> OtherUsers = (from a in _context.Login
-                                                        join b in _context.EmployeeGeneralDetails on a.Id equals b.UserId into
-                                                        logGen
-                                                        from lg in logGen.DefaultIfEmpty()
-                                                        where a.Role == "U" && a.Status == "A" && lg.Status == "A" && a.Invited_Status != "Invited"
-                                                        select new StatusCardResponse
-                                                        {
-                                                            UserId = lg.UserId,
-                                                            GenId = lg.Id,
-                                                            Email = a.EmailId,
-                                                            Status = a.Invited_Status,
-                                                            Role = a.Role
-                                                        }).ToList();
+                                                           join b in _context.EmployeeGeneralDetails on a.Id equals b.UserId into
+                                                           logGen
+                                                           from lg in logGen.DefaultIfEmpty()
+                                                           where a.Role == "U" && a.Status == "A" && lg.Status == "A" && a.Invited_Status != "Invited"
+                                                           select new StatusCardResponse
+                                                           {
+                                                               UserId = lg.UserId,
+                                                               GenId = lg.Id,
+                                                               Email = a.EmailId,
+                                                               Status = a.Invited_Status,
+                                                               Role = a.Role
+                                                           }).ToList();
                     return OtherUsers;
 
 
                 }
                 return null;
-                    
+
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 throw;
             }

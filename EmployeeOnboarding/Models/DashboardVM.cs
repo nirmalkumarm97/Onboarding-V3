@@ -13,6 +13,8 @@ namespace EmployeeOnboarding.Models
         public string education { get; set; }
         public int? UserId { get; set; }
         public string Status { get; set; }
+        public DateTime CreatedDate { get; set; }
+        public DateTime? DateModified { get; set; }
 
     }
 }

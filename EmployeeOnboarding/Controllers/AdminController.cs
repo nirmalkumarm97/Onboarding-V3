@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using EmployeeOnboarding.Contracts;
 using EmployeeOnboarding.Data;
 using EmployeeOnboarding.Models;
-
+using EmployeeOnboarding.Request;
 
 namespace EmployeeOnboarding.Controllers
 {
@@ -20,10 +20,24 @@ namespace EmployeeOnboarding.Controllers
             _adminRepository = adminRepository;
         }
 
-        [HttpGet("api/AdminDashboard")]
-        public async Task<List<DashboardVM>> getEmployee()
+        [HttpPost("api/AdminDashboard")]
+        public async Task<List<DashboardVM>> getEmployee([FromBody] AdminRequest adminRequest)
         {
-            return await _adminRepository.GetEmployeeDetails();
+            return await _adminRepository.GetEmployeeDetails(adminRequest);
+        }
+
+        [HttpPost("api/GetExpiredDetails")]
+        public async Task<IActionResult> GetExpiredDetails(AdminRequest adminRequest)
+        {
+            var result = await _adminRepository.GetExpiredDetails(adminRequest);
+            if (result != null)
+            {
+                return Ok(result);
+            }
+            else
+            {
+                return NoContent();
+            }
         }
 
         ////[HttpPost("api/AdminDeleteById")]
@@ -44,20 +58,20 @@ namespace EmployeeOnboarding.Controllers
         //    return await _adminRepository.GetApprovedEmpDetails(EmpGen_Id);
         //}
 
-        [HttpGet("api/GetPendingEmployeeDetails")]
-        public async Task<List<Dashboard1VM>> GetPendingEmployee()
+        [HttpPost("api/GetPendingEmployeeDetails")]
+        public async Task<List<Dashboard1VM>> GetPendingEmployee([FromBody] AdminRequest adminRequest)
         {
-            return await _adminRepository.GetPendingEmployeeDetails();
+            return await _adminRepository.GetPendingEmployeeDetails(adminRequest);
         }
-        [HttpGet("api/GetInvitedEmployeeDetails")]
-        public async Task<List<Dashboard1VM>> GetInvitedEmployee()
+        [HttpPost("api/GetInvitedEmployeeDetails")]
+        public async Task<List<Dashboard1VM>> GetInvitedEmployee([FromBody] AdminRequest adminRequest)
         {
-            return await _adminRepository.GetInvitedEmployeeDetails();
+            return await _adminRepository.GetInvitedEmployeeDetails(adminRequest);
         }
-        [HttpGet("api/GetRejectedEmployeeDetails")]
-        public async Task<List<Dashboard1VM>> GetRejectedDetails()
+        [HttpPost("api/GetRejectedEmployeeDetails")]
+        public async Task<List<Dashboard1VM>> GetRejectedDetails([FromBody] AdminRequest adminRequest)
         {
-            return await _adminRepository.GetRejectedEmployeeDetails();
+            return await _adminRepository.GetRejectedEmployeeDetails(adminRequest);
         }
 
         //[HttpPost("api/SearchApprovedEmployeeDetails")]
