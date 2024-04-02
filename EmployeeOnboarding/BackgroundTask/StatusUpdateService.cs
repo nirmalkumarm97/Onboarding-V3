@@ -9,7 +9,7 @@ namespace EmployeeOnboarding.BackgroundTask
     public class StatusUpdateService : BackgroundService
     {
         private readonly IServiceProvider _services;
-        private const int IntervalTime = 8 * 60 * 60; // 8 hours once trigger
+        private const int IntervalTime = 8; // 8 hours once trigger
 
         public StatusUpdateService(IServiceProvider services)
         {
