@@ -15,6 +15,11 @@ using System.Data.Entity.Core.Mapping;
 using EmployeeOnboarding.ViewModels;
 using EmployeeOnboarding.Data.Enum;
 using OpenXmlPowerTools;
+using DocumentFormat.OpenXml.Spreadsheet;
+using EmployeeOnboarding.Response;
+using EmployeeOnboarding.Request;
+using DocumentFormat.OpenXml.Wordprocessing;
+using EmployeeOnboarding.Constants;
 
 namespace EmployeeOnboarding.Repository
 {
@@ -27,31 +32,40 @@ namespace EmployeeOnboarding.Repository
             _context = context;
         }
 
-        public async Task<List<Dashboard1VM>> GetInvitedEmployeeDetails()
+        public async Task<List<Dashboard1VM>> GetInvitedEmployeeDetails(AdminRequest adminRequest)
         {
             var InvitedDetails = (from l in _context.Login
-                                  where l.Status == "A" && l.Invited_Status == "Invited" || l.Invited_Status == "Confirmed"
+                                  where l.Status == "A" && (l.Invited_Status == "Invited" || l.Invited_Status == "Confirmed") &&
+                                  (l.Name.ToLower().Contains(adminRequest.SearchCriteria.ToLower()) || l.EmailId.ToLower().Contains(adminRequest.SearchCriteria.ToLower()) || string.IsNullOrWhiteSpace(adminRequest.SearchCriteria))
                                   select new Dashboard1VM()
                                   {
                                       Login_Id = l.Id,
                                       Name = l.Name,
                                       DateModified = l.Date_Modified,
                                       Email_id = l.EmailId,
-                                      Current_Status = l.Invited_Status
-                                  }).ToList();
+                                      Current_Status = l.Invited_Status,
+                                      CreatedDate = l.Date_Created
+                                  }).Skip((adminRequest.PageNumber - 1) * adminRequest.PageSize).Take(adminRequest.PageSize).OrderByDescending(x => x.CreatedDate).ToList();
             return InvitedDetails;
         }
-        public async Task<List<Dashboard1VM>> GetRejectedEmployeeDetails()
+        public async Task<List<Dashboard1VM>> GetRejectedEmployeeDetails(AdminRequest adminRequest)
         {
-            var RejectedDetails = (from e in _context.EmployeeGeneralDetails
-                                   where e.Status == "A"
-                                   join l in _context.Login on e.UserId equals l.Id
-                                   where l.Status == "A" && l.Role == "U"
+            var RejectedDetails = (from l in _context.Login
+                                   join e in _context.EmployeeGeneralDetails on l.Id equals e.UserId
                                    join a in _context.ApprovalStatus on e.Id equals a.EmpGen_Id
-                                   where a.Status == "A" && a.Current_Status == 3
+                                   where l.Status == "A" && l.Role == "U" &&
+                                         e.Status == "A" &&
+                                         a.Status == "A" && a.Current_Status == 3 &&
+                                         (
+                                             e.Id.ToString().ToLower().Contains(adminRequest.SearchCriteria.ToLower()) ||
+                                             e.Empname.ToLower().Contains(adminRequest.SearchCriteria.ToLower()) ||
+                                             e.Contact_no.ToString().ToLower().Contains(adminRequest.SearchCriteria.ToLower()) ||
+                                             e.Personal_Emailid.ToLower().Contains(adminRequest.SearchCriteria.ToLower()) ||
+                                             string.IsNullOrWhiteSpace(adminRequest.SearchCriteria)
+                                         )
                                    select new Dashboard1VM()
                                    {
-                                       Login_Id = (int)e.UserId,
+                                       Login_Id = l.Id,
                                        EmpGen_Id = a.EmpGen_Id,
                                        Name = e.Empname,
                                        Contact_no = e.Contact_no,
@@ -59,18 +73,31 @@ namespace EmployeeOnboarding.Repository
                                        Email_id = l.EmailId,
                                        Current_Status = ((Data.Enum.Status)a.Current_Status).ToString(),
                                        UserId = e.UserId,
-                                       RejectedComments = a.Comments
-                                   }).ToList();
+                                       RejectedComments = a.Comments,
+                                       CreatedDate = a.Date_Created
+                                   })
+                     .Skip((adminRequest.PageNumber - 1) * adminRequest.PageSize)
+                     .Take(adminRequest.PageSize)
+                     .OrderByDescending(x => x.DateModified)
+                     .ToList();
             return RejectedDetails;
         }
 
-        public async Task<List<Dashboard1VM>> GetPendingEmployeeDetails()
+        public async Task<List<Dashboard1VM>> GetPendingEmployeeDetails(AdminRequest adminRequest)
         {
             var PendingDetails = (from l in _context.Login
-                                  where l.Status == "A" && l.Role == "U"
                                   join e in _context.EmployeeGeneralDetails on l.Id equals e.UserId
                                   join a in _context.ApprovalStatus on e.Id equals a.EmpGen_Id
-                                  where a.Status == "A" && a.Current_Status == 2
+                                  where l.Status == "A" && l.Role == "U" &&
+                                        e.Status == "A" &&
+                                        a.Status == "A" && a.Current_Status == 2 &&
+                                        (
+                                            e.Id.ToString().ToLower().Contains(adminRequest.SearchCriteria.ToLower()) ||
+                                            e.Empname.ToLower().Contains(adminRequest.SearchCriteria.ToLower()) ||
+                                            e.Contact_no.ToString().ToLower().Contains(adminRequest.SearchCriteria.ToLower()) ||
+                                            e.Personal_Emailid.ToLower().Contains(adminRequest.SearchCriteria.ToLower()) ||
+                                            string.IsNullOrWhiteSpace(adminRequest.SearchCriteria)
+                                        )
                                   select new Dashboard1VM()
                                   {
                                       Login_Id = l.Id,
@@ -80,21 +107,31 @@ namespace EmployeeOnboarding.Repository
                                       DateModified = a.Date_Modified,
                                       Email_id = l.EmailId,
                                       Current_Status = ((Data.Enum.Status)a.Current_Status).ToString(),
-                                      UserId = e.UserId
-                                  }).ToList();
+                                      UserId = e.UserId,
+                                      CreatedDate = a.Date_Created,
+                                  })
+                    .Skip((adminRequest.PageNumber - 1) * adminRequest.PageSize)
+                    .Take(adminRequest.PageSize)
+                    .OrderByDescending(x => x.CreatedDate)
+                    .ToList();
             return PendingDetails;
         }
 
-        public async Task<List<DashboardVM>> GetEmployeeDetails()
+        public async Task<List<DashboardVM>> GetEmployeeDetails(AdminRequest adminRequest)
         {
             var employeedetails = (from l in _context.Login
-                                   where l.Status == "A" && l.Role == "U" 
                                    join e in _context.EmployeeGeneralDetails on l.Id equals e.UserId
-                                   where e.Status == "A" 
-                                   join al in _context.ApprovalStatus on e.Id equals al.EmpGen_Id
-                                   where  al.Status == "A" && al.Current_Status == 1
-                                   //join ec in _context.EmployeeContactDetails on e.Id equals ec.EmpGen_Id
-                                   //where ec.Status == "A"
+                                   join a in _context.ApprovalStatus on e.Id equals a.EmpGen_Id
+                                   where l.Status == "A" && l.Role == "U" &&
+                                         e.Status == "A" &&
+                                         a.Status == "A" && a.Current_Status == 1 &&
+                                         (
+                                             e.Id.ToString().ToLower().Contains(adminRequest.SearchCriteria.ToLower()) ||
+                                             e.Empname.ToLower().Contains(adminRequest.SearchCriteria.ToLower()) ||
+                                             e.Contact_no.ToString().ToLower().Contains(adminRequest.SearchCriteria.ToLower()) ||
+                                             e.Personal_Emailid.ToLower().Contains(adminRequest.SearchCriteria.ToLower()) ||
+                                             string.IsNullOrWhiteSpace(adminRequest.SearchCriteria)
+                                         )
                                    select new DashboardVM()
                                    {
                                        EmpGen_Id = e.Id,
@@ -104,15 +141,32 @@ namespace EmployeeOnboarding.Repository
                                        Email = e.Official_EmailId,
                                        education = (_context.EmployeeEducationDetails.Where(x => x.EmpGen_Id == e.Id).Select(x => x.Degree_achieved).OrderBy(x => x).LastOrDefault()),
                                        UserId = (int)e.UserId,
-                                       Status = ((Data.Enum.Status)al.Current_Status).ToString()
-                                   }).ToList();
+                                       Status = ((Data.Enum.Status)a.Current_Status).ToString(),
+                                       CreatedDate = a.Date_Created,
+                                       DateModified = a.Date_Modified,
+                                   })
+                    .Skip((adminRequest.PageNumber - 1) * adminRequest.PageSize)
+                    .Take(adminRequest.PageSize)
+                    .OrderByDescending(x => x.DateModified)
+                    .ToList();
             return employeedetails;
         }
-        public async Task<string> FindUsers()
+        public async Task<List<Dashboard1VM>> GetExpiredDetails(AdminRequest adminRequest)
         {
-
+            var expiredDetails = (from l in _context.Login
+                                  where l.Status == "A" && (l.Invited_Status == "Expired") &&
+                                  (l.Name.ToLower().Contains(adminRequest.SearchCriteria.ToLower()) || l.EmailId.ToLower().Contains(adminRequest.SearchCriteria.ToLower()) || string.IsNullOrWhiteSpace(adminRequest.SearchCriteria))
+                                  select new Dashboard1VM()
+                                  {
+                                      Login_Id = l.Id,
+                                      Name = l.Name,
+                                      DateModified = l.Date_Modified,
+                                      Email_id = l.EmailId,
+                                      Current_Status = l.Invited_Status,
+                                      CreatedDate = l.Date_Created
+                                  }).Skip((adminRequest.PageNumber - 1) * adminRequest.PageSize).Take(adminRequest.PageSize).OrderByDescending(x => x.CreatedDate).ToList();
+            return expiredDetails;
         }
-
 
         //       // EnumExtensionMethods.GetEnumDescription((BloodGroup) general.BloodGrp)
         //        public async Task<List<PersonalInfoVM>>? GetPersonalInfo(int id)
