@@ -166,7 +166,6 @@ namespace EmployeeOnboarding.Repository
                                       CreatedDate = l.Date_Created
                                   }).Skip((adminRequest.PageNumber - 1) * adminRequest.PageSize).Take(adminRequest.PageSize).OrderByDescending(x => x.CreatedDate).ToList();
             return expiredDetails;
-
         }
 
         //       // EnumExtensionMethods.GetEnumDescription((BloodGroup) general.BloodGrp)
