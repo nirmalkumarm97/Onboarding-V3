@@ -75,21 +75,22 @@ namespace EmployeeOnboarding.Services
                     disapproved.Modified_by = "Admin";
                     disapproved.Status = "D";
                     _context.ApprovalStatus.Update(disapproved);
-                }
 
-                // If neither approved nor disapproved, create a new ApprovalStatus with Approved status
-                var newApproval = new ApprovalStatus()
-                {
-                    EmpGen_Id = genId,
-                    Current_Status = (int)Status.Approved,
-                    Comments = "",
-                    Date_Created = DateTime.UtcNow,
-                    Date_Modified = DateTime.UtcNow,
-                    Created_by = "Admin",
-                    Modified_by = "Admin",
-                    Status = "A",
-                };
-                _context.ApprovalStatus.Add(newApproval);
+
+                    // If neither approved nor disapproved, create a new ApprovalStatus with Approved status
+                    var newApproval = new ApprovalStatus()
+                    {
+                        EmpGen_Id = genId,
+                        Current_Status = (int)Status.Approved,
+                        Comments = "",
+                        Date_Created = DateTime.UtcNow,
+                        Date_Modified = DateTime.UtcNow,
+                        Created_by = "Admin",
+                        Modified_by = "Admin",
+                        Status = "A",
+                    };
+                    _context.ApprovalStatus.Add(newApproval);
+                }
 
             }
             await _context.SaveChangesAsync(); // Save changes to ApprovalStatus
@@ -221,20 +222,21 @@ namespace EmployeeOnboarding.Services
                             existingRejected.Modified_by = "Admin";
                             existingRejected.Status = "D";
                             _context.ApprovalStatus.Update(existingRejected);
-                        }
 
-                        var newApprovalStatus = new ApprovalStatus()
-                        {
-                            EmpGen_Id = genId,
-                            Current_Status = (int)Status.Rejected,
-                            Comments = onboardstatus.Comments,
-                            Date_Created = DateTime.UtcNow,
-                            Date_Modified = DateTime.UtcNow,
-                            Created_by = "Admin",
-                            Modified_by = "Admin",
-                            Status = "A",
-                        };
-                        _context.ApprovalStatus.Add(newApprovalStatus);
+
+                            var newApprovalStatus = new ApprovalStatus()
+                            {
+                                EmpGen_Id = genId,
+                                Current_Status = (int)Status.Rejected,
+                                Comments = onboardstatus.Comments,
+                                Date_Created = DateTime.UtcNow,
+                                Date_Modified = DateTime.UtcNow,
+                                Created_by = "Admin",
+                                Modified_by = "Admin",
+                                Status = "A",
+                            };
+                            _context.ApprovalStatus.Add(newApprovalStatus);
+                        }
 
                     }
 
