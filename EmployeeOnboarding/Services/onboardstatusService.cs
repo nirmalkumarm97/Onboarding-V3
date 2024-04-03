@@ -53,9 +53,9 @@ namespace EmployeeOnboarding.Services
 
         private async Task UpdateApprovalStatus(int genId)
         {
-            var approved = _context.ApprovalStatus.FirstOrDefault(e => e.EmpGen_Id == genId && e.Current_Status == 2);
+            var approved = _context.ApprovalStatus.FirstOrDefault(e => e.EmpGen_Id == genId);
 
-            if (approved != null)
+            if (approved != null && approved.Current_Status == 2)
             {
                 // Update existing record to Approved
                 approved.Current_Status = (int)Status.Approved;
@@ -64,35 +64,33 @@ namespace EmployeeOnboarding.Services
                 approved.Status = "A";
                 _context.ApprovalStatus.Update(approved);
             }
-            else
+            else if (approved != null && approved.Current_Status == 3)
             {
-                var disapproved = _context.ApprovalStatus.FirstOrDefault(e => e.EmpGen_Id == genId && e.Current_Status == 3);
+                // Update existing record to Disapproved
+                approved.Date_Modified = DateTime.UtcNow;
+                approved.Modified_by = "Admin";
+                approved.Status = "D";
+                _context.ApprovalStatus.Update(approved);
 
-                if (disapproved != null)
+                // If neither approved nor disapproved, create a new ApprovalStatus with Approved status
+                var newApproval = new ApprovalStatus()
                 {
-                    // Update existing record to Disapproved
-                    disapproved.Date_Modified = DateTime.UtcNow;
-                    disapproved.Modified_by = "Admin";
-                    disapproved.Status = "D";
-                    _context.ApprovalStatus.Update(disapproved);
-
-
-                    // If neither approved nor disapproved, create a new ApprovalStatus with Approved status
-                    var newApproval = new ApprovalStatus()
-                    {
-                        EmpGen_Id = genId,
-                        Current_Status = (int)Status.Approved,
-                        Comments = "",
-                        Date_Created = DateTime.UtcNow,
-                        Date_Modified = DateTime.UtcNow,
-                        Created_by = "Admin",
-                        Modified_by = "Admin",
-                        Status = "A",
-                    };
-                    _context.ApprovalStatus.Add(newApproval);
-                }
-
+                    EmpGen_Id = genId,
+                    Current_Status = (int)Status.Approved,
+                    Comments = "",
+                    Date_Created = DateTime.UtcNow,
+                    Date_Modified = DateTime.UtcNow,
+                    Created_by = "Admin",
+                    Modified_by = "Admin",
+                    Status = "A",
+                };
+                _context.ApprovalStatus.Add(newApproval);
             }
+            else if (approved != null && approved.Current_Status == 1)
+            {
+                return;
+            }
+
             await _context.SaveChangesAsync(); // Save changes to ApprovalStatus
         }
 
@@ -201,9 +199,9 @@ namespace EmployeeOnboarding.Services
 
                 using (var transaction = _context.Database.BeginTransaction())
                 {
-                    var approvalStatus = _context.ApprovalStatus.FirstOrDefault(e => e.EmpGen_Id == genId && e.Current_Status == 2);
+                    var approvalStatus = _context.ApprovalStatus.FirstOrDefault(e => e.EmpGen_Id == genId);
 
-                    if (approvalStatus != null)
+                    if (approvalStatus != null && approvalStatus.Current_Status == 2)
                     {
                         approvalStatus.Current_Status = (int)Status.Rejected;
                         approvalStatus.Comments = onboardstatus.Comments;
@@ -212,32 +210,30 @@ namespace EmployeeOnboarding.Services
                         approvalStatus.Status = "A";
                         _context.ApprovalStatus.Update(approvalStatus);
                     }
-                    else
+                    else if (approvalStatus != null && approvalStatus.Current_Status == 3)
                     {
-                        var existingRejected = _context.ApprovalStatus.FirstOrDefault(e => e.EmpGen_Id == genId && e.Current_Status == 3);
+                        approvalStatus.Date_Modified = DateTime.UtcNow;
+                        approvalStatus.Modified_by = "Admin";
+                        approvalStatus.Status = "D";
+                        _context.ApprovalStatus.Update(approvalStatus);
 
-                        if (existingRejected != null)
+
+                        var newApprovalStatus = new ApprovalStatus()
                         {
-                            existingRejected.Date_Modified = DateTime.UtcNow;
-                            existingRejected.Modified_by = "Admin";
-                            existingRejected.Status = "D";
-                            _context.ApprovalStatus.Update(existingRejected);
-
-
-                            var newApprovalStatus = new ApprovalStatus()
-                            {
-                                EmpGen_Id = genId,
-                                Current_Status = (int)Status.Rejected,
-                                Comments = onboardstatus.Comments,
-                                Date_Created = DateTime.UtcNow,
-                                Date_Modified = DateTime.UtcNow,
-                                Created_by = "Admin",
-                                Modified_by = "Admin",
-                                Status = "A",
-                            };
-                            _context.ApprovalStatus.Add(newApprovalStatus);
-                        }
-
+                            EmpGen_Id = genId,
+                            Current_Status = (int)Status.Rejected,
+                            Comments = onboardstatus.Comments,
+                            Date_Created = DateTime.UtcNow,
+                            Date_Modified = DateTime.UtcNow,
+                            Created_by = "Admin",
+                            Modified_by = "Admin",
+                            Status = "A",
+                        };
+                        _context.ApprovalStatus.Add(newApprovalStatus);
+                    }
+                    else if (approvalStatus != null && approvalStatus.Current_Status == 1)
+                    {
+                        return;
                     }
 
                     // Update 'Invited_Status' in Login table
