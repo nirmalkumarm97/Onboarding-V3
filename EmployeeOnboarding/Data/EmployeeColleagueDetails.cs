@@ -17,6 +17,7 @@ namespace EmployeeOnboarding.Data
         public string Created_by { get; set; }
         public string? Modified_by { get; set; }
         public string Status { get; set; }
+        public string? RelationShip { get; set; }
 
     }
 }

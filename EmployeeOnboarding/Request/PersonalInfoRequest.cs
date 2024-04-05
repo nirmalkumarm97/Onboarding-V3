@@ -13,7 +13,7 @@ namespace EmployeeOnboarding.Request
         public List<ContactInfo> contact { get; set; }
         public List<FamilyInfo> families { get; set; }
         public HobbiesInfo hobby { get; set; }
-        public List<ColleagueInfo> colleagues { get; set; }
+        public List<ColleagueInfo>? colleagues { get; set; }
         public List<EmergencyContactInfo> emergencies { get; set; }
         public RequiredInfo RequiredDocuments { get; set; }
     }
