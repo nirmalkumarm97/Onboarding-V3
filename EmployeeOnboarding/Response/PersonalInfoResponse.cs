@@ -13,6 +13,7 @@ namespace EmployeeOnboarding.Response
     {
         public int loginId { get; set; }
         public int GenId { get; set; }
+        public bool IsCollegueAdded { get; set; }
         public GeneralInfoResponse generalVM { get; set; }
         public List<ContactResponse> contact { get; set; }
         public List<FamilyResponse> families { get; set; }
@@ -67,6 +68,7 @@ namespace EmployeeOnboarding.Response
         public string? Empid { get; set; }
         public string? Colleague_Name { get; set; }
         public string? Location { get; set; }
+        public string? RelationShip { get; set; }
     }
     public class EmergencyContactResponse
     {

@@ -448,6 +448,7 @@ namespace EmployeeOnboarding.Repository
                                     existingColleague.Date_Modified = DateTime.UtcNow;
                                     existingColleague.Modified_by = GenId.ToString();
                                     existingColleague.Status = "A";
+                                    existingColleague.RelationShip = colleague.RelationShip;
                                 }
                                 else
                                 {
@@ -462,7 +463,8 @@ namespace EmployeeOnboarding.Repository
                                         Date_Modified = DateTime.UtcNow,
                                         Created_by = GenId.ToString(),
                                         Modified_by = GenId.ToString(),
-                                        Status = "A"
+                                        Status = "A",
+                                        RelationShip = colleague.RelationShip,
                                     };
                                     colleagueVMs.Add(_colleague);
                                 }
@@ -659,13 +661,19 @@ namespace EmployeeOnboarding.Repository
                     {
                         Empid = e.Employee_id,
                         Colleague_Name = e.Colleague_Name,
-                        Location = e.Location
+                        Location = e.Location,
+                        RelationShip = e.RelationShip,
                     })
                       .ToList();
 
                     if (colleague.Count > 0)
                     {
                         personalInfoResponse.colleagues = colleague;
+                        personalInfoResponse.IsCollegueAdded = true;
+                    }
+                    else
+                    {
+                        personalInfoResponse.IsCollegueAdded = false;
                     }
 
 
