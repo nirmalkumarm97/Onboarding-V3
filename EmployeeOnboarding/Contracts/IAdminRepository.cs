@@ -8,11 +8,11 @@ namespace EmployeeOnboarding.Contracts
 {
     public interface IAdminRepository
     {
-        Task <List<Dashboard1VM>> GetPendingEmployeeDetails(AdminRequest adminRequest);
-        Task<List<Dashboard1VM>> GetInvitedEmployeeDetails(AdminRequest adminRequest);
-        Task<List<Dashboard1VM>> GetRejectedEmployeeDetails(AdminRequest adminRequest);
-        Task<List<DashboardVM>> GetEmployeeDetails(AdminRequest adminRequest);
-        Task<List<Dashboard1VM>> GetExpiredDetails(AdminRequest adminRequest);
+        Task <AdminDashBoardUsersData> GetPendingEmployeeDetails(AdminRequest adminRequest);
+        Task<AdminDashBoardUsersData> GetInvitedEmployeeDetails(AdminRequest adminRequest);
+        Task<AdminDashBoardUsersData> GetRejectedEmployeeDetails(AdminRequest adminRequest);
+        Task<AdminDashBoardEmployeesData> GetEmployeeDetails(AdminRequest adminRequest);
+        Task<AdminDashBoardUsersData> GetExpiredDetails(AdminRequest adminRequest);
 
         //// Task DeleteEmployee(string[] employeeId);    
         //Task <List<PersonalInfoVM>>? GetPersonalInfo(int id);
