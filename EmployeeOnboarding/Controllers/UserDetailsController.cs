@@ -267,7 +267,7 @@ namespace EmployeeOnboarding.Controllers
             try
             {
                 List<string> colleges = _context.EmployeeEducationDetails
-                    .Where(x => x.Qualification.Contains("UG") || x.Qualification.Contains("PG") || x.Qualification.Contains("PhD"))
+                    .Where(x => x.Qualification == 4 || x.Qualification == 5 || x.Qualification == 6)
                     .Select(x => x.University).Distinct()
                     .ToList();
 
@@ -287,7 +287,11 @@ namespace EmployeeOnboarding.Controllers
             {
                 var qualifications = Enum.GetValues(typeof(Qualification))
                                          .Cast<Qualification>()
-                                         .Select(GetEnumMemberValue)
+                                         .Select(q => new 
+                                         {
+                                             Id = (int)q,
+                                             Name = GetEnumMemberValue(q)
+                                         })
                                          .ToList();
 
                 return Ok(qualifications);
@@ -297,6 +301,7 @@ namespace EmployeeOnboarding.Controllers
                 return StatusCode(500, "An error occurred while fetching qualifications.");
             }
         }
+
         private string GetEnumMemberValue(Qualification value)
         {
             Type type = typeof(Qualification);

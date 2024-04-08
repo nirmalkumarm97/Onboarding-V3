@@ -17,7 +17,7 @@ namespace EmployeeOnboarding.Migrations
             Create.Table("EmployeeEducationDetails").WithColumn("Id").AsInt32().NotNullable().Identity().PrimaryKey()
                .WithColumn("EmpGen_Id").AsInt32().NotNullable().ForeignKey("EmployeeGeneralDetails","Id")
                .WithColumn("Education_no").AsInt32().Nullable()
-               .WithColumn("Qualification").AsString(100).NotNullable()
+               .WithColumn("Qualification").AsInt32().NotNullable()
                .WithColumn("University").AsString(100).NotNullable()
                .WithColumn("Institution_name").AsString(100).NotNullable()
                .WithColumn("Degree_achieved").AsString(100).NotNullable()

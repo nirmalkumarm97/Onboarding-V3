@@ -214,7 +214,7 @@ namespace EmployeeOnboarding.Repository
             var education = _context.EmployeeEducationDetails.Where(e => e.EmpGen_Id == genId && e.Education_no != null).Select(e => new GetEducationVM
             {
                 GenId = e.EmpGen_Id,
-                Qualification = e.Qualification,
+                Qualification = Enum.GetName(typeof(Qualification), e.Qualification),
                 University = e.University,
                 Institution_name = e.Institution_name,
                 Degree_achieved = e.Degree_achieved,
