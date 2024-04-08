@@ -12,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using OnboardingWebsite.Models;
 using System.ComponentModel;
 using System.Reflection;
+using System.Runtime.Serialization;
 //using OnboardingWebsite.Models;
 
 namespace EmployeeOnboarding.Controllers
@@ -258,6 +259,71 @@ namespace EmployeeOnboarding.Controllers
                 return Ok(response);
             }
             return BadRequest();
+        }
+
+        [HttpGet("GetColleges")]
+        public async Task<IActionResult> GetColleges()
+        {
+            try
+            {
+                List<string> colleges = _context.EmployeeEducationDetails
+                    .Where(x => x.Qualification.Contains("UG") || x.Qualification.Contains("PG") || x.Qualification.Contains("PhD"))
+                    .Select(x => x.University).Distinct()
+                    .ToList();
+
+                return Ok(colleges);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(400, "An error occurred while fetching colleges."); // Internal Server Error
+            }
+        }
+
+
+        [HttpGet("GetQualifications")]
+        public async Task<IActionResult> GetQualifications()
+        {
+            try
+            {
+                var qualifications = Enum.GetValues(typeof(Qualification))
+                                         .Cast<Qualification>()
+                                         .Select(GetEnumMemberValue)
+                                         .ToList();
+
+                return Ok(qualifications);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "An error occurred while fetching qualifications.");
+            }
+        }
+        private string GetEnumMemberValue(Qualification value)
+        {
+            Type type = typeof(Qualification);
+            MemberInfo[] memberInfo = type.GetMember(value.ToString());
+            if (memberInfo.Length > 0)
+            {
+                object[] attrs = memberInfo[0].GetCustomAttributes(typeof(EnumMemberAttribute), false);
+                if (attrs.Length > 0)
+                {
+                    return ((EnumMemberAttribute)attrs[0]).Value;
+                }
+            }
+            return value.ToString();
+        }
+
+        [HttpGet("GetRelationships")]
+        public IActionResult GetRelationships()
+        {
+            try
+            {
+                var relationships = Enum.GetNames(typeof(Relationship)).ToList();
+                return Ok(relationships);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "An error occurred while fetching relationships.");
+            }
         }
 
         //[HttpGet("GetStatesByCountryId/{Id}")]
