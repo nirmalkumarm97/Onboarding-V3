@@ -11,6 +11,9 @@ namespace EmployeeOnboarding.Data.Enum
         [EnumMember(Value = "12th")]
         Twelfth,
 
+        [EnumMember(Value = "Diploma")]
+        Diploma,
+
         [EnumMember(Value = "UG")]
         UG,
 
