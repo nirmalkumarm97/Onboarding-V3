@@ -235,19 +235,34 @@ namespace EmployeeOnboarding.Repository
         {
             try
             {
-                var check = _context.Login.FirstOrDefault(e => e.EmailId == emailId);
-                if (check != null && loginconfirmVM.Password == loginconfirmVM.Conf_Password)
+                var check = _context.Login.FirstOrDefault(e => e.EmailId.ToLower() == emailId.ToLower());
+                if (check != null)
                 {
-                    check.Password = loginconfirmVM.Conf_Password;
+                    if (loginconfirmVM.Password == loginconfirmVM.Conf_Password)
+                    {
+                        // If passwords match, update the user's password to the new password
+                        check.Password = loginconfirmVM.Conf_Password;
+                        _context.Login.Update(check);
+                        _context.SaveChanges();
+                        return "Succeeded";
+                    }
+                    else
+                    {
+                        // Passwords do not match
+                        throw new Exception("Passwords do not match");
+                    }
                 }
-                _context.Login.Update(check);
-                _context.SaveChanges();
-                return "Succeeded";
+                else
+                {
+                    // Email does not exist, return 400 (Bad Request)
+                    throw new Exception("Email not found"); // Or any other suitable message
+                }
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.InnerException.Message);
+                throw new Exception(ex.Message);
             }
+
         }
         public async Task<bool> VerifyOTP(string emailId, int OTP)
         {

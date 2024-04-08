@@ -66,12 +66,19 @@ namespace EmployeeOnboarding.Controllers
         [HttpPut("UpdatePassword")]
         public async Task<IActionResult> UpdatePassword(string emailId, loginconfirmVM loginconfirmVM)
         {
-            var response = await _Ilogin.UpdatePassword(emailId,loginconfirmVM);
-            if (response != null)
+            try
             {
-                return Ok(response);
+                var response = await _Ilogin.UpdatePassword(emailId, loginconfirmVM);
+                if (response != null)
+                {
+                    return Ok(response);
+                }
+                return NoContent();
             }
-            return NoContent();
+            catch (Exception ex)
+            {
+                return BadRequest(StatusCode(400, ex.Message));
+            }
         }
         [HttpPost("VerifyOTP")]
 
