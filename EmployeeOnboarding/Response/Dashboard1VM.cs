@@ -1,4 +1,4 @@
-﻿namespace EmployeeOnboarding.Models
+﻿namespace EmployeeOnboarding.Response
 {
     public class Dashboard1VM
     {
@@ -10,7 +10,11 @@
         public DateTime CreatedDate { get; set; }
         public string Email_id { get; set; }
         public string Current_Status { get; set; }
-        public int? UserId { get; set; }
         public string? RejectedComments { get; set; }
+    }
+    public class AdminDashBoardUsersData
+    {
+        public int OverallCount { get; set; }
+        public List<Dashboard1VM> result { get; set; }
     }
 }

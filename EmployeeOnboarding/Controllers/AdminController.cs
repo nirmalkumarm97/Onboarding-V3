@@ -21,9 +21,17 @@ namespace EmployeeOnboarding.Controllers
         }
 
         [HttpPost("api/AdminDashboard")]
-        public async Task<List<DashboardVM>> getEmployee([FromBody] AdminRequest adminRequest)
+        public async Task<IActionResult> getEmployee([FromBody] AdminRequest adminRequest)
         {
-            return await _adminRepository.GetEmployeeDetails(adminRequest);
+            var result = await _adminRepository.GetEmployeeDetails(adminRequest);
+            if (result != null)
+            {
+                return Ok(result);
+            }
+            else
+            {
+                return NoContent();
+            }
         }
 
         [HttpPost("api/GetExpiredDetails")]
@@ -59,19 +67,43 @@ namespace EmployeeOnboarding.Controllers
         //}
 
         [HttpPost("api/GetPendingEmployeeDetails")]
-        public async Task<List<Dashboard1VM>> GetPendingEmployee([FromBody] AdminRequest adminRequest)
+        public async Task<IActionResult> GetPendingEmployeeDetails([FromBody] AdminRequest adminRequest)
         {
-            return await _adminRepository.GetPendingEmployeeDetails(adminRequest);
+            var result = await _adminRepository.GetPendingEmployeeDetails(adminRequest);
+            if (result != null)
+            {
+                return Ok(result);
+            }
+            else
+            {
+                return NoContent();
+            }
         }
         [HttpPost("api/GetInvitedEmployeeDetails")]
-        public async Task<List<Dashboard1VM>> GetInvitedEmployee([FromBody] AdminRequest adminRequest)
+        public async Task<IActionResult> GetInvitedEmployee([FromBody] AdminRequest adminRequest)
         {
-            return await _adminRepository.GetInvitedEmployeeDetails(adminRequest);
+            var result = await _adminRepository.GetInvitedEmployeeDetails(adminRequest);
+            if (result != null)
+            {
+                return Ok(result);
+            }
+            else
+            {
+                return NoContent();
+            }
         }
         [HttpPost("api/GetRejectedEmployeeDetails")]
-        public async Task<List<Dashboard1VM>> GetRejectedDetails([FromBody] AdminRequest adminRequest)
+        public async Task<IActionResult> GetRejectedEmployeeDetails([FromBody] AdminRequest adminRequest)
         {
-            return await _adminRepository.GetRejectedEmployeeDetails(adminRequest);
+            var result = await _adminRepository.GetRejectedEmployeeDetails(adminRequest);
+            if (result != null)
+            {
+                return Ok(result);
+            }
+            else
+            {
+                return NoContent();
+            }
         }
 
         //[HttpPost("api/SearchApprovedEmployeeDetails")]
