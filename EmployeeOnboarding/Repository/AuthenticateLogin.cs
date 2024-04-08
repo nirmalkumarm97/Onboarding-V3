@@ -249,7 +249,7 @@ namespace EmployeeOnboarding.Repository
                         check.Password = loginconfirmVM.Conf_Password;
                         _context.Login.Update(check);
                         _context.SaveChanges();
-                        return "Succeeded";
+                        return "Password successfully updated";
                     }
                     else
                     {
