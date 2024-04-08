@@ -6,21 +6,21 @@ namespace EmployeeOnboarding.Data.Enum
     public enum Qualification
     {
         [EnumMember(Value = "10th")]
-        Tenth,
+        Tenth = 1,
 
         [EnumMember(Value = "12th")]
-        Twelfth,
+        Twelfth = 2,
 
         [EnumMember(Value = "Diploma")]
-        Diploma,
+        Diploma = 3,
 
-        [EnumMember(Value = "UG")]
-        UG,
+        [EnumMember(Value = "Graduate")]
+        UG = 4,
 
-        [EnumMember(Value = "PG")]
-        PG,
+        [EnumMember(Value = "Post Graduate")]
+        PG = 5,
 
         [EnumMember(Value = "PhD")]
-        Phd
+        Phd = 6
     }
 }
