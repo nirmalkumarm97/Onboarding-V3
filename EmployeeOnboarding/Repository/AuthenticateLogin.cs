@@ -33,25 +33,30 @@ namespace EmployeeOnboarding.Repository
         }
         public async Task<employloginVM> AuthenticateEmp(string email, string password)
         {
-            try
+            if (email != null && password != null)
             {
-                var _succeeded = _context.Login.Where(authUser => authUser.EmailId == email && authUser.Password == password)
-                   .Select(succeeded => new employloginVM()
-                   {
-                       EmpId = succeeded.Id,
-                       Name = succeeded.Name,
-                       Email = succeeded.EmailId,
-                       Role = succeeded.Role == "U" ? "User" : "Admin"
-                   }).FirstOrDefault();
+                Login? login = await _context.Login.FirstOrDefaultAsync(authUser => authUser.EmailId == email);
+                if (login == null)
+                {
+                    throw new Exception("Enter a valid email id");
+                }
+                if (login.Password != password)
+                {
+                    throw new Exception("Enter a valid password");
+                }
 
-                if (_succeeded == null)
-                    return null;
-                else
-                    return _succeeded;
+                employloginVM loginResponse = new employloginVM
+                {
+                    EmpId = login.Id,
+                    Name = login.Name,
+                    Email = login.EmailId,
+                    Role = login.Role == "U" ? "User" : "Admin"
+                };
+                return loginResponse;
             }
-            catch (Exception e)
+            else
             {
-                throw new Exception(e.InnerException.Message);
+                throw new Exception("Null Exception");
             }
         }
 
@@ -251,12 +256,19 @@ namespace EmployeeOnboarding.Repository
         }
         public async Task<bool> VerifyOTP(string emailId, int OTP)
         {
-            var CheckOtp = await _context.Login.Where(e => e.EmailId == emailId && e.OTP == OTP).FirstOrDefaultAsync();
-            if (CheckOtp != null)
+            if(emailId !=null && OTP !=null)
             {
-                return true;
+                var CheckOtp = await _context.Login.Where(e => e.EmailId == emailId && e.OTP == OTP).FirstOrDefaultAsync();
+                if (CheckOtp != null)
+                {
+                    return true;
+                }
+                else throw new Exception("Enter a valid OTP");
             }
-            else return false;
+            else
+            {
+                throw new Exception("Null Exception");
+            }
         }
         public int otpgeneration()
         {

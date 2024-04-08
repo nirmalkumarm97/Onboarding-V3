@@ -44,12 +44,19 @@ namespace EmployeeOnboarding.Controllers
         [HttpPost("AuthenticateEmp")]
         public async Task<IActionResult> AuthenticateEmp(string emailid, string password)
         {
-            var response = await _Ilogin.AuthenticateEmp(emailid, password);
-            if (response != null)
+            try 
             {
-                return Ok(response);
+                var response = await _Ilogin.AuthenticateEmp(emailid, password);
+                if (response != null)
+                {
+                    return Ok(response);
+                }
+                return NoContent();
             }
-            return NoContent();
+            catch (Exception ex)
+            {
+                return BadRequest(StatusCode(400, ex.Message));
+            }
         }
 
         [HttpPost("ForgotPassword")]
@@ -77,12 +84,20 @@ namespace EmployeeOnboarding.Controllers
 
         public async Task<IActionResult> VerifyOTP(string emailId, int OTP)
         {
-            var response = await _Ilogin.VerifyOTP(emailId, OTP);
-            if (response != null)
+            try
             {
-                return Ok(response);
+
+                var response = await _Ilogin.VerifyOTP(emailId, OTP);
+                if (response != null)
+                {
+                    return Ok(response);
+                }
+                return NoContent();
             }
-            return NoContent();
+            catch (Exception ex)
+            {
+                return BadRequest(StatusCode(400, ex.Message));
+            }
         }
 
     }
