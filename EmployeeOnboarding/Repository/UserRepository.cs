@@ -212,22 +212,49 @@ namespace EmployeeOnboarding.Repository
 
         public List<GetEducationVM> GetEducation(int genId)
         {
-            var education = _context.EmployeeEducationDetails.Where(e => e.EmpGen_Id == genId && e.Education_no != null).Select(e => new GetEducationVM
-            {
-                GenId = e.EmpGen_Id,
-                Qualification = Enum.GetName(typeof(Qualification), e.Qualification),
-                University = e.University,
-                Institution_name = e.Institution_name,
-                Degree_achieved = e.Degree_achieved,
-                specialization = e.specialization,
-                Passoutyear = e.Passoutyear,
-                Percentage = e.Percentage,
-                Edu_certificate = GetFile(e.Edu_certificate)
-            })
+            var education = _context.EmployeeEducationDetails
+                .Where(e => e.EmpGen_Id == genId && e.Education_no != null)
+                .Select(e => new GetEducationVM
+                {
+                    GenId = e.EmpGen_Id,
+                    Qualification = GetQualificationString((Qualification)e.Qualification), // Call static helper method
+                    University = e.University,
+                    Institution_name = e.Institution_name,
+                    Degree_achieved = e.Degree_achieved,
+                    specialization = e.specialization,
+                    Passoutyear = e.Passoutyear,
+                    Percentage = e.Percentage,
+                    Edu_certificate = GetFile(e.Edu_certificate) // Assuming GetFile() is defined
+                })
                 .ToList();
 
             return education;
         }
+
+        private static string GetQualificationString(Qualification qualification)
+        {
+            try
+            {
+                // Check if the enum value is valid
+                if (Enum.IsDefined(typeof(Qualification), qualification))
+                {
+                    // If it's valid, convert to string
+                    return qualification.ToString();
+                }
+                else
+                {
+                    // If not valid, return a default string or handle as needed
+                    return "Unknown";
+                }
+            }
+            catch (Exception ex)
+            {
+                // Log or handle the exception
+                return "Unknown"; // Return a default string on exception
+            }
+        }
+
+
 
 
         //AddCertificates
