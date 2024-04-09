@@ -31,95 +31,9 @@ namespace EmployeeOnboarding.Controllers
         [HttpPost("add-education/{genId}")]
         public async Task<IActionResult> AddEducation(int genId, [FromBody] List<EducationVM> educations)
         {
-            var response = await _userRepository.AddEducation(genId, educations);
-            if (response != null)
+            try
             {
-                return Ok(response);
-            }
-            else
-            {
-                return NoContent();
-            }
-        }
-
-
-        [HttpPost("add-certificate/{genId}")]
-        public async Task<IActionResult> AddCertificate(int genId, [FromBody] List<CertificateVM> certificates)
-        {
-            var response = await _userRepository.AddCertificate(genId, certificates);
-            if (response != null)
-            {
-                return Ok(response);
-            }
-            else
-            {
-                return NoContent();
-            }
-        }
-
-        [HttpPost("add-experience/{genId}")]
-        public async Task<IActionResult> AddExperience(int genId, [FromBody] List<WorkExperienceVM> experiences)
-        {
-            var response = await _userRepository.AddExperiences(genId, experiences);
-            if (response != null)
-            {
-                return Ok(response);
-            }
-            else
-            {
-                return NoContent();
-            }
-        }
-
-        [HttpPost("add-reference/{genId}")]
-        public async Task<IActionResult> AddReference(int genId, [FromBody] ReferenceVM reference)
-        {
-            var response = await _userRepository.AddReference(genId, reference);
-            if (response != null)
-            {
-                return Ok(response);
-            }
-            else
-            {
-                return NoContent();
-            }
-        }
-
-        [HttpPost("add-health/{genId}")]
-        public async Task<IActionResult> AddHealth(int genId, [FromBody] HealthVM health)
-        {
-            var response = await _userRepository.AddHealth(genId, health);
-            if (response != null)
-            {
-                return Ok(response);
-            }
-            else
-            {
-                return NoContent();
-            }
-        }
-
-        [HttpPost("add-existing-bank/{genId}")]
-        public async Task<IActionResult> AddBank(int genId, [FromBody] ExistingBankVM bank)
-        {
-            var response = await _userRepository.AddBank(genId, bank);
-            if (response != null)
-            {
-                return Ok(response);
-            }
-            else
-            {
-                return NoContent();
-            }
-        }
-
-        [HttpPost("CreateSelfDeclaration/{genId}")]
-        public async Task<IActionResult> CreateSelfDeclaration(int genId, [FromBody] SelfDeclarationRequest selfDeclarationRequest)
-        {
-            var name = _context.EmployeeGeneralDetails.Where(x => x.Id == genId && x.Empname.Contains(selfDeclarationRequest.Name)).Select(x => x.Empname).FirstOrDefault();
-            if (name != null)
-            {
-                var response = await _userRepository.CreateSelfDeclaration(genId, selfDeclarationRequest);
+                var response = await _userRepository.AddEducation(genId, educations);
                 if (response != null)
                 {
                     return Ok(response);
@@ -129,7 +43,143 @@ namespace EmployeeOnboarding.Controllers
                     return NoContent();
                 }
             }
-            else return BadRequest("Name should be same as like PersonalInformation");
+            catch (Exception ex)
+            {
+                return BadRequest(StatusCode(400, ex.Message));
+            }
+        }
+
+
+        [HttpPost("add-certificate/{genId}")]
+        public async Task<IActionResult> AddCertificate(int genId, [FromBody] List<CertificateVM> certificates)
+        {
+            try
+            {
+                var response = await _userRepository.AddCertificate(genId, certificates);
+                if (response != null)
+                {
+                    return Ok(response);
+                }
+                else
+                {
+                    return NoContent();
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(StatusCode(400, ex.Message));
+            }
+
+        }
+
+        [HttpPost("add-experience/{genId}")]
+        public async Task<IActionResult> AddExperience(int genId, [FromBody] List<WorkExperienceVM> experiences)
+        {
+            try
+            {
+                var response = await _userRepository.AddExperiences(genId, experiences);
+                if (response != null)
+                {
+                    return Ok(response);
+                }
+                else
+                {
+                    return NoContent();
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(StatusCode(400, ex.Message));
+            }
+        }
+
+        [HttpPost("add-reference/{genId}")]
+        public async Task<IActionResult> AddReference(int genId, [FromBody] ReferenceVM reference)
+        {
+            try
+            {
+                var response = await _userRepository.AddReference(genId, reference);
+            if (response != null)
+            {
+                return Ok(response);
+            }
+            else
+            {
+                return NoContent();
+            }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(StatusCode(400, ex.Message));
+            }
+        }
+
+        [HttpPost("add-health/{genId}")]
+        public async Task<IActionResult> AddHealth(int genId, [FromBody] HealthVM health)
+        {
+            try
+            {
+                var response = await _userRepository.AddHealth(genId, health);
+                if (response != null)
+                {
+                    return Ok(response);
+                }
+                else
+                {
+                    return NoContent();
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(StatusCode(400, ex.Message));
+            }
+        }
+
+        [HttpPost("add-existing-bank/{genId}")]
+        public async Task<IActionResult> AddBank(int genId, [FromBody] ExistingBankVM bank)
+        {
+            try
+            {
+                var response = await _userRepository.AddBank(genId, bank);
+                if (response != null)
+                {
+                    return Ok(response);
+                }
+                else
+                {
+                    return NoContent();
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(StatusCode(400, ex.Message));
+            }
+        }
+
+        [HttpPost("CreateSelfDeclaration/{genId}")]
+        public async Task<IActionResult> CreateSelfDeclaration(int genId, [FromBody] SelfDeclarationRequest selfDeclarationRequest)
+        {
+            try
+            {
+                var name = _context.EmployeeGeneralDetails.Where(x => x.Id == genId && x.Empname.Contains(selfDeclarationRequest.Name)).Select(x => x.Empname).FirstOrDefault();
+                if (name != null)
+                {
+                    var response = await _userRepository.CreateSelfDeclaration(genId, selfDeclarationRequest);
+                    if (response != null)
+                    {
+                        return Ok(response);
+                    }
+                    else
+                    {
+                        return NoContent();
+                    }
+                }
+                else return BadRequest("Name should be same as like PersonalInformation");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(StatusCode(400, ex.Message));
+            }
         }
 
         //*************************************************************************************************************
@@ -181,14 +231,21 @@ namespace EmployeeOnboarding.Controllers
         [HttpGet("GetSelfDeclaration/{genId}")]
         public async Task<IActionResult> GetSelfDeclaration(int genId)
         {
-            var response = await _userRepository.GetSelfDeclaration(genId);
-            if (response != null)
+            try
             {
-                return Ok(response);
+                var response = await _userRepository.GetSelfDeclaration(genId);
+                if (response != null)
+                {
+                    return Ok(response);
+                }
+                else
+                {
+                    return NoContent();
+                }
             }
-            else
-            {
-                return NoContent();
+            catch(Exception ex)
+            { 
+                return BadRequest(ex.Message); 
             }
         }
     }

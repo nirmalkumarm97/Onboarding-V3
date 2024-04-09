@@ -35,28 +35,42 @@ namespace EmployeeOnboarding.Controllers
         [HttpPost("AddPersonalInfo")]
         public async Task<IActionResult> AddPersonalInfo(bool directAdd, [FromBody] PersonalInfoRequest personalInfoRequest)
         {
-            var response = await _userDetailsRepository.AddPersonalInfo(directAdd, personalInfoRequest);
-            if (response != null)
+            try
             {
-                return Ok(response);
+                var response = await _userDetailsRepository.AddPersonalInfo(directAdd, personalInfoRequest);
+                if (response != null)
+                {
+                    return Ok(response);
+                }
+                else
+                {
+                    return NoContent();
+                }
             }
-            else
+            catch(Exception ex)
             {
-                return NoContent();
+                return BadRequest(StatusCode(400, ex.Message));
             }
         }
 
         [HttpGet("GetPersonalInfo/{Id}")]
         public async Task<IActionResult> GetPersonalInfo(int Id)
         {
-            var response = await _userDetailsRepository.GetPersonalInfo(Id);
-            if (response != null)
+            try
             {
-                return Ok(response);
+                var response = await _userDetailsRepository.GetPersonalInfo(Id);
+                if (response != null)
+                {
+                    return Ok(response);
+                }
+                else
+                {
+                    return NoContent();
+                }
             }
-            else
+            catch (Exception ex)
             {
-                return NoContent();
+                return BadRequest(StatusCode(400, ex.Message));
             }
         }
         [HttpGet("Gender")]

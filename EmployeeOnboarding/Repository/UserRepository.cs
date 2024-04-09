@@ -15,6 +15,7 @@ using OnboardingWebsite.Models;
 using System;
 using System.Data.Entity;
 using System.Globalization;
+using System.Net;
 using System.Security.Principal;
 
 namespace EmployeeOnboarding.Repository
@@ -910,11 +911,11 @@ namespace EmployeeOnboarding.Repository
                     transaction.Rollback();
                     throw new Exception(ex.Message);
                 }
-               
+
             }
         }
 
-#region Create process
+        #region Create process
         private void CreateNewSelfDeclaration(int genId, SelfDeclarationRequest selfDeclarationRequest)
         {
             SelfDeclaration self = new SelfDeclaration()
@@ -923,7 +924,7 @@ namespace EmployeeOnboarding.Repository
                 Name = selfDeclarationRequest.Name,
                 CreatedBy = selfDeclarationRequest.CreatedBy,
                 CreatedDate = DateTime.ParseExact(selfDeclarationRequest.Date, "dd-MM-yyyy", CultureInfo.InvariantCulture),
-                Status =  "A"
+                Status = "A"
             };
             _context.Add(self);
             CreateApprovalStatusIfNotExists(genId);
@@ -949,7 +950,7 @@ namespace EmployeeOnboarding.Repository
         }
         #endregion Create Process
 
-#region UpdateProcess
+        #region UpdateProcess
         private void UpdateExistingSelfDeclaration(SelfDeclaration existingSelfDeclaration, SelfDeclarationRequest selfDeclarationRequest)
         {
             existingSelfDeclaration.Name = selfDeclarationRequest.Name;
@@ -972,22 +973,66 @@ namespace EmployeeOnboarding.Repository
             }
             return false; // Status was not updated
         }
-#endregion Update Process
+        #endregion Update Process
         public async Task<SelfDeclarationResponse> GetSelfDeclaration(int genId)
         {
-            var data = (from a in _context.SelfDeclaration
-                       // join b in _context.EmployeeGeneralDetails on a.EmpGen_Id equals b.Id
-                        where a.EmpGen_Id == genId
-                        select a).FirstOrDefault();
-
-            SelfDeclarationResponse selfDec = new SelfDeclarationResponse()
+            try
             {
-                Name = data == null ? null : data.Name,
-                Date = data == null ? null : data.CreatedDate.Date.ToShortDateString(),
-                IsSelfDeclared = data == null ? false : true
-            };
-            return selfDec;
-        }
+                // Fetch Empname from EmployeeGeneralDetails for the given genId
+                var employee =  _context.EmployeeGeneralDetails
+                                              .FirstOrDefault(x => x.Id == genId);
+                // Fetch SelfDeclaration record for the given genId
+                var selfDeclaration =  _context.SelfDeclaration
+                                        .FirstOrDefault(a => a.EmpGen_Id == genId);
 
+
+                if (employee == null)
+                {
+                    // If EmployeeGeneralDetails record not found, return default response
+                    return new SelfDeclarationResponse
+                    {
+                        Name = null,
+                        Date = null,
+                        IsSelfDeclared = false,
+                    };
+                }
+
+                else if (selfDeclaration == null)
+                {
+                    // If no SelfDeclaration record found, return default response
+                    return new SelfDeclarationResponse
+                    {
+                        Name = employee.Empname,
+                        Date = null,
+                        IsSelfDeclared = false
+                    };
+                }
+                else
+                {
+                    // Create a SelfDeclarationResponse object
+                    SelfDeclarationResponse selfDec = new SelfDeclarationResponse()
+                    {
+                        // Set Name to the fetched Empname
+                        Name = employee.Empname,
+
+                        // Set Date to CreatedDate formatted as short date string
+                        Date = selfDeclaration.CreatedDate.Date.ToShortDateString(),
+
+                        // Set IsSelfDeclared to true
+                        IsSelfDeclared = true
+                    };
+
+                    // Return the SelfDeclarationResponse
+                    return selfDec;
+                }
+            }
+            catch (Exception ex)
+            {
+                // Log the exception
+                // You might want to log the exception details somewhere
+                throw new Exception(ex.Message);
+                // Return a default response indicating an error
+            }
+        }
     }
 }
