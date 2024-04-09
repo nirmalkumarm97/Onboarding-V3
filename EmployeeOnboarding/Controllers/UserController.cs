@@ -99,14 +99,14 @@ namespace EmployeeOnboarding.Controllers
             try
             {
                 var response = await _userRepository.AddReference(genId, reference);
-            if (response != null)
-            {
-                return Ok(response);
-            }
-            else
-            {
-                return NoContent();
-            }
+                if (response != null)
+                {
+                    return Ok(response);
+                }
+                else
+                {
+                    return NoContent();
+                }
             }
             catch (Exception ex)
             {
@@ -187,45 +187,87 @@ namespace EmployeeOnboarding.Controllers
         [HttpGet("get-education/{genId}")]
         public IActionResult GetEducation(int genId)
         {
-            var education = _userRepository.GetEducation(genId);
-            return Ok(education);
+            try
+            {
+                var education = _userRepository.GetEducation(genId);
+                return Ok(education);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(StatusCode(400, ex.Message));
+            }
         }
 
 
         [HttpGet("get-certificate/{genId}")]
         public IActionResult GetCertificate(int genId)
         {
-            var certificate = _userRepository.GetCertificate(genId);
-            return Ok(certificate);
+            try
+            {
+                var certificate = _userRepository.GetCertificate(genId);
+                return Ok(certificate);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(StatusCode(400, ex.Message));
+            }
         }
 
 
         [HttpGet("get-experience/{genId}")]
         public IActionResult GetCompanyExperiences(int genId)
         {
-            var companyExperiences = _userRepository.GetCompanyByEmpId(genId);
-            return Ok(companyExperiences);
+            try
+            {
+                var companyExperiences = _userRepository.GetCompanyByEmpId(genId);
+                return Ok(companyExperiences);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(StatusCode(400, ex.Message));
+            }
         }
 
-        [HttpGet("get-reference/{genId}")]
+    [HttpGet("get-reference/{genId}")]
         public IActionResult GetReference(int genId)
         {
-            var reference = _userRepository.Getreference(genId);
-            return Ok(reference);
+            try
+            {
+                var reference = _userRepository.Getreference(genId);
+                return Ok(reference);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(StatusCode(400, ex.Message));
+            }
         }
 
         [HttpGet("get-health/{genId}")]
         public IActionResult GetHealth(int genId)
         {
-            var healthInfo = _userRepository.GetHealth(genId);
-            return Ok(healthInfo);
+            try
+            {
+                var healthInfo = _userRepository.GetHealth(genId);
+                return Ok(healthInfo);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(StatusCode(400, ex.Message));
+            }
         }
 
         [HttpGet("get-existing-bank/{genId}")]
         public IActionResult GetBank(int genId)
         {
-            var bank = _userRepository.GetBank(genId);
-            return Ok(bank);
+            try
+            {
+                var bank = _userRepository.GetBank(genId);
+                return Ok(bank);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(StatusCode(400, ex.Message));
+            }
         }
 
         [HttpGet("GetSelfDeclaration/{genId}")]
