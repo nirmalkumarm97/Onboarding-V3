@@ -217,6 +217,7 @@ namespace EmployeeOnboarding.Repository
                 .Select(e => new GetEducationVM
                 {
                     GenId = e.EmpGen_Id,
+                    Number = (int)e.Education_no,
                     Qualification = GetQualificationString((Qualification)e.Qualification), // Call static helper method
                     University = e.University,
                     Institution_name = e.Institution_name,
@@ -225,7 +226,7 @@ namespace EmployeeOnboarding.Repository
                     Passoutyear = e.Passoutyear,
                     Percentage = e.Percentage,
                     Edu_certificate = GetFile(e.Edu_certificate) // Assuming GetFile() is defined
-                })
+                }).OrderBy(x => x.Number)
                 .ToList();
 
             return education;
@@ -357,6 +358,7 @@ namespace EmployeeOnboarding.Repository
             var certificate = _context.EmployeeCertifications.Where(e => e.EmpGen_Id == genId && e.Certificate_no != null).Select(e => new getCertificateVM
             {
                 GenId = (int)e.EmpGen_Id,
+                Number = (int)e.Certificate_no,
                 Certificate_name = e.Certificate_name,
                 Issued_by = e.Issued_by,
                 Valid_till = e.Valid_till,
@@ -364,7 +366,7 @@ namespace EmployeeOnboarding.Repository
                 Specialization = e.Specialization,
                 Percentage = e.Percentage,
                 proof = GetFile(e.proof),
-            })
+            }).OrderBy(x => x.Number)
             .ToList();
 
             return certificate;
@@ -473,6 +475,7 @@ namespace EmployeeOnboarding.Repository
             var companyExperiences = _context.EmployeeExperienceDetails.Where(e => e.EmpGen_Id == genId && e.Company_no != null).Select(e => new getExperienceVM
             {
                 GenId = (int)e.EmpGen_Id,
+                Number = (int)e.Company_no,
                 Company_name = e.Company_name,
                 Designation = e.Designation,
                 Reason = e.Reason,
@@ -481,7 +484,7 @@ namespace EmployeeOnboarding.Repository
                 EndDate = e.EndDate,
                 Reporting_to = e.Reporting_to,
                 Exp_Certificate = GetFile(e.Exp_Certificate),
-            })
+            }).OrderBy(x => x.Number)
                 .ToList();
 
             return companyExperiences;
