@@ -804,10 +804,7 @@ namespace EmployeeOnboarding.Repository
         .container {{
             max-width: 600px;
             margin: 0 auto;
-            padding: 20px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            background-color: #f9f9f9;
+            padding: 10px;
         }}
         h1 {{
             color: #333;
@@ -819,10 +816,10 @@ namespace EmployeeOnboarding.Repository
 </head>
 <body>
     <div class='container'>
-        <h1>Hi {name},</h1>
+        <p>Dear {name},</p>
         <p>Your onboarding form is submitted Successfully.</p>
         <p>Wait for approval by HR team.</p>
-        <p>Regards,<br />HR Team</p>
+        <p>Regards,<br />HR Department<br />Ideassion Technology Solutions LLP</p>
     </div>
 </body>
 </html>";
@@ -854,10 +851,7 @@ namespace EmployeeOnboarding.Repository
                 .container {{
                     max-width: 600px;
                     margin: 0 auto;
-                    padding: 20px;
-                    border: 1px solid #ccc;
-                    border-radius: 5px;
-                    background-color: #f9f9f9;
+                    padding: 10px;
                 }}
                 h1 {{
                     color: #333;
@@ -869,11 +863,11 @@ namespace EmployeeOnboarding.Repository
         </head>
         <body>
             <div class='container'>
-                <h1>Hi {name},</h1>
+                <p>Dear {name},</p>
                 <p>Your form has been resubmitted successfully.</p>
                 <p>We have received your updated information. Please wait for further instructions or confirmation.</p>
                 <p>Thank you for your cooperation.</p>
-                <p>Regards,<br />HR Team</p>
+                <p>Regards,<br />HR Department<br />Ideassion Technology Solutions LLP</p>
             </div>
         </body>
         </html>";

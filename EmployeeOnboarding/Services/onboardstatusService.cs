@@ -164,11 +164,11 @@ namespace EmployeeOnboarding.Services
 </head>
 <body>
     <div class='container'>
-        <h1>Hi {empName},</h1>
+        <p>Dear {empName},</p>
         <p>Your onboarding form is approved.</p>
         <p>Your employee ID is {empId} and official email ID is {officialEmail}.</p>
         <p>You can check the status by <a href='{HtmlEncoder.Default.Encode(url)}'>clicking here</a>.</p>
-        <p>Regards,<br>HR Team</p>
+        <p>Regards,<br />HR Department<br />Ideassion Technology Solutions LLP</p>
     </div>
 </body>
 </html>";
@@ -314,11 +314,11 @@ namespace EmployeeOnboarding.Services
 </head>
 <body>
     <div class='container'>
-        <h1>Hi {empName},</h1>
+        <p>Dear {empName},</p>
         <p>Your onboarding form has been rejected.</p>
         <p>Rejected Remarks: {remarks}</p>
         <p>You can check the status by <a href='{HtmlEncoder.Default.Encode(url)}'>clicking here</a>.</p>
-        <p>Regards,<br>HR Team</p>
+        <p>Regards,<br />HR Department<br />Ideassion Technology Solutions LLP</p>
     </div>
 </body>
 </html>";
