@@ -38,7 +38,7 @@ namespace EmployeeOnboarding.Repository
                 Login? login = await _context.Login.FirstOrDefaultAsync(authUser => authUser.EmailId == email);
                 if (login == null)
                 {
-                    throw new Exception("Enter a valid email id");
+                    throw new Exception("User not found!");
                 }
                 if (login.Password != password)
                 {
