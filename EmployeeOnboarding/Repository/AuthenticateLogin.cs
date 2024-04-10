@@ -13,6 +13,7 @@ using EmployeeOnboarding.Helper;
 using EmployeeOnboarding.Response;
 using DocumentFormat.OpenXml.Wordprocessing;
 using EmployeeOnboarding.Data.Enum;
+using System.Xml.Linq;
 
 namespace EmployeeOnboarding.Repository
 {
@@ -148,10 +149,7 @@ namespace EmployeeOnboarding.Repository
         .container {{
             max-width: 600px;
             margin: 0 auto;
-            padding: 20px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            background-color: #f9f9f9;
+            padding: 10px;
         }}
         h1 {{
             color: #333;
@@ -170,10 +168,10 @@ namespace EmployeeOnboarding.Repository
 </head>
 <body>
     <div class='container'>
-        <h1>Hi {name},</h1>
+        <p>Dear {name},</p>
         <p>Please login into your profile by <a href='{HtmlEncoder.Default.Encode(url)}'>clicking here</a>.</p>
         <p>Your email is {email} and password is {tempPass}.</p>
-        <p>Regards,<br />HR Team</p>
+        <p>Regards,<br />HR Department<br />Ideassion Technology Solutions LLP</p>
     </div>
 </body>
 </html>";
@@ -224,7 +222,8 @@ namespace EmployeeOnboarding.Repository
                 if (check != null)
                 {
                     int getOTP = otpgeneration();
-                    await _emailSender.SendEmailAsync(emailId, "Reset Password", $"Please reset your password by entering the OTP. Your OTP is {getOTP}.");
+                    await _emailSender.SendEmailAsync(emailId, "Reset Password", $"<p>Dear {check.Name},</p>Please reset your password by entering the OTP. Your OTP is {getOTP}." +
+                        $"<p>Regards,<br />HR Department<br />Ideassion Technology Solutions LLP</p>");
                     check.OTP = getOTP;
                     _context.SaveChanges();
                     return true;
