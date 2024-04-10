@@ -191,7 +191,7 @@ namespace EmployeeOnboarding.Controllers
             try
             {
                 var education = _userRepository.GetEducation(genId);
-                if (education == null)
+                if (education.Count == 0)
                 {
                     // If education is null, return an empty array
                     return Ok(new List<GetEducationVM>()); // Assuming Education is a class or struct
@@ -213,7 +213,7 @@ namespace EmployeeOnboarding.Controllers
             try
             {
                 var certificate = _userRepository.GetCertificate(genId);
-                if (certificate == null)
+                if (certificate.Count == 0)
                 {
                     return Ok(new List<getCertificateVM>());
                 }
@@ -235,7 +235,7 @@ namespace EmployeeOnboarding.Controllers
             try
             {
                 var companyExperiences = _userRepository.GetCompanyByEmpId(genId);
-                if (companyExperiences == null)
+                if (companyExperiences.Count == 0)
                 {
                     return Ok(new List<getExperienceVM>());
                 }
