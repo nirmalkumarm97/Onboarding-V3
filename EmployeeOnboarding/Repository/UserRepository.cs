@@ -16,6 +16,7 @@ using System;
 using System.Data.Entity;
 using System.Globalization;
 using System.Net;
+using System.Runtime.Serialization;
 using System.Security.Principal;
 
 namespace EmployeeOnboarding.Repository
@@ -218,7 +219,7 @@ namespace EmployeeOnboarding.Repository
                 {
                     GenId = e.EmpGen_Id,
                     Number = (int)e.Education_no,
-                    Qualification = GetQualificationString((Qualification)e.Qualification), // Call static helper method
+                    Qualification = GetEnumMemberValue((Qualification)e.Qualification), // Call helper method
                     University = e.University,
                     Institution_name = e.Institution_name,
                     Degree_achieved = e.Degree_achieved,
@@ -232,30 +233,24 @@ namespace EmployeeOnboarding.Repository
             return education;
         }
 
-        private static string GetQualificationString(Qualification qualification)
+        private static string GetEnumMemberValue(Enum value)
         {
-            try
+            Type type = value.GetType();
+            string name = Enum.GetName(type, value);
+            if (name != null)
             {
-                // Check if the enum value is valid
-                if (Enum.IsDefined(typeof(Qualification), qualification))
+                var field = type.GetField(name);
+                if (field != null)
                 {
-                    // If it's valid, convert to string
-                    return qualification.ToString();
-                }
-                else
-                {
-                    // If not valid, return a default string or handle as needed
-                    return "Unknown";
+                    var attr = field.GetCustomAttributes(typeof(EnumMemberAttribute), false).FirstOrDefault() as EnumMemberAttribute;
+                    if (attr != null)
+                    {
+                        return attr.Value;
+                    }
                 }
             }
-            catch (Exception ex)
-            {
-                // Log or handle the exception
-                return "Unknown"; // Return a default string on exception
-            }
+            return "Unknown";
         }
-
-
 
 
         //AddCertificates
@@ -1009,10 +1004,10 @@ namespace EmployeeOnboarding.Repository
             try
             {
                 // Fetch Empname from EmployeeGeneralDetails for the given genId
-                var employee =  _context.EmployeeGeneralDetails
+                var employee = _context.EmployeeGeneralDetails
                                               .FirstOrDefault(x => x.Id == genId);
                 // Fetch SelfDeclaration record for the given genId
-                var selfDeclaration =  _context.SelfDeclaration
+                var selfDeclaration = _context.SelfDeclaration
                                         .FirstOrDefault(a => a.EmpGen_Id == genId);
 
 
