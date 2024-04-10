@@ -250,7 +250,7 @@ namespace EmployeeOnboarding.Controllers
             }
         }
 
-    [HttpGet("get-reference/{genId}")]
+        [HttpGet("get-reference/{genId}")]
         public IActionResult GetReference(int genId)
         {
             try
@@ -258,16 +258,16 @@ namespace EmployeeOnboarding.Controllers
                 var reference = _userRepository.Getreference(genId);
                 if (reference == null)
                 {
-                    return null;
+                    return Ok(new { Message = "No reference information available for this user." });
                 }
                 else
                 {
-                   return Ok(reference);
+                    return Ok(reference);
                 }
             }
             catch (Exception ex)
             {
-                return BadRequest(StatusCode(400, ex.Message));
+                return BadRequest(ex.Message);
             }
         }
 
@@ -277,19 +277,21 @@ namespace EmployeeOnboarding.Controllers
             try
             {
                 var healthInfo = _userRepository.GetHealth(genId);
-                if(healthInfo == null)
+                if (healthInfo == null)
                 {
-                    return null;
+                    // If healthInfo is null, return an empty object or message
+                    // You can customize this based on your API's requirements
+                    return Ok(new { Message = "No health information available for this user." });
                 }
                 else
                 {
+                    // If healthInfo is not null, return it with an HTTP 200 OK response
                     return Ok(healthInfo);
                 }
-              
             }
             catch (Exception ex)
             {
-                return BadRequest(StatusCode(400, ex.Message));
+                return BadRequest(ex.Message);
             }
         }
 
@@ -299,18 +301,21 @@ namespace EmployeeOnboarding.Controllers
             try
             {
                 var bank = _userRepository.GetBank(genId);
-                if(bank == null)
+                if (bank == null)
                 {
-                    return null;
+                    // If bank is null, return an empty object or message
+                    // You can customize this based on your API's requirements
+                    return Ok(new { Message = "No bank information available for this user." });
                 }
                 else
                 {
+                    // If bank is not null, return it with an HTTP 200 OK response
                     return Ok(bank);
                 }
             }
             catch (Exception ex)
             {
-                return BadRequest(StatusCode(400, ex.Message));
+                return BadRequest(ex.Message);
             }
         }
 
@@ -329,9 +334,9 @@ namespace EmployeeOnboarding.Controllers
                     return NoContent();
                 }
             }
-            catch(Exception ex)
-            { 
-                return BadRequest(ex.Message); 
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
             }
         }
     }

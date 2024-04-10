@@ -549,7 +549,7 @@ namespace EmployeeOnboarding.Repository
 
         public GetReferenceVM Getreference(int genId)
         {
-            var _reference = _context.EmployeeReferenceDetails.Where(n => n.EmpGen_Id == genId).Select(reference => new GetReferenceVM()
+            GetReferenceVM _reference = _context.EmployeeReferenceDetails.Where(n => n.EmpGen_Id == genId).Select(reference => new GetReferenceVM()
             {
                 GenId = (int)reference.EmpGen_Id,
                 Referral_name = reference.Referral_name,
@@ -642,7 +642,8 @@ namespace EmployeeOnboarding.Repository
 
         public GetHealthVM GetHealth(int Id)
         {
-            var _health = _context.EmployeeHealthInformation.Where(n => n.EmpGen_Id == Id).Select(health => new GetHealthVM()
+            GetHealthVM health = new GetHealthVM();
+            health = _context.EmployeeHealthInformation.Where(n => n.EmpGen_Id == Id).Select(health => new GetHealthVM()
             {
                 GenId = health.EmpGen_Id,
                 Specific_health_condition = health.Specific_health_condition,
@@ -656,7 +657,7 @@ namespace EmployeeOnboarding.Repository
                 Health_documents = GetFile(health.Health_documents),
                 Vaccine_certificate = GetFile(health.Vaccine_certificate)
             }).FirstOrDefault();
-            return _health;
+            return health;
         }
 
 
