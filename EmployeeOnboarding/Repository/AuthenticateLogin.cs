@@ -14,6 +14,7 @@ using EmployeeOnboarding.Response;
 using DocumentFormat.OpenXml.Wordprocessing;
 using EmployeeOnboarding.Data.Enum;
 using System.Xml.Linq;
+using System.Text.RegularExpressions;
 
 namespace EmployeeOnboarding.Repository
 {
@@ -37,6 +38,11 @@ namespace EmployeeOnboarding.Repository
             if (email != null && password != null)
             {
                 Login? login = await _context.Login.FirstOrDefaultAsync(authUser => authUser.EmailId == email);
+                string pattern = @"^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$";
+                if (!Regex.IsMatch(email, pattern))
+                {
+                    throw new Exception("Enter a valid email id");
+                }
                 if (login == null)
                 {
                     throw new Exception("User not found!");
