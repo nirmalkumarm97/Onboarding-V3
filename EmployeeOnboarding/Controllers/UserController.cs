@@ -10,6 +10,7 @@ using EmployeeOnboarding.ViewModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using OnboardingWebsite.Models;
+using Org.BouncyCastle.Tls;
 using System;
 using System.ComponentModel.Design;
 
@@ -190,7 +191,14 @@ namespace EmployeeOnboarding.Controllers
             try
             {
                 var education = _userRepository.GetEducation(genId);
+                if (education == null)
+                {
+                    // If education is null, return an empty array
+                    return Ok(new List<GetEducationVM>()); // Assuming Education is a class or struct
+                }
+                // If education is not null, return it
                 return Ok(education);
+
             }
             catch (Exception ex)
             {
@@ -205,7 +213,14 @@ namespace EmployeeOnboarding.Controllers
             try
             {
                 var certificate = _userRepository.GetCertificate(genId);
-                return Ok(certificate);
+                if (certificate == null)
+                {
+                    return Ok(new List<getCertificateVM>());
+                }
+                else
+                {
+                    return Ok(certificate);
+                }
             }
             catch (Exception ex)
             {
@@ -220,7 +235,14 @@ namespace EmployeeOnboarding.Controllers
             try
             {
                 var companyExperiences = _userRepository.GetCompanyByEmpId(genId);
-                return Ok(companyExperiences);
+                if (companyExperiences == null)
+                {
+                    return Ok(new List<getExperienceVM>());
+                }
+                else
+                {
+                    return Ok(companyExperiences);
+                }
             }
             catch (Exception ex)
             {
@@ -234,7 +256,14 @@ namespace EmployeeOnboarding.Controllers
             try
             {
                 var reference = _userRepository.Getreference(genId);
-                return Ok(reference);
+                if (reference == null)
+                {
+                    return null;
+                }
+                else
+                {
+                   return Ok(reference);
+                }
             }
             catch (Exception ex)
             {
@@ -248,7 +277,15 @@ namespace EmployeeOnboarding.Controllers
             try
             {
                 var healthInfo = _userRepository.GetHealth(genId);
-                return Ok(healthInfo);
+                if(healthInfo == null)
+                {
+                    return null;
+                }
+                else
+                {
+                    return Ok(healthInfo);
+                }
+              
             }
             catch (Exception ex)
             {
@@ -262,7 +299,14 @@ namespace EmployeeOnboarding.Controllers
             try
             {
                 var bank = _userRepository.GetBank(genId);
-                return Ok(bank);
+                if(bank == null)
+                {
+                    return null;
+                }
+                else
+                {
+                    return Ok(bank);
+                }
             }
             catch (Exception ex)
             {
