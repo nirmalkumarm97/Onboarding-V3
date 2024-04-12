@@ -1,13 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace EmployeeOnboarding.Data
+namespace EmployeeOnboarding.Data.Models
 {
     public class EmployeeExistingBankAccount
 
     {
         public int Id { get; set; }
         [ForeignKey("EmpGen_Id")]
-        public int? EmpGen_Id { get; set; }  
+        public int? EmpGen_Id { get; set; }
         public string? Account_name { get; set; }
         public string? Bank_name { get; set; }
         public string? Bank_Branch { get; set; }

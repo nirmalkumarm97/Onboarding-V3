@@ -1,4 +1,4 @@
-﻿namespace EmployeeOnboarding.Data
+﻿namespace EmployeeOnboarding.Data.Models
 {
     public class SelfDeclaration
     {

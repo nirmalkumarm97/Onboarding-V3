@@ -331,48 +331,6 @@ namespace EmployeeOnboarding.Controllers
             }
             return value.ToString();
         }
-
-        [HttpGet("GetRelationships")]
-        public IActionResult GetRelationships()
-        {
-            try
-            {
-                var relationships = Enum.GetNames(typeof(Relationship)).ToList();
-                return Ok(relationships);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, "An error occurred while fetching relationships.");
-            }
-        }
-
-        //[HttpGet("GetStatesByCountryId/{Id}")]
-        //public async Task<IActionResult> GetStatesByCountryId(int Id)
-        //{
-        //    var response = await _context.State.Where(x => x.Country_Id == Id).ToListAsync();
-        //    if (response != null)
-        //    {
-        //        return Ok(response);
-        //    }
-        //    else
-        //    {
-        //        return NoContent();
-        //    }
-        //}
-        //[HttpGet("GetCitiesByStateId/{Id}")]
-        //public async Task<IActionResult> GetCitiesByStateId(int Id)
-        //{
-        //    var response = await _context.City.Where(x => x.State_Id == Id).ToListAsync();
-        //    if (response != null)
-        //    {
-        //        return Ok(response);
-        //    }
-        //    else
-        //    {
-        //        return NoContent();
-        //    }
-        //}
-
     }
 }
 

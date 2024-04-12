@@ -1,15 +1,17 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace EmployeeOnboarding.Data
+namespace EmployeeOnboarding.Data.Models
 {
-    public class EmployeeHobbyMembership
+    public class EmployeeEmergencyContactDetails
     {
         public int Id { get; set; }
         [ForeignKey("EmpGen_Id")]
-        public int EmpGen_Id { get; set; }  
-        public bool ProfessionalBody { get; set; }
-        public string? ProfessionalBody_name { get; set; }
-        public string? Hobbies { get; set; }
+        public int EmpGen_Id { get; set; }
+        public int? emergency_no { get; set; }
+        public string Relationship { get; set; }
+        public string Relation_name { get; set; }
+        public long Contact_number { get; set; }
+        public string Contact_address { get; set; }
         public DateTime Date_Created { get; set; }
         public DateTime? Date_Modified { get; set; }
         public string Created_by { get; set; }

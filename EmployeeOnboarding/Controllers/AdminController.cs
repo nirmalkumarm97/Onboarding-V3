@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using EmployeeOnboarding.Contracts;
 using EmployeeOnboarding.Data;
-using EmployeeOnboarding.Models;
 using EmployeeOnboarding.Request;
 
 namespace EmployeeOnboarding.Controllers

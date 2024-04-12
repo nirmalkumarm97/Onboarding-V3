@@ -1,4 +1,4 @@
-﻿using EmployeeOnboarding.Data;
+﻿using EmployeeOnboarding.Data.Models;
 using EmployeeOnboarding.ViewModels;
 
 namespace EmployeeOnboarding.Contracts
