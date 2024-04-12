@@ -130,13 +130,13 @@ namespace EmployeeOnboarding.Repository
                 }
                 else
                 {
-                    throw new NullReferenceException("Request is null");
+                    throw new Exception("Request is null");
                 }
             }
 
             catch (Exception e)
             {
-                throw new Exception(e.InnerException.Message);
+                throw new Exception(e.Message);
             }
         }
         private async Task SendConfirmationEmail(string email, string name, string url, string tempPass)
@@ -237,7 +237,7 @@ namespace EmployeeOnboarding.Repository
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.InnerException.Message);
+                throw new Exception(ex.Message);
             }
         }
         public async Task<string> UpdatePassword(string emailId, loginconfirmVM loginconfirmVM)
