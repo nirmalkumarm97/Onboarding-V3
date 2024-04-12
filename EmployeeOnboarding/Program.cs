@@ -84,8 +84,8 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultCOnnect
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(connectionString));
 
 builder.Services.AddTransient<IEmailSender>(s => new EmailSender("smtp.hostinger.com", 587 , "no-reply@onboarding.ideassion.in" , "N%P-tMmt5'{Wlpu"));
-builder.Services.AddTransient<OnboardStatusRepository>();
-builder.Services.AddScoped<ILogin, AuthenticateLogin>();
+builder.Services.AddTransient<StatusRepository>();
+builder.Services.AddScoped<ILogin, LoginRepository>();
 builder.Services.AddScoped<IAdminRepository, AdminRepository>();
 builder.Services.AddTransient<IUserDetailsRepository, UserDetailsRepository>();
 builder.Services.AddTransient<IUserRepository, UserRepository>();
