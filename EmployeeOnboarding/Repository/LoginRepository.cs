@@ -233,7 +233,7 @@ namespace EmployeeOnboarding.Repository
                     _context.SaveChanges();
                     return true;
                 }
-                throw new NullReferenceException("This emailId does not exists");
+                throw new Exception("This emailId does not exists");
             }
             catch (Exception ex)
             {
