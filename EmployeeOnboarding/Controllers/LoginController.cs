@@ -21,12 +21,20 @@ namespace EmployeeOnboarding.Controllers
         [HttpPost("LoginInvite")]
         public async Task<IActionResult> LoginInvite(List<logininviteVM>logindet)
         {
-            var response = await _Ilogin.LoginInvite(logindet);
-            if (response != null)
+            try
             {
-                return Ok(response);
+
+                var response = await _Ilogin.LoginInvite(logindet);
+                if (response != null)
+                {
+                    return Ok(response);
+                }
+                return NoContent();
             }
-            return NoContent();
+            catch (Exception ex)
+            {
+                return BadRequest(StatusCode(400, ex.Message));
+            }
         }
 
         [HttpPut("LoginCmp")]
@@ -61,12 +69,19 @@ namespace EmployeeOnboarding.Controllers
         [HttpPost("ForgotPassword")]
         public async Task<IActionResult> ForgotPassword(string emailId)
         {
-            var response = await _Ilogin.ForgotPassword(emailId);
-            if (response != null)
+            try
             {
-                return Ok(response);
+                var response = await _Ilogin.ForgotPassword(emailId);
+                if (response != null)
+                {
+                    return Ok(response);
+                }
+                return NoContent();
             }
-            return NoContent();
+            catch (Exception ex)
+            {
+                return BadRequest(StatusCode(400, ex.Message));
+            }
         }
 
         [HttpPut("UpdatePassword")]

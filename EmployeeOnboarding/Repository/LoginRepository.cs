@@ -233,7 +233,7 @@ namespace EmployeeOnboarding.Repository
                     _context.SaveChanges();
                     return true;
                 }
-                else return false;
+                throw new NullReferenceException("This emailId does not exists");
             }
             catch (Exception ex)
             {
@@ -275,7 +275,7 @@ namespace EmployeeOnboarding.Repository
         }
         public async Task<bool> VerifyOTP(string emailId, int OTP)
         {
-            if(emailId !=null && OTP !=null)
+            if (emailId != null && OTP != null)
             {
                 var CheckOtp = await _context.Login.Where(e => e.EmailId == emailId && e.OTP == OTP).FirstOrDefaultAsync();
                 if (CheckOtp != null)
