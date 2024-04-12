@@ -1,13 +1,13 @@
 ﻿using EmployeeOnboarding.ViewModels;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace EmployeeOnboarding.Data
+namespace EmployeeOnboarding.Data.Models
 {
     public class EmployeeHealthInformation
     {
         public int Id { get; set; }
         [ForeignKey("EmpGen_Id")]
-        public int EmpGen_Id { get; set; }  
+        public int EmpGen_Id { get; set; }
         public string? Specific_health_condition { get; set; }
         public string? Allergies { get; set; }
         public bool surgery { get; set; }

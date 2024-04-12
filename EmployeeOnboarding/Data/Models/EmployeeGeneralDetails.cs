@@ -2,19 +2,19 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace EmployeeOnboarding.Data
+namespace EmployeeOnboarding.Data.Models
 {
     public class EmployeeGeneralDetails
     {
         public int Id { get; set; }
         [ForeignKey("Login_Id")]
-        public int Login_ID { get; set; }    
+        public int Login_ID { get; set; }
         public string? Empid { get; set; }
         public string Empname { get; set; }
         public string? Official_EmailId { get; set; }
         public string Personal_Emailid { get; set; }
         public long Contact_no { get; set; }
-        public DateOnly DOB {  get; set; }
+        public DateOnly DOB { get; set; }
         public string Nationality { get; set; }
         public int Gender { get; set; }
         public int MaritalStatus { get; set; }

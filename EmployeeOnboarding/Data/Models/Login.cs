@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace EmployeeOnboarding.Data
+namespace EmployeeOnboarding.Data.Models
 {
-    public class Login 
+    public class Login
     {
         public int Id { get; set; }
         public string Name { get; set; }

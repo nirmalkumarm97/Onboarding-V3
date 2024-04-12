@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace EmployeeOnboarding.Data
+namespace EmployeeOnboarding.Data.Models
 {
     public class EmployeeEducationDetails
     {
@@ -8,7 +8,7 @@ namespace EmployeeOnboarding.Data
         [ForeignKey("EmpGen_Id")]
         public int EmpGen_Id { get; set; }
         public int? Education_no { get; set; }
-        public int Qualification { get; set; }  
+        public int Qualification { get; set; }
         public string University { get; set; }
         public string Institution_name { get; set; }
         public string Degree_achieved { get; set; }

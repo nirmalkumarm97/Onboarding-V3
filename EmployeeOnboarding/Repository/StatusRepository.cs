@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using OpenXmlPowerTools;
 using System.Text.Encodings.Web;
 using DocumentFormat.OpenXml.Office2010.Excel;
+using EmployeeOnboarding.Data.Models;
 
 namespace EmployeeOnboarding.Repository
 {

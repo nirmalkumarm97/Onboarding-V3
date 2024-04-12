@@ -1,6 +1,5 @@
 ﻿using EmployeeOnboarding.Contracts;
 using EmployeeOnboarding.Data;
-using EmployeeOnboarding.Models;
 using EmployeeOnboarding.ViewModels;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
@@ -14,6 +13,7 @@ using DocumentFormat.OpenXml.Wordprocessing;
 using EmployeeOnboarding.Data.Enum;
 using System.Xml.Linq;
 using System.Text.RegularExpressions;
+using EmployeeOnboarding.Data.Models;
 
 namespace EmployeeOnboarding.Repository
 {

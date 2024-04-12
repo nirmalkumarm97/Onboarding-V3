@@ -2,6 +2,7 @@
 using EmployeeOnboarding.Contracts;
 using EmployeeOnboarding.Data;
 using EmployeeOnboarding.Data.Enum;
+using EmployeeOnboarding.Data.Models;
 using EmployeeOnboarding.Helper;
 using EmployeeOnboarding.Request;
 using EmployeeOnboarding.Response;

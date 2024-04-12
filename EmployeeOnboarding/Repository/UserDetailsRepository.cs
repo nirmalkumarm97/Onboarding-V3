@@ -19,6 +19,7 @@ using System.Text.Encodings.Web;
 using System.Data.Entity;
 using System.Collections.Generic;
 using NuGet.Protocol.Plugins;
+using EmployeeOnboarding.Data.Models;
 
 namespace EmployeeOnboarding.Repository
 {

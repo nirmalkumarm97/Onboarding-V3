@@ -1,4 +1,5 @@
-﻿ using Microsoft.EntityFrameworkCore;
+﻿using EmployeeOnboarding.Data.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace EmployeeOnboarding.Data
 {
