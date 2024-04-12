@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using EmployeeOnboarding.Contracts;
 using EmployeeOnboarding.Repository;
-using EmployeeOnboarding.Services;
 using EmployeeOnboarding.ViewModels;
 using EmployeeOnboarding.Data;
 using Microsoft.EntityFrameworkCore;
@@ -17,10 +16,10 @@ namespace EmployeeOnboarding.Controllers
     public class StatusController : ControllerBase
     {
 
-        public onboardstatusService _onboardstatusService;
+        public OnboardStatusRepository _onboardstatusService;
         public ApplicationDbContext _context;
 
-        public StatusController(onboardstatusService onboardstatusService, ApplicationDbContext context)
+        public StatusController(OnboardStatusRepository onboardstatusService, ApplicationDbContext context)
         {
             _onboardstatusService = onboardstatusService;
             _context = context;

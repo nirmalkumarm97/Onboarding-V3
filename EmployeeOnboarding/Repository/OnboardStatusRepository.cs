@@ -9,14 +9,14 @@ using OpenXmlPowerTools;
 using System.Text.Encodings.Web;
 using DocumentFormat.OpenXml.Office2010.Excel;
 
-namespace EmployeeOnboarding.Services
+namespace EmployeeOnboarding.Repository
 {
-    public class onboardstatusService
+    public class OnboardStatusRepository
     {
         private readonly IEmailSender _emailSender;
         private readonly IConfiguration _configuration;
         private ApplicationDbContext _context;
-        public onboardstatusService(ApplicationDbContext context, IEmailSender emailSender, IConfiguration configuration)
+        public OnboardStatusRepository(ApplicationDbContext context, IEmailSender emailSender, IConfiguration configuration)
         {
             _context = context;
             _emailSender = emailSender;
