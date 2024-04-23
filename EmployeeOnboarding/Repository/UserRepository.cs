@@ -200,7 +200,7 @@ namespace EmployeeOnboarding.Repository
                             return genId;
                         }
                     }
-                    else throw new NullReferenceException("Request Cannot be null");
+                    else throw new Exception("Request Cannot be null");
                 }
                 catch (Exception ex)
                 {
