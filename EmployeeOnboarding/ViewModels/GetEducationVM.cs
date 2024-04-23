@@ -4,7 +4,7 @@
     {
         public int GenId { get; set; }
         public int Number { get; set; }
-        public string Qualification { get; set; }
+        public int Qualification { get; set; }
         public string University { get; set; }
         public string Institution_name { get; set; }
         public string Degree_achieved { get; set; }
