@@ -9,6 +9,7 @@ using OpenXmlPowerTools;
 using System.Text.Encodings.Web;
 using DocumentFormat.OpenXml.Office2010.Excel;
 using EmployeeOnboarding.Data.Models;
+using EmployeeOnboarding.Response;
 
 namespace EmployeeOnboarding.Repository
 {
@@ -365,6 +366,26 @@ namespace EmployeeOnboarding.Repository
                }).FirstOrDefault();
 
             return _onboard;
+        }
+
+        public async Task<StageResponse> GetStagesbyGenId(int genId)
+        {
+            int personal = _context.EmployeeGeneralDetails.Where(x => x.Id == genId).Select(x => x.Id).FirstOrDefault();
+            int edu = _context.EmployeeEducationDetails.Where(x => x.EmpGen_Id == genId).Select(x => x.EmpGen_Id).FirstOrDefault();
+            int cert = (int)_context.EmployeeCertifications.Where(x => x.EmpGen_Id == genId).Select(x => x.EmpGen_Id).FirstOrDefault();
+            int refer = (int)_context.EmployeeExperienceDetails.Where(x => x.EmpGen_Id == genId).Select(x => x.EmpGen_Id).FirstOrDefault();
+            int health = _context.EmployeeHealthInformation.Where(x => x.EmpGen_Id == genId).Select(x => x.EmpGen_Id).FirstOrDefault();
+            int bank = (int)_context.EmployeeRequiredDocuments.Where(x => x.EmpGen_Id == genId).Select(x => x.EmpGen_Id).FirstOrDefault();
+
+            return new StageResponse()
+            {
+                PersonalInfo = personal == null ? false : true,
+                EducationInfo = edu == null ? false : true,
+                CertificateInfo = cert == null ? false : true,
+                ExperienceInfo = refer == null ? false : true,
+                HealthInfo = health == null ? false : true,
+                BankInfo = bank == null ? false : true
+            };
         }
 
     }

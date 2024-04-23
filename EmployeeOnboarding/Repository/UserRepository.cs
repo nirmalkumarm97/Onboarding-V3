@@ -200,7 +200,7 @@ namespace EmployeeOnboarding.Repository
                             return genId;
                         }
                     }
-                    else throw new NullReferenceException("Request Cannot be null");
+                    else throw new Exception("Request Cannot be null");
                 }
                 catch (Exception ex)
                 {
@@ -220,7 +220,7 @@ namespace EmployeeOnboarding.Repository
                 {
                     GenId = e.EmpGen_Id,
                     Number = (int)e.Education_no,
-                    Qualification = GetEnumMemberValue((Qualification)e.Qualification), // Call helper method
+                    Qualification =  e.Qualification,//GetEnumMemberValue((Qualification)e.Qualification), // Call helper method
                     University = e.University,
                     Institution_name = e.Institution_name,
                     Degree_achieved = e.Degree_achieved,
@@ -234,24 +234,24 @@ namespace EmployeeOnboarding.Repository
             return education;
         }
 
-        private static string GetEnumMemberValue(Enum value)
-        {
-            Type type = value.GetType();
-            string name = Enum.GetName(type, value);
-            if (name != null)
-            {
-                var field = type.GetField(name);
-                if (field != null)
-                {
-                    var attr = field.GetCustomAttributes(typeof(EnumMemberAttribute), false).FirstOrDefault() as EnumMemberAttribute;
-                    if (attr != null)
-                    {
-                        return attr.Value;
-                    }
-                }
-            }
-            return "Unknown";
-        }
+        //private static string GetEnumMemberValue(Enum value)
+        //{
+        //    Type type = value.GetType();
+        //    string name = Enum.GetName(type, value);
+        //    if (name != null)
+        //    {
+        //        var field = type.GetField(name);
+        //        if (field != null)
+        //        {
+        //            var attr = field.GetCustomAttributes(typeof(EnumMemberAttribute), false).FirstOrDefault() as EnumMemberAttribute;
+        //            if (attr != null)
+        //            {
+        //                return attr.Value;
+        //            }
+        //        }
+        //    }
+        //    return "Unknown";
+        //}
 
 
         //AddCertificates

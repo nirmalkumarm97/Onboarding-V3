@@ -54,6 +54,14 @@ namespace EmployeeOnboarding.Controllers
             return Ok(issuccess);
         }
 
+        [HttpGet("GetStagesbyGenId/{genId}")]
+        public IActionResult GetStagesbyGenId(int genId)
+        {
+            var issuccess = _onboardstatusService.GetStagesbyGenId(genId);
+
+            return Ok(issuccess);
+        }
+
         //[HttpGet("status-dashboard")]
         //public async Task<statusdashVM> GetAdminStatusList()
         //{
