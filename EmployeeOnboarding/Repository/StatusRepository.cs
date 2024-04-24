@@ -370,24 +370,33 @@ namespace EmployeeOnboarding.Repository
 
         public async Task<StageResponse> GetStagesbyGenId(int genId)
         {
-            int personal = _context.EmployeeGeneralDetails.Where(x => x.Id == genId).Select(x => x.Id).FirstOrDefault();
-            int edu = _context.EmployeeEducationDetails.Where(x => x.EmpGen_Id == genId).Select(x => x.EmpGen_Id).FirstOrDefault();
-            int cert = (int)_context.EmployeeCertifications.Where(x => x.EmpGen_Id == genId).Select(x => x.EmpGen_Id).FirstOrDefault();
-            int refer = (int)_context.EmployeeExperienceDetails.Where(x => x.EmpGen_Id == genId).Select(x => x.EmpGen_Id).FirstOrDefault();
-            int health = _context.EmployeeHealthInformation.Where(x => x.EmpGen_Id == genId).Select(x => x.EmpGen_Id).FirstOrDefault();
-            int bank = (int)_context.EmployeeRequiredDocuments.Where(x => x.EmpGen_Id == genId).Select(x => x.EmpGen_Id).FirstOrDefault();
+            var personal = _context.EmployeeGeneralDetails.Any(x => x.Id == genId);
 
-            return new StageResponse()
+            if (!personal)
             {
-                PersonalInfo = personal == null ? false : true,
-                EducationInfo = edu == null ? false : true,
-                CertificateInfo = cert == null ? false : true,
-                ExperienceInfo = refer == null ? false : true,
-                HealthInfo = health == null ? false : true,
-                BankInfo = bank == null ? false : true
+                return new StageResponse
+                {
+                    PersonalInfo = false,
+                    EducationInfo = false,
+                    CertificateInfo = false,
+                    ExperienceInfo = false,
+                    HealthInfo = false,
+                    BankInfo = false
+                };
+            }
+
+            var stages = new StageResponse
+            {
+                PersonalInfo = true,
+                EducationInfo = _context.EmployeeEducationDetails.Any(x => x.EmpGen_Id == genId),
+                CertificateInfo = _context.EmployeeCertifications.Any(x => x.EmpGen_Id == genId),
+                ExperienceInfo = _context.EmployeeExperienceDetails.Any(x => x.EmpGen_Id == genId),
+                HealthInfo = _context.EmployeeHealthInformation.Any(x => x.EmpGen_Id == genId),
+                BankInfo = _context.EmployeeRequiredDocuments.Any(x => x.EmpGen_Id == genId)
             };
+
+            return stages;
         }
 
     }
-
 }

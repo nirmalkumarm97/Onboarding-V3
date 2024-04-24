@@ -55,9 +55,9 @@ namespace EmployeeOnboarding.Controllers
         }
 
         [HttpGet("GetStagesbyGenId/{genId}")]
-        public IActionResult GetStagesbyGenId(int genId)
+        public async Task<IActionResult> GetStagesbyGenId(int genId)
         {
-            var issuccess = _onboardstatusService.GetStagesbyGenId(genId);
+            var issuccess = await _onboardstatusService.GetStagesbyGenId(genId);
 
             return Ok(issuccess);
         }
