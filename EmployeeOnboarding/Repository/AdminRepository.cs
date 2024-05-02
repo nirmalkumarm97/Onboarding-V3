@@ -119,7 +119,7 @@ namespace EmployeeOnboarding.Repository
                                   })
                     .Skip((adminRequest.PageNumber - 1) * adminRequest.PageSize)
                     .Take(adminRequest.PageSize)
-                    .OrderByDescending(x => x.CreatedDate)
+                    .OrderByDescending(x => x.DateModified)
                     .ToList();
             response.result = PendingDetails;
             response.OverallCount = PendingDetails.Count;
