@@ -560,7 +560,7 @@ namespace EmployeeOnboarding.Repository
                     }
                     else
                     {
-                        throw new NullReferenceException("Null Exception");
+                        throw new Exception("Null Exception");
                     }
                 }
                 catch (Exception e)
