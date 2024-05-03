@@ -429,7 +429,7 @@ namespace EmployeeOnboarding.Repository
                         }
 
                         //colleaguesInfo
-                        if (personalInfoRequest.colleagues.Count > 0)
+                        if (personalInfoRequest.colleagues != null && personalInfoRequest.colleagues.Count > 0)
                         {
                             List<EmployeeColleagueDetails> colleagueVMs = new List<EmployeeColleagueDetails>();
                             int index2 = 1;
@@ -705,7 +705,7 @@ namespace EmployeeOnboarding.Repository
 
                 else
                 {
-                    throw new NullReferenceException("Null exception");
+                    return null;
                 }
             }
             catch (Exception e)
