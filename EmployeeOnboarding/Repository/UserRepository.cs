@@ -220,7 +220,7 @@ namespace EmployeeOnboarding.Repository
                 {
                     GenId = e.EmpGen_Id,
                     Number = (int)e.Education_no,
-                    Qualification =  e.Qualification,//GetEnumMemberValue((Qualification)e.Qualification), // Call helper method
+                    Qualification = e.Qualification,//GetEnumMemberValue((Qualification)e.Qualification), // Call helper method
                     University = e.University,
                     Institution_name = e.Institution_name,
                     Degree_achieved = e.Degree_achieved,
@@ -631,7 +631,7 @@ namespace EmployeeOnboarding.Repository
                             return genId;
                         }
                     }
-                    else throw new NullReferenceException("Request Cannot be null");
+                    else throw new Exception("Request Cannot be null");
                 }
                 catch (Exception ex)
                 {
@@ -748,12 +748,28 @@ namespace EmployeeOnboarding.Repository
 
                             //    dbcontext.SaveChanges();
                             //}
+                            var role = dbcontext.Login.Where(x => x.Id == bank.LoginId).FirstOrDefault();
+                            if (role != null && role.Role == "A")
+                            {
+                                var status = dbcontext.ApprovalStatus.Where(x => x.EmpGen_Id == genId).FirstOrDefault();
+                                if (status != null)
+                                {
+                                    status.Current_Status = 2;
+                                    status.Date_Modified = DateTime.UtcNow;
+                                    dbcontext.Update(status);
+                                    dbcontext.SaveChanges();
+                                }
+                                else
+                                {
+                                    throw new Exception("This GenId don't exists in Approval to change the status to Pending");
+                                }
+                            }
                             transaction.Commit();
                             dbcontext.ChangeTracker.Clear();
                             return genId;
                         }
                     }
-                    else throw new NullReferenceException("Request Cannot be null");
+                    else throw new Exception("Request Cannot be null");
                 }
                 catch (Exception ex)
                 {

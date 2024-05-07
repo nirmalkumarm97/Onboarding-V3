@@ -10,5 +10,6 @@
         public bool? Joint_Account { get; set; }
         public List<string>? ProofSubmitted { get; set; }
         public string? Bank_Documents { get; set; }
+        public int LoginId { get; set; }
     }
 }
