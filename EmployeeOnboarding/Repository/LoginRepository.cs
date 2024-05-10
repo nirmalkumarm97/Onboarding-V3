@@ -75,6 +75,7 @@ namespace EmployeeOnboarding.Repository
         {
             try
             {
+                
                 if (logindet.Count > 0)
                 {
                     foreach (var (i, check) in from i in logindet
@@ -83,36 +84,44 @@ namespace EmployeeOnboarding.Repository
                     {
                         string tempPass = Guid.NewGuid().ToString().Replace("-", "").Substring(0, 8); // Change length as needed
 
-                        if (check != null)
+                        switch (i.NewUserInvite, check)
                         {
-                            // int Verifyotp = otpgeneration();
+                            case (false, not null):
+                                // int Verifyotp = otpgeneration();
+                                check.Name = i.Name;
+                                check.EmailId = i.Emailid;
+                                check.Password = tempPass;
+                                check.Date_Modified = DateTime.UtcNow;
+                                _context.Login.Update(check);
+                                _context.SaveChanges();
+                                break;
 
-                            check.Name = i.Name;
-                            check.EmailId = i.Emailid;
-                            check.Password = tempPass;
-                            check.Date_Modified = DateTime.UtcNow;
-                            _context.Login.Update(check);
-                            _context.SaveChanges();
-                        }
-                        else
-                        {
-                            var _logindet = new Login()
-                            {
-                                Name = i.Name,
-                                EmailId = i.Emailid,
-                                Password = tempPass,
-                                Invited_Status = "Invited",
-                                Date_Created = DateTime.UtcNow,
-                                Date_Modified = DateTime.UtcNow,
-                                Created_by = "Admin",
-                                Modified_by = "Admin",
-                                Status = "A",
-                                Role = "U"
-                                // OTP = Verifyotp
-                            };
+                            case (false, null):
+                                var _logindet = new Login()
+                                {
+                                    Name = i.Name,
+                                    EmailId = i.Emailid,
+                                    Password = tempPass,
+                                    Invited_Status = "Invited",
+                                    Date_Created = DateTime.UtcNow,
+                                    Date_Modified = DateTime.UtcNow,
+                                    Created_by = "Admin",
+                                    Modified_by = "Admin",
+                                    Status = "A",
+                                    Role = "U"
+                                    // OTP = Verifyotp
+                                };
 
-                            _context.Login.Add(_logindet);
-                            _context.SaveChanges();
+                                _context.Login.Add(_logindet);
+                                _context.SaveChanges();
+                                break;
+
+                            case (true, not null):
+                                throw new Exception($"This emailId : {i.Emailid} already exists");
+
+                            default:
+                                // Handle any other cases
+                                break;
                         }
 
                         //var callbackUrl = "http://localhost:7136/swagger/index.html";
