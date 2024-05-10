@@ -96,7 +96,7 @@ namespace EmployeeOnboarding.Repository
                                 _context.SaveChanges();
                                 break;
 
-                            case (false, null):
+                            case (true, null):
                                 var _logindet = new Login()
                                 {
                                     Name = i.Name,
