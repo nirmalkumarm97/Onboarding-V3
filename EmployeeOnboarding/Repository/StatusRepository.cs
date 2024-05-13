@@ -125,10 +125,10 @@ namespace EmployeeOnboarding.Repository
 
             login.Invited_Status = "Approved";
             _context.Login.Update(login);
+            _context.SaveChanges(); // Save changes to Login
 
             string empName = login.Name;
             string email = login.EmailId;
-            _context.SaveChanges(); // Save changes to Login
 
             string url = _configuration.GetSection("ApplicationURL").Value;
             await SendApprovalEmail(email, empName, url, official.Empid, official.Official_EmailId);

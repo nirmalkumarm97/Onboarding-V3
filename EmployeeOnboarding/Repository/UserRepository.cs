@@ -363,7 +363,7 @@ namespace EmployeeOnboarding.Repository
                 Specialization = e.Specialization,
                 Percentage = e.Percentage,
                 Proof = GetFile(e.proof),
-                ProofName = Path.GetFileName(e.proof)
+                ProofName =  e.proof != null ? Path.GetFileName(e.proof) : null
             }).OrderBy(x => x.Number)
             .ToList();
 

@@ -11,6 +11,6 @@
         public string? Specialization { get; set; }
         public string? Percentage { get; set; }
         public byte[]? Proof { get; set; }
-        public string ProofName { get; set; }
+        public string? ProofName { get; set; }
     }
 }
