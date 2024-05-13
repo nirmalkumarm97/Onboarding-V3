@@ -28,10 +28,14 @@ namespace EmployeeOnboarding.Controllers
         [HttpPost("approve/{genId}")]
         public async Task<IActionResult> ChangeApprovalStatus(int genId, [FromBody] onboardstatusVM onboardstatus)
         {
-            var empCheck = _context.EmployeeGeneralDetails.Where(x => x.Id == genId).Select(x => x.Empid).FirstOrDefault();
-            if (empCheck != null && empCheck == onboardstatus.Emp_id)
+            var empCheck = _context.EmployeeGeneralDetails.Where(x => x.Id == genId).FirstOrDefault();
+            if (empCheck != null && empCheck.Empid == onboardstatus.Emp_id)
             {
                 return BadRequest("EmployeeID already exists");
+            }
+            if(empCheck != null && empCheck.Official_EmailId == onboardstatus.Official_EmailId)
+            {
+                return BadRequest("Employee emailID already exists");
             }
             try
             {
