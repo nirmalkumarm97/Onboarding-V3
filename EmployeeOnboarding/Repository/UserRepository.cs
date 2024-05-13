@@ -690,7 +690,7 @@ namespace EmployeeOnboarding.Repository
                                 existingBank.Account_number = bank.Account_number;
                                 existingBank.IFSC_code = bank.IFSC_code;
                                 existingBank.Joint_Account = bank.Joint_Account;
-                                existingBank.Proof_submitted = string.Join(",", bank.ProofSubmitted);
+                                existingBank.Proof_submitted = bank.ProofSubmitted != null ? string.Join(",", bank.ProofSubmitted) : bank.ProofSubmitted.Count > 0 ? string.Join(",", bank.ProofSubmitted) : null;
                                 existingBank.Bank_Documents = await SaveFileAsync(bank.Bank_Documents, genId.ToString(), "Bank_documents.pdf");
                                 existingBank.Date_Modified = DateTime.UtcNow;
                                 existingBank.Modified_by = genId.ToString();
@@ -711,7 +711,7 @@ namespace EmployeeOnboarding.Repository
                                     Account_number = bank.Account_number,
                                     IFSC_code = bank.IFSC_code,
                                     Joint_Account = bank.Joint_Account,
-                                    Proof_submitted = string.Join(",", bank.ProofSubmitted),
+                                    Proof_submitted = bank.ProofSubmitted != null ? string.Join(",", bank.ProofSubmitted) : bank.ProofSubmitted.Count > 0 ? string.Join(",", bank.ProofSubmitted) : null,
                                     Bank_Documents = await SaveFileAsync(bank.Bank_Documents, genId.ToString(), "Bank_documents.pdf"),
                                     Date_Created = DateTime.UtcNow,
                                     Date_Modified = DateTime.UtcNow,
