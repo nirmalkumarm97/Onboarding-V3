@@ -227,7 +227,8 @@ namespace EmployeeOnboarding.Repository
                     specialization = e.specialization,
                     Passoutyear = e.Passoutyear,
                     Percentage = e.Percentage,
-                    Edu_certificate = GetFile(e.Edu_certificate) // Assuming GetFile() is defined
+                    Edu_certificate = GetFile(e.Edu_certificate), // Assuming GetFile() is defined
+                    Edu_certificateName = Path.GetFileName(e.Edu_certificate)
                 }).OrderBy(x => x.Number)
                 .ToList();
 
@@ -361,7 +362,8 @@ namespace EmployeeOnboarding.Repository
                 Duration = e.Duration,
                 Specialization = e.Specialization,
                 Percentage = e.Percentage,
-                proof = GetFile(e.proof),
+                Proof = GetFile(e.proof),
+                ProofName =  e.proof != null ? Path.GetFileName(e.proof) : null
             }).OrderBy(x => x.Number)
             .ToList();
 
@@ -480,6 +482,7 @@ namespace EmployeeOnboarding.Repository
                 EndDate = e.EndDate,
                 Reporting_to = e.Reporting_to,
                 Exp_Certificate = GetFile(e.Exp_Certificate),
+                Exp_CertificateName = e.Exp_Certificate != null ? Path.GetFileName(e.Exp_Certificate) : null // Extract file name
             }).OrderBy(x => x.Number)
                 .ToList();
 
@@ -559,7 +562,6 @@ namespace EmployeeOnboarding.Repository
                 Contact_number = reference.Contact_number,
                 Email_Id = reference.Email_Id,
                 Authorize = reference.Authorize
-
             }).FirstOrDefault();
 
             return _reference;
@@ -656,7 +658,10 @@ namespace EmployeeOnboarding.Repository
                 Disability_explanation = health.Disability_explanation,
                 CovidVaccine = health.CovidVaccine,
                 Health_documents = GetFile(health.Health_documents),
-                Vaccine_certificate = GetFile(health.Vaccine_certificate)
+                Health_documentsName = Path.GetFileName(health.Health_documents),
+                Vaccine_certificate = GetFile(health.Vaccine_certificate),
+                Vaccine_certificateName = health.Vaccine_certificate != null ? Path.GetFileName(health.Vaccine_certificate) : null
+
             }).FirstOrDefault();
             return health;
         }
@@ -801,7 +806,8 @@ namespace EmployeeOnboarding.Repository
                     IFSC_code = _bank.IFSC_code,
                     Joint_Account = _bank.Joint_Account,
                     ProofSubmitted = proofSubmittedList,
-                    Bank_Documents = GetFile(_bank.Bank_Documents)
+                    Bank_Documents = GetFile(_bank.Bank_Documents),
+                    Bank_DocumentsName = _bank.Bank_Documents != null ?  Path.GetFileName(_bank.Bank_Documents)  : null
                 };
                 return bankVM;
             }

@@ -12,6 +12,7 @@
         public DateOnly? EndDate { get; set; }
         public string? Reporting_to { get; set; }
         public byte[]? Exp_Certificate { get; set; }
+        public string? Exp_CertificateName { get; set; }
         //public byte[]? getCertificate { get; set; }
-    }  
+    }
 }

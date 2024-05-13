@@ -10,6 +10,7 @@
         public int? Duration { get; set; }
         public string? Specialization { get; set; }
         public string? Percentage { get; set; }
-        public byte[]? proof { get; set; }
+        public byte[]? Proof { get; set; }
+        public string? ProofName { get; set; }
     }
 }
