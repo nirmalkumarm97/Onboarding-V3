@@ -921,6 +921,9 @@ namespace EmployeeOnboarding.Repository
                         var userLogin = _context.Login.FirstOrDefault(x => x.Id == userId);
                         if (userLogin != null)
                         {
+                            userLogin.Invited_Status = "Submitted";
+                            _context.Update(userLogin);
+                            _context.SaveChanges();
                             await SendOnboardingSubmissionEmail(userLogin.EmailId, userLogin.Name);
                         }
                     }
@@ -934,6 +937,9 @@ namespace EmployeeOnboarding.Repository
                             var userLogin = _context.Login.FirstOrDefault(x => x.Id == userId);
                             if (userLogin != null)
                             {
+                                userLogin.Invited_Status = "Submitted";
+                                _context.Update(userLogin);
+                                _context.SaveChanges();
                                 await SendOnboardingReSubmissionEmail(userLogin.EmailId, userLogin.Name);
                             }
                         }
@@ -969,7 +975,7 @@ namespace EmployeeOnboarding.Repository
 
         private void CreateApprovalStatusIfNotExists(int genId)
         {
-            var existingPendingStatus = _context.ApprovalStatus.FirstOrDefault(x => x.EmpGen_Id == genId);
+            var existingPendingStatus = _context.ApprovalStatus.FirstOrDefault(x => x.EmpGen_Id == genId && x.Current_Status != 1);
             if (existingPendingStatus == null)
             {
                 var onboardStatus = new ApprovalStatus()

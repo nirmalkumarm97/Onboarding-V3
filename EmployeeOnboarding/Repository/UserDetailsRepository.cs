@@ -291,7 +291,7 @@ namespace EmployeeOnboarding.Repository
 
                         var submit = _context.Login.FirstOrDefault(e => e.Id == personalInfoRequest.loginId);
 
-                        submit.Invited_Status = "Submitted";
+                        submit.Invited_Status = "Incomplete";
 
                         _context.Login.Update(submit);
 
