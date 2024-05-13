@@ -33,15 +33,29 @@ namespace EmployeeOnboarding.Controllers
             {
                 return BadRequest("EmployeeID already exists");
             }
-            await _onboardstatusService.ChangeApprovalStatus(genId, onboardstatus);
-            return Ok("Approved");
+            try
+            {
+                await _onboardstatusService.ChangeApprovalStatus(genId, onboardstatus);
+                return Ok("Approved");
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpPost("reject/{genId}")]
         public async Task<IActionResult> ChangeCancelStatus(int genId, [FromBody] commentVM onboardstatus)
         {
-            await _onboardstatusService.ChangeCancelStatus(genId, onboardstatus);
-            return Ok("Rejected");
+            try
+            {
+                await _onboardstatusService.ChangeCancelStatus(genId, onboardstatus);
+                return Ok("Rejected");
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpPost("pending/{genId}")]
