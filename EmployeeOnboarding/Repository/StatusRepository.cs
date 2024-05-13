@@ -112,21 +112,27 @@ namespace EmployeeOnboarding.Repository
         private async Task UpdateLoginStatus(int genId)
         {
             var official = _context.EmployeeGeneralDetails.FirstOrDefault(e => e.Id == genId);
-            if (official == null) return;
+            if (official == null)
+            {
+                throw new Exception("General details does not contains");
+            }
 
             var login = _context.Login.FirstOrDefault(x => x.Id == official.UserId);
-            if (login == null) return;
+            if (login == null)
+            {
+                throw new Exception("Login details does not contains to change approve status");
+            }
 
             login.Invited_Status = "Approved";
             _context.Login.Update(login);
 
             string empName = login.Name;
             string email = login.EmailId;
+            _context.SaveChanges(); // Save changes to Login
 
             string url = _configuration.GetSection("ApplicationURL").Value;
             await SendApprovalEmail(email, empName, url, official.Empid, official.Official_EmailId);
 
-            await _context.SaveChangesAsync(); // Save changes to Login
         }
 
         private async Task SendApprovalEmail(string email, string empName, string url, string empId, string officialEmail)

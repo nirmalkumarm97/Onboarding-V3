@@ -12,6 +12,8 @@
         public string? Disability_explanation { get; set; }
         public int CovidVaccine { get; set; }
         public byte[] Vaccine_certificate { get; set; }
+        public string Vaccine_certificateName { get; set; }
         public byte[]? Health_documents { get; set; }
+        public string? Health_documentsName { get; set; }
     }
 }

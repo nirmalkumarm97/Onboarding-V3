@@ -37,6 +37,7 @@ namespace EmployeeOnboarding.Response
         public DateOnly? DateOfMarriage { get; set; }
         public int BloodGrp { get; set; }
         public byte[] Profile_Pic { get; set; }
+        public string ProfilePicName { get; set; }
     }
     public class ContactResponse
     {
@@ -81,9 +82,14 @@ namespace EmployeeOnboarding.Response
     public class RequiredDocumentsRespose
     {
         public byte[] Aadhar { get; set; }
+        public string AadharName { get; set; }
         public byte[] Pan { get; set; }
+        public string PanName { get; set; }
         public byte[]? Driving_license { get; set; }
+        public string? Driving_LicenseName { get; set; }
         public byte[]? Passport { get; set; }
+        public string? PassportName { get; set; }
+
     }
 }
 

@@ -12,5 +12,6 @@
         public int Passoutyear { get; set; }
         public string Percentage { get; set; }
         public byte[] Edu_certificate { get; set; }
+        public string Edu_certificateName { get; set; }
     }
 }

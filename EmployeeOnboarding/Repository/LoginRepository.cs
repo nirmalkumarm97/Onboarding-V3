@@ -117,7 +117,7 @@ namespace EmployeeOnboarding.Repository
                                 break;
 
                             case (true, not null):
-                                throw new Exception($"This emailId : {i.Emailid} already exists");
+                                throw new Exception($"User already exists");
 
                             default:
                                 // Handle any other cases

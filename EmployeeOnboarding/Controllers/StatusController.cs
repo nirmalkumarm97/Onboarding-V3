@@ -28,14 +28,19 @@ namespace EmployeeOnboarding.Controllers
         [HttpPost("approve/{genId}")]
         public async Task<IActionResult> ChangeApprovalStatus(int genId, [FromBody] onboardstatusVM onboardstatus)
         {
+            var empCheck = _context.EmployeeGeneralDetails.Where(x => x.Id == genId).Select(x => x.Empid).FirstOrDefault();
+            if (empCheck != null && empCheck == onboardstatus.Emp_id)
+            {
+                return BadRequest("EmployeeID already exists");
+            }
             await _onboardstatusService.ChangeApprovalStatus(genId, onboardstatus);
             return Ok("Approved");
         }
-         
+
         [HttpPost("reject/{genId}")]
         public async Task<IActionResult> ChangeCancelStatus(int genId, [FromBody] commentVM onboardstatus)
         {
-           await _onboardstatusService.ChangeCancelStatus(genId, onboardstatus);
+            await _onboardstatusService.ChangeCancelStatus(genId, onboardstatus);
             return Ok("Rejected");
         }
 

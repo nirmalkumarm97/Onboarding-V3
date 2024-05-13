@@ -615,6 +615,7 @@ namespace EmployeeOnboarding.Repository
                         DateOfMarriage = general.DateOfMarriage,
                         BloodGrp = general.BloodGrp,//EnumExtensionMethods.GetEnumDescription((BloodGroup)general.BloodGrp),
                         Profile_Pic = GetFile(general.Profile_pic),
+                        ProfilePicName = Path.GetFileName(general.Profile_pic)
 
                     }).FirstOrDefault();
                     personalInfoResponse.GenId = _general.Id;
@@ -692,9 +693,13 @@ namespace EmployeeOnboarding.Repository
                     RequiredDocumentsRespose requiredDocuments = _context.EmployeeRequiredDocuments.Where(x => x.EmpGen_Id == _general.Id).Select(e => new RequiredDocumentsRespose
                     {
                         Aadhar = GetFile(e.Aadhar),
+                        AadharName = Path.GetFileName(e.Aadhar),
                         Driving_license = GetFile(e.Driving_license),
+                        Driving_LicenseName = Path.GetFileName(e.Driving_license),
                         Pan = GetFile(e.Pan),
-                        Passport = GetFile(e.Passport)
+                        PanName = e.Pan != null ? Path.GetFileName(e.Pan) : null,
+                        Passport = GetFile(e.Passport),
+                        PassportName = e.Passport != null ? Path.GetFileName(e.Passport) : null
                     }).FirstOrDefault();
 
                     personalInfoResponse.RequiredDocuments = requiredDocuments;
