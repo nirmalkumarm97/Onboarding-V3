@@ -928,12 +928,19 @@ namespace EmployeeOnboarding.Repository
                         CreateNewSelfDeclaration(genId, selfDeclarationRequest);
 
                         var userId = _context.EmployeeGeneralDetails.FirstOrDefault(x => x.Id == genId)?.UserId;
+                        if(userId == null)
+                        {
+                            throw new Exception("UserId does not exists in General Information");
+                        }
                         var userLogin = _context.Login.FirstOrDefault(x => x.Id == userId);
+                        if (userLogin == null)
+                        {
+                            throw new Exception("LoginId does not exists in Login Details");
+                        }
                         if (userLogin != null)
                         {
                             userLogin.Invited_Status = "Submitted";
                             _context.Update(userLogin);
-                            _context.SaveChanges();
                             await SendOnboardingSubmissionEmail(userLogin.EmailId, userLogin.Name);
                         }
                     }
@@ -949,12 +956,11 @@ namespace EmployeeOnboarding.Repository
                             {
                                 userLogin.Invited_Status = "Submitted";
                                 _context.Update(userLogin);
-                                _context.SaveChanges();
                                 await SendOnboardingReSubmissionEmail(userLogin.EmailId, userLogin.Name);
                             }
                         }
                     }
-                    await _context.SaveChangesAsync();
+                    _context.SaveChanges();
                     transaction.Commit();
 
                     return "succeed";
