@@ -31,11 +31,11 @@ namespace EmployeeOnboarding.Controllers
             var empCheck = _context.EmployeeGeneralDetails.Where(x => x.Id == genId).FirstOrDefault();
             if (empCheck != null && empCheck.Empid == onboardstatus.Emp_id)
             {
-                return BadRequest("EmployeeID already exists");
+                return BadRequest("Employee ID or email ID might already exist.");
             }
             if(empCheck != null && empCheck.Official_EmailId == onboardstatus.Official_EmailId)
             {
-                return BadRequest("Employee emailID already exists");
+                return BadRequest("Employee ID or email ID might already exist.");
             }
             try
             {
