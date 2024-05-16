@@ -30,19 +30,20 @@ namespace EmployeeOnboarding.Controllers
         {
             var empCheck = _context.EmployeeGeneralDetails.FirstOrDefault(x => x.Id == genId);
 
-            if (empCheck != null)
+            var existingEmployee = _context.EmployeeGeneralDetails
+            .Any(x => x.Empid == onboardstatus.Emp_id || x.Official_EmailId == onboardstatus.Official_EmailId);
+
+            if (existingEmployee)
             {
-                if (empCheck.Empid == onboardstatus.Emp_id || empCheck.Official_EmailId == onboardstatus.Official_EmailId)
-                {
-                    return BadRequest("Employee ID or email ID might already exist.");
-                }
+                return BadRequest("Employee ID or email ID might already exist.");
             }
+
             try
             {
                 await _onboardstatusService.ChangeApprovalStatus(genId, onboardstatus);
                 return Ok("Approved");
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
@@ -56,7 +57,7 @@ namespace EmployeeOnboarding.Controllers
                 await _onboardstatusService.ChangeCancelStatus(genId, onboardstatus);
                 return Ok("Rejected");
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
