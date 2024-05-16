@@ -32,7 +32,7 @@ namespace EmployeeOnboarding.Controllers
 
             if (empCheck != null)
             {
-                if (empCheck.Empid == onboardstatus.Emp_id || empCheck.Official_EmailId == onboardstatus.Official_EmailId)
+                if (empCheck.Empid.Contains(onboardstatus.Emp_id) || empCheck.Official_EmailId.Contains(onboardstatus.Official_EmailId))
                 {
                     return BadRequest("Employee ID or email ID might already exist.");
                 }
