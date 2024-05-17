@@ -29,13 +29,20 @@ namespace EmployeeOnboarding.Controllers
         public async Task<IActionResult> ChangeApprovalStatus(int genId, [FromBody] onboardstatusVM onboardstatus)
         {
             var empCheck = _context.EmployeeGeneralDetails.FirstOrDefault(x => x.Id == genId);
-
-            var existingEmployee = _context.EmployeeGeneralDetails
-            .Any(x => x.Empid == onboardstatus.Emp_id || x.Official_EmailId == onboardstatus.Official_EmailId);
-
-            if (existingEmployee)
+            if (empCheck != null)
             {
-                return BadRequest("Employee ID or email ID might already exist.");
+                if (empCheck.Empid == onboardstatus.Emp_id || empCheck.Empid.Contains(onboardstatus.Emp_id))
+                {
+                    return BadRequest("Employee ID already exists.");
+                }
+                else if (empCheck.Official_EmailId.Contains(onboardstatus.Official_EmailId))
+                {
+                    return BadRequest("Email ID already exists.");
+                }
+                else if ((empCheck.Empid == onboardstatus.Emp_id || empCheck.Empid.Contains(onboardstatus.Emp_id)) && empCheck.Official_EmailId.Contains(onboardstatus.Official_EmailId))
+                {
+                    return BadRequest("Employee ID and Email ID both already exists.");
+                }
             }
 
             try
