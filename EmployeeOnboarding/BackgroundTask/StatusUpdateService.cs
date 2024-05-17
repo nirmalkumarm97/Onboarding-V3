@@ -30,7 +30,7 @@ namespace EmployeeOnboarding.BackgroundTask
                 List<Login> logins = new List<Login>();
                 // Find entities where status is "Pending" and created more than 15 days ago
                 List<Login> entitiesToUpdate = dbContext.Login
-                    .Where(x => x.Invited_Status.ToLower() == "invited" && x.Date_Created <= DateTime.UtcNow.AddDays(-15))
+                    .Where(x => x.Invited_Status.ToLower() == "invited" && x.Date_Created <= DateTime.UtcNow.AddDays(-7))
                     .ToList();
 
                 if (entitiesToUpdate.Any())

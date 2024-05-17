@@ -155,33 +155,9 @@ namespace EmployeeOnboarding.Repository
 <!DOCTYPE html>
 <html>
 <head>
-    <style>
-        body {{
-            font-family: Arial, sans-serif;
-            line-height: 1.6;
-        }}
-        .container {{
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 10px;
-        }}
-        h1 {{
-            color: #333;
-        }}
-        p {{
-            margin-bottom: 20px;
-        }}
-        a {{
-            color: #007bff;
-            text-decoration: none;
-        }}
-        a:hover {{
-            text-decoration: underline;
-        }}
-    </style>
 </head>
 <body>
-    <div class='container'>
+    <div>
         <p>Dear {name},</p>
         <p>Please login into your profile by <a href='{HtmlEncoder.Default.Encode(url)}'>clicking here</a>.</p>
         <p>Your email is {email} and password is {tempPass}.</p>

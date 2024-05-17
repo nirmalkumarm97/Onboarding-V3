@@ -824,26 +824,9 @@ namespace EmployeeOnboarding.Repository
 <!DOCTYPE html>
 <html>
 <head>
-    <style>
-        body {{
-            font-family: Arial, sans-serif;
-            line-height: 1.6;
-        }}
-        .container {{
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 10px;
-        }}
-        h1 {{
-            color: #333;
-        }}
-        p {{
-            margin-bottom: 20px;
-        }}
-    </style>
 </head>
 <body>
-    <div class='container'>
+    <div>
         <p>Dear {name},</p>
         <p>Your onboarding form is submitted Successfully.</p>
         <p>Wait for approval by HR team.</p>
@@ -868,38 +851,20 @@ namespace EmployeeOnboarding.Repository
         {
             string subject = "Form Resubmission Confirmation";
             string body = $@"
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <style>
-                body {{
-                    font-family: Arial, sans-serif;
-                    line-height: 1.6;
-                }}
-                .container {{
-                    max-width: 600px;
-                    margin: 0 auto;
-                    padding: 10px;
-                }}
-                h1 {{
-                    color: #333;
-                }}
-                p {{
-                    margin-bottom: 20px;
-                }}
-            </style>
-        </head>
-        <body>
-            <div class='container'>
-                <p>Dear {name},</p>
-                <p>Your form has been resubmitted successfully.</p>
-                <p>We have received your updated information. Please wait for further instructions or confirmation.</p>
-                <p>Thank you for your cooperation.</p>
-                <p>Regards,<br />HR Department<br />Ideassion Technology Solutions LLP</p>
-            </div>
-        </body>
-        </html>";
-
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+    <div>
+        <p>Dear {name},</p>
+        <p>Your form has been resubmitted successfully.</p>
+        <p>We have received your updated information. Please wait for further instructions or confirmation.</p>
+        <p>Thank you for your cooperation.</p>
+        <p>Regards,<br />HR Department<br />Ideassion Technology Solutions LLP</p>
+    </div>
+</body>
+</html>";
             try
             {
                 // Assuming _emailSender is an instance of an email sending service
