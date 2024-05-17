@@ -10,6 +10,7 @@ using System.Text.Encodings.Web;
 using DocumentFormat.OpenXml.Office2010.Excel;
 using EmployeeOnboarding.Data.Models;
 using EmployeeOnboarding.Response;
+using Microsoft.IdentityModel.Tokens;
 
 namespace EmployeeOnboarding.Repository
 {
@@ -32,6 +33,10 @@ namespace EmployeeOnboarding.Repository
 
             if (onboardstatus == null)
                 throw new ArgumentNullException(nameof(onboardstatus));
+            if(onboardstatus.Emp_id.IsNullOrEmpty() || onboardstatus.Official_EmailId.IsNullOrEmpty())
+            {
+                throw new Exception("Please enter values in both dialog boxes");
+            }
 
             try
             {
@@ -142,36 +147,9 @@ namespace EmployeeOnboarding.Repository
 <!DOCTYPE html>
 <html>
 <head>
-    <style>
-        body {{
-            font-family: Arial, sans-serif;
-            line-height: 1.6;
-        }}
-        .container {{
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 20px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            background-color: #f9f9f9;
-        }}
-        h1 {{
-            color: #333;
-        }}
-        p {{
-            margin-bottom: 20px;
-        }}
-        a {{
-            color: #007bff;
-            text-decoration: none;
-        }}
-        a:hover {{
-            text-decoration: underline;
-        }}
-    </style>
 </head>
 <body>
-    <div class='container'>
+    <div>
         <p>Dear {empName},</p>
         <p>Your onboarding form is approved.</p>
         <p>Your employee ID is {empId} and official email ID is {officialEmail}.</p>
@@ -180,7 +158,6 @@ namespace EmployeeOnboarding.Repository
     </div>
 </body>
 </html>";
-
             try
             {
                 await _emailSender.SendEmailAsync(email, subject, body);
@@ -292,36 +269,9 @@ namespace EmployeeOnboarding.Repository
 <!DOCTYPE html>
 <html>
 <head>
-    <style>
-        body {{
-            font-family: Arial, sans-serif;
-            line-height: 1.6;
-        }}
-        .container {{
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 20px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            background-color: #f9f9f9;
-        }}
-        h1 {{
-            color: #333;
-        }}
-        p {{
-            margin-bottom: 20px;
-        }}
-        a {{
-            color: #007bff;
-            text-decoration: none;
-        }}
-        a:hover {{
-            text-decoration: underline;
-        }}
-    </style>
 </head>
 <body>
-    <div class='container'>
+    <div>
         <p>Dear {empName},</p>
         <p>Your onboarding form has been rejected.</p>
         <p>Rejected Remarks: {remarks}</p>
@@ -330,7 +280,6 @@ namespace EmployeeOnboarding.Repository
     </div>
 </body>
 </html>";
-
                 await _emailSender.SendEmailAsync(email, subject, body);
 
                 return;
