@@ -828,7 +828,7 @@ namespace EmployeeOnboarding.Repository
 <body>
     <div>
         <p>Dear {name},</p>
-        <p>Your onboarding form is submitted Successfully.</p>
+        <p>Your onboarding form is submitted successfully.</p>
         <p>Wait for approval by HR team.</p>
         <p>Regards,<br />HR Department<br />Ideassion Technology Solutions LLP</p>
     </div>
