@@ -35,7 +35,7 @@ namespace EmployeeOnboarding.Repository
                 throw new ArgumentNullException(nameof(onboardstatus));
             if(onboardstatus.Emp_id.IsNullOrEmpty() || onboardstatus.Official_EmailId.IsNullOrEmpty())
             {
-                throw new Exception("Please enter values in both dialog boxes");
+                throw new Exception("Please fill in all the mandatory fields");
             }
 
             try
