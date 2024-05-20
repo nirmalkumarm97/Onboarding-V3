@@ -11,12 +11,13 @@ namespace EmployeeOnboarding.BackgroundTask
     public class StatusUpdateService : BackgroundService
     {
         private readonly IServiceProvider _services;
-        private readonly IEmailSender emailSender;
+        private readonly IEmailSender _emailSender;
         private const int IntervalTime = 5; // 5 minutes 
 
-        public StatusUpdateService(IServiceProvider services)
+        public StatusUpdateService(IServiceProvider services , IEmailSender emailSender)
         {
             _services = services;
+            _emailSender = emailSender;
         }
         public override async Task StartAsync(CancellationToken cancellationToken)
         {
@@ -77,7 +78,7 @@ namespace EmployeeOnboarding.BackgroundTask
 </html>";
             try
             {
-                await emailSender.SendEmailAsync(email, subject, body);
+                await _emailSender.SendEmailAsync(email, subject, body);
             }
             catch (Exception ex)
             {
