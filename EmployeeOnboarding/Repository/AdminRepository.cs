@@ -46,7 +46,7 @@ namespace EmployeeOnboarding.Repository
                                       Current_Status = l.Invited_Status,
                                       CreatedDate = l.Date_Created
                                   }).Skip((adminRequest.PageNumber - 1) * adminRequest.PageSize).Take(adminRequest.PageSize).OrderByDescending(x => x.CreatedDate).ToList();
-            response.result = InvitedDetails;
+            response.result = adminRequest.OrderByNew == true ? InvitedDetails.OrderBy(x => x.CreatedDate).ToList() : InvitedDetails;
             response.OverallCount = InvitedDetails.Count;
             return response;
         }
@@ -84,7 +84,7 @@ namespace EmployeeOnboarding.Repository
                      .OrderByDescending(x => x.DateModified)
                      .ToList();
 
-            response.result = RejectedDetails;
+            response.result = adminRequest.OrderByNew == true ? RejectedDetails.OrderBy(x => x.DateModified).ToList() : RejectedDetails;
             response.OverallCount = RejectedDetails.Count;
             return response;
         }
@@ -121,7 +121,7 @@ namespace EmployeeOnboarding.Repository
                     .Take(adminRequest.PageSize)
                     .OrderByDescending(x => x.DateModified)
                     .ToList();
-            response.result = PendingDetails;
+            response.result = adminRequest.OrderByNew == true ? PendingDetails.OrderBy(x => x.DateModified).ToList() : PendingDetails;
             response.OverallCount = PendingDetails.Count;
             return response;
         }
@@ -159,7 +159,7 @@ namespace EmployeeOnboarding.Repository
                     .Take(adminRequest.PageSize)
                     .OrderByDescending(x => x.DateModified)
                     .ToList();
-            response.result = employeedetails;
+            response.result = adminRequest.OrderByNew == true ? employeedetails.OrderBy(x => x.DateModified).ToList() : employeedetails;
             response.OverallCount = employeedetails.Count;
             return response;
         }
@@ -181,7 +181,7 @@ namespace EmployeeOnboarding.Repository
                                       CreatedDate = l.Date_Created
                                   }).Skip((adminRequest.PageNumber - 1) * adminRequest.PageSize).Take(adminRequest.PageSize).OrderByDescending(x => x.CreatedDate).ToList();
 
-            response.result = expiredDetails;
+            response.result = adminRequest.OrderByNew == true ? expiredDetails.OrderBy(x => x.CreatedDate).ToList() : expiredDetails;
             response.OverallCount = expiredDetails.Count;
             return response;
         }

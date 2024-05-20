@@ -9,5 +9,6 @@ namespace EmployeeOnboarding.Request
         public int PageNumber { get; set; }
         public int PageSize { get; set; }
         public string? SearchCriteria { get; set; }
+        public bool OrderByNew { get; set; }
     }
 }
