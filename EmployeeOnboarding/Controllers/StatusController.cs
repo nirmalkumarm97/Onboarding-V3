@@ -7,6 +7,7 @@ using EmployeeOnboarding.ViewModels;
 using EmployeeOnboarding.Data;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
+using Microsoft.IdentityModel.Tokens;
 
 namespace EmployeeOnboarding.Controllers
 {
@@ -29,20 +30,31 @@ namespace EmployeeOnboarding.Controllers
         [HttpPost("approve/{genId}")]
         public async Task<IActionResult> ChangeApprovalStatus(int genId, [FromBody] onboardstatusVM onboardstatus)
         {
+            if (onboardstatus.Emp_id.IsNullOrEmpty() || onboardstatus.Official_EmailId.IsNullOrEmpty())
+            {
+                return BadRequest("Please fill in all the mandatory fields");
+            }
             var empCheck = _context.EmployeeGeneralDetails.FirstOrDefault(x => x.Id == genId);
             if (empCheck != null)
             {
-                if (empCheck.Empid == onboardstatus.Emp_id && empCheck.Official_EmailId.Contains(onboardstatus.Official_EmailId))
+                if (empCheck != null)
                 {
-                    return BadRequest("Employee ID and Email ID both already exist.");
+                    if (empCheck.Empid == onboardstatus.Emp_id && empCheck.Official_EmailId != null && empCheck.Official_EmailId.Contains(onboardstatus.Official_EmailId))
+                    {
+                        return BadRequest("Employee ID and Email ID both already exist.");
+                    }
+                    else if (empCheck.Empid == onboardstatus.Emp_id)
+                    {
+                        return BadRequest("Employee ID already exists.");
+                    }
+                    else if (empCheck.Official_EmailId != null && empCheck.Official_EmailId.Contains(onboardstatus.Official_EmailId))
+                    {
+                        return BadRequest("Email ID already exists.");
+                    }
                 }
-                else if (empCheck.Empid == onboardstatus.Emp_id)
+                else
                 {
-                    return BadRequest("Employee ID already exists.");
-                }
-                else if (empCheck.Official_EmailId.Contains(onboardstatus.Official_EmailId))
-                {
-                    return BadRequest("Email ID already exists.");
+                    return BadRequest("General details does not exists");
                 }
             }
             try

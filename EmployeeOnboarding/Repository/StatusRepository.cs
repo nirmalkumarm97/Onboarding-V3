@@ -33,11 +33,7 @@ namespace EmployeeOnboarding.Repository
 
             if (onboardstatus == null)
                 throw new ArgumentNullException(nameof(onboardstatus));
-            if(onboardstatus.Emp_id.IsNullOrEmpty() || onboardstatus.Official_EmailId.IsNullOrEmpty())
-            {
-                throw new Exception("Please fill in all the mandatory fields");
-            }
-
+          
             try
             {
                 using (var transaction = _context.Database.BeginTransaction())
