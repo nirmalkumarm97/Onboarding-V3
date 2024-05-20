@@ -41,7 +41,10 @@ namespace EmployeeOnboarding.Controllers
                 var existingEmployee = empCheck.FirstOrDefault(e => e.Empid == onboardstatus.Emp_id);
                 var existingEmail = empCheck.FirstOrDefault(e => e.Official_EmailId == onboardstatus.Official_EmailId);
                 var both = empCheck.FirstOrDefault(e => e.Official_EmailId == onboardstatus.Official_EmailId && e.Empid == onboardstatus.Emp_id);
-
+                if (both != null)
+                {
+                    return BadRequest("Employee ID and Email ID both already exist.");
+                }
                 if (existingEmployee != null)
                 {
                     return BadRequest("Employee ID already exists.");
@@ -49,10 +52,6 @@ namespace EmployeeOnboarding.Controllers
                 if (existingEmail != null)
                 {
                     return BadRequest("Email ID already exists.");
-                }
-                if (both != null)
-                {
-                    return BadRequest("Employee ID and Email ID both already exist.");
                 }
             }
             try
