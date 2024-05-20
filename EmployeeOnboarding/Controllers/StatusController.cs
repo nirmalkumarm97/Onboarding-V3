@@ -6,6 +6,7 @@ using EmployeeOnboarding.Repository;
 using EmployeeOnboarding.ViewModels;
 using EmployeeOnboarding.Data;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 namespace EmployeeOnboarding.Controllers
 {
@@ -31,7 +32,11 @@ namespace EmployeeOnboarding.Controllers
             var empCheck = _context.EmployeeGeneralDetails.FirstOrDefault(x => x.Id == genId);
             if (empCheck != null)
             {
-                if (empCheck.Empid == onboardstatus.Emp_id || empCheck.Empid.Contains(onboardstatus.Emp_id))
+                if (empCheck.Empid == onboardstatus.Emp_id && empCheck.Official_EmailId.Contains(onboardstatus.Official_EmailId))
+                {
+                    return BadRequest("Employee ID and Email ID both already exist.");
+                }
+                else if (empCheck.Empid == onboardstatus.Emp_id)
                 {
                     return BadRequest("Employee ID already exists.");
                 }
@@ -39,12 +44,7 @@ namespace EmployeeOnboarding.Controllers
                 {
                     return BadRequest("Email ID already exists.");
                 }
-                else if ((empCheck.Empid == onboardstatus.Emp_id || empCheck.Empid.Contains(onboardstatus.Emp_id)) && empCheck.Official_EmailId.Contains(onboardstatus.Official_EmailId))
-                {
-                    return BadRequest("Employee ID and Email ID both already exists.");
-                }
             }
-
             try
             {
                 await _onboardstatusService.ChangeApprovalStatus(genId, onboardstatus);
