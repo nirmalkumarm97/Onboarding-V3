@@ -34,27 +34,25 @@ namespace EmployeeOnboarding.Controllers
             {
                 return BadRequest("Please fill in all the mandatory fields");
             }
-            var empCheck = _context.EmployeeGeneralDetails.FirstOrDefault(x => x.Id == genId);
-            if (empCheck != null)
+            var empCheck = _context.EmployeeGeneralDetails.ToList();
+
+            if (empCheck != null && empCheck.Any())
             {
-                if (empCheck != null)
+                var existingEmployee = empCheck.FirstOrDefault(e => e.Empid == onboardstatus.Emp_id);
+                var existingEmail = empCheck.FirstOrDefault(e => e.Official_EmailId == onboardstatus.Official_EmailId);
+                var both = empCheck.FirstOrDefault(e => e.Official_EmailId == onboardstatus.Official_EmailId && e.Empid == onboardstatus.Emp_id);
+
+                if (existingEmployee != null)
                 {
-                    if (empCheck.Empid == onboardstatus.Emp_id && empCheck.Official_EmailId != null && empCheck.Official_EmailId.Contains(onboardstatus.Official_EmailId))
-                    {
-                        return BadRequest("Employee ID and Email ID both already exist.");
-                    }
-                    else if (empCheck.Empid == onboardstatus.Emp_id)
-                    {
-                        return BadRequest("Employee ID already exists.");
-                    }
-                    else if (empCheck.Official_EmailId != null && empCheck.Official_EmailId.Contains(onboardstatus.Official_EmailId))
-                    {
-                        return BadRequest("Email ID already exists.");
-                    }
+                    return BadRequest("Employee ID already exists.");
                 }
-                else
+                if (existingEmail != null)
                 {
-                    return BadRequest("General details does not exists");
+                    return BadRequest("Email ID already exists.");
+                }
+                if (both != null)
+                {
+                    return BadRequest("Employee ID and Email ID both already exist.");
                 }
             }
             try
@@ -66,6 +64,7 @@ namespace EmployeeOnboarding.Controllers
             {
                 return BadRequest(ex.Message);
             }
+
         }
 
         [HttpPost("reject/{genId}")]
