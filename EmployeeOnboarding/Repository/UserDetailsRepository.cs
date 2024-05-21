@@ -202,6 +202,17 @@ namespace EmployeeOnboarding.Repository
                 {
                     if (personalInfoRequest != null)
                     {
+                        if (personalInfoRequest.GenId > 0)
+                        {
+                            var checkStatus = _context.ApprovalStatus.Where(x => x.EmpGen_Id == personalInfoRequest.GenId && x.Current_Status == 1);
+                            {
+                                if (checkStatus.Any())
+                                {
+                                    return ((int)personalInfoRequest.GenId);
+                                }
+                            }
+
+                        }
                         int UserId = 0;
                         if (directadd == true)
                         {
