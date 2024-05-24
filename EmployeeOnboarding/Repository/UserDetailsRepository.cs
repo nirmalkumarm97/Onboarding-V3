@@ -204,7 +204,7 @@ namespace EmployeeOnboarding.Repository
                     {
                         if (personalInfoRequest.GenId > 0)
                         {
-                            var checkStatus = _context.ApprovalStatus.Where(x => x.EmpGen_Id == personalInfoRequest.GenId && x.Current_Status == 1);
+                            var checkStatus = _context.ApprovalStatus.Where(x => x.EmpGen_Id == personalInfoRequest.GenId && (x.Current_Status == 1 || x.Current_Status == 2));
                             {
                                 if (checkStatus.Any())
                                 {
